@@ -17,6 +17,7 @@
     export class FlowRateController {
         constructor(
             private $scope: IFlowRateScope,
+            private $state: angular.ui.IStateProvider,
             private httpService: Services.HttpService) {
 
             var that: FlowRateController = this;
@@ -26,14 +27,14 @@
         private init() {
             var that: FlowRateController = this;
 
-            that.$scope.flowRateScope = {};
+            //that.$scope.flowRateScope = {};
             that.$scope.flowRateScope.maraRiverFlowRate = {};
             that.$scope.flowRateScope.channel = {};
             that.$scope.flowRateScope.feeds = [];
             that.$scope.flowRateScope.reorderFeeds = [];
             that.$scope.flowRateScope.selectedFeed = [];
 
-            var data = that.getData();
+            that.getData();
         
             //TODO: Do a progress ring
             //TODO: Paginate the table

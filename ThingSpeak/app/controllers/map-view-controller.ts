@@ -10,16 +10,16 @@
         mapScope?: ICurrentScope;
     }
 
-    export class MapController {
+    export class MapViewController {
         constructor(
             private $scope: ICurrentScope) {
 
-            var that: MapController = this;
+            var that: MapViewController = this;
             that.init();
         }
 
         private init() {
-            var that: MapController = this;
+            var that: MapViewController = this;
 
         }
     }

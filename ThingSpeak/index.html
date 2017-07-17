@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Dra n Drop</title>
+    <title>Thingspeak</title>
 
     <link href="app/css/app.css" rel="stylesheet" type="text/css" />
     <link href="Content/bootstrap.css" rel="stylesheet" />
@@ -11,16 +11,34 @@
 
     <script src="Scripts/jquery-3.1.1.js"></script>
     <script src="Scripts/angular.js"></script>
+    <script src="Scripts/angular-ui-router.js"></script>
     <script src="Scripts/bootstrap.js"></script>
-    <!--<script src="Scripts/datatables.js"></script>-->
     <script src="app/scripts/app.js"></script>
     <script src="Scripts/angular-drag-and-drop-lists.js"></script>
 
-
 </head>
 
-<body class="container">
-  <div></div>
+<body>
+    <!--<header ng-controller="HomeController as HomeCtrl">
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Angular Routing Example</a>
+                </div>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/home"><i class="fa fa-home"></i> Home</a></li>
+                    <li><a href="/flowrate"><i class="fa fa-comment"></i> Flow Rate</a></li>
+                    <li><a href="/about"><i class="fa fa-shield"></i> About</a></li>
+                    <li><a href="mapview"><i class="fa fa-comment"></i> Map View</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>-->
+
+    <div>
+        <div ui-view></div>
+    </div>
 
     <script type="text/javascript">
         var app = new ThingSpeak.AppModule();

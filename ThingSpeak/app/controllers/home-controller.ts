@@ -2,8 +2,7 @@
     "use strict";
 
     export interface ICurrentScope {
-
-
+        title?: string;
     }
 
     interface IHomeScope extends ng.IScope {
@@ -12,15 +11,42 @@
 
     export class HomeController {
         constructor(
-            private $scope: ICurrentScope) {
+            private $scope: IHomeScope,
+            private $state: angular.ui.IStateService) {
 
             var that: HomeController = this;
             that.init();
         }
 
         private init() {
+
             var that: HomeController = this;
 
+            console.log('Tumefikia scope');
+
+            //that.$scope.homeScope.title = "";
+
+            //that.$scope.homeScope.title = "Home";
+
+            that.navigateView("home");
+
         }
+
+        private navigateView(view: string) {
+
+            console.log('Twende home');
+
+
+            var that: HomeController = this;
+            that.$state.go(view);
+        }
+
+        private openHomeView() {
+            var that: HomeController = this;
+
+            that.navigateView("home");
+        }
+
+       
     }
 }

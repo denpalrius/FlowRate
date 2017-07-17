@@ -4,11 +4,16 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", ["dndLists"]);
+            var ngFlowRate = angular.module("ngFlowRate", ["ui.router", , "dndLists"]);
+            // configs
+            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             // services
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers
-            ngFlowRate.controller("FlowRateController", ["$scope", "httpService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$state", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
+            ngFlowRate.controller("MapViewController", ["$scope", ThingSpeak.Controllers.MapViewController]);
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(function () {
                 angular.bootstrap(document, ["ngFlowRate"]);
@@ -33,21 +38,60 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
+    var Configs;
+    (function (Configs) {
+        var RouteConfig = (function () {
+            function RouteConfig($urlRouterProvider, $stateProvider, $locationProvider) {
+                $locationProvider.hashPrefix('');
+                $urlRouterProvider.otherwise('/');
+                $stateProvider
+                    .state('home', {
+                    url: '/',
+                    controller: 'HomeController',
+                    controllerAs: 'HomeCtrl',
+                    templateUrl: 'app/views/home/home-view.html'
+                })
+                    .state('about', {
+                    url: '/about',
+                    controller: 'AboutController',
+                    controllerAs: 'AboutCtrl',
+                    templateUrl: 'app/views/about-view.html'
+                })
+                    .state('mapview', {
+                    url: '/mapview',
+                    controller: 'MapViewController',
+                    controllerAs: 'MapViewCtrl',
+                    templateUrl: 'app/views/map-view.html'
+                })
+                    .state('flowrate', {
+                    url: '/flowrate',
+                    controller: 'FlowRateController',
+                    controllerAs: 'FlowRateCtrl',
+                    templateUrl: 'app/views/raw-flow-rate-view.html'
+                });
+            }
+            return RouteConfig;
+        }());
+        Configs.RouteConfig = RouteConfig;
+    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     var Controllers;
     (function (Controllers) {
         "use strict";
-        var MapController = (function () {
-            function MapController($scope) {
+        var MapViewController = (function () {
+            function MapViewController($scope) {
                 this.$scope = $scope;
                 var that = this;
                 that.init();
             }
-            MapController.prototype.init = function () {
+            MapViewController.prototype.init = function () {
                 var that = this;
             };
-            return MapController;
+            return MapViewController;
         }());
-        Controllers.MapController = MapController;
+        Controllers.MapViewController = MapViewController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -75,13 +119,27 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope) {
+            function HomeController($scope, $state) {
                 this.$scope = $scope;
+                this.$state = $state;
                 var that = this;
                 that.init();
             }
             HomeController.prototype.init = function () {
                 var that = this;
+                console.log('Tumefikia scope');
+                //that.$scope.homeScope.title = "";
+                //that.$scope.homeScope.title = "Home";
+                that.navigateView("home");
+            };
+            HomeController.prototype.navigateView = function (view) {
+                console.log('Twende home');
+                var that = this;
+                that.$state.go(view);
+            };
+            HomeController.prototype.openHomeView = function () {
+                var that = this;
+                that.navigateView("home");
             };
             return HomeController;
         }());
@@ -94,21 +152,22 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var FlowRateController = (function () {
-            function FlowRateController($scope, httpService) {
+            function FlowRateController($scope, $state, httpService) {
                 this.$scope = $scope;
+                this.$state = $state;
                 this.httpService = httpService;
                 var that = this;
                 that.init();
             }
             FlowRateController.prototype.init = function () {
                 var that = this;
-                that.$scope.flowRateScope = {};
+                //that.$scope.flowRateScope = {};
                 that.$scope.flowRateScope.maraRiverFlowRate = {};
                 that.$scope.flowRateScope.channel = {};
                 that.$scope.flowRateScope.feeds = [];
                 that.$scope.flowRateScope.reorderFeeds = [];
                 that.$scope.flowRateScope.selectedFeed = [];
-                var data = that.getData();
+                that.getData();
                 //TODO: Do a progress ring
                 //TODO: Paginate the table
                 //TODO: Add charts for Field 1, field 2 ad field 3
