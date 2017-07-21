@@ -4,25 +4,20 @@
             $urlRouterProvider: angular.ui.IUrlRouterProvider,
             $stateProvider: angular.ui.IStateProvider,
             $locationProvider: ng.ILocationProvider) {
-            
+
+            // For any unmatched url, send to 404
+            //$urlRouterProvider.when('', '/');
+            //$urlRouterProvider.otherwise('/404');
             $locationProvider.hashPrefix('');
-            $urlRouterProvider.otherwise('/');
+            $urlRouterProvider.otherwise('/');   
 
             $stateProvider
-                //.state('home', {
-                //        url: '/',
-                //        controller: 'HomeController',
-                //        controllerAs: 'HomeCtrl',
-                //        templateUrl: '/app/views/home-view.html'
-                //})
-
                 .state('home', {
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
-                    templateUrl: 'app/views/home/home-view.html'
+                    templateUrl: 'app/views/home-view.html'
                 })
-
                 .state('about', {
                     url: '/about',
                     controller: 'AboutController',

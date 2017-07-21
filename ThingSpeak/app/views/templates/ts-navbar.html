@@ -1,0 +1,36 @@
+﻿<div class="header">
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#js-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <a class="navbar-brand" href="#/">KDZ</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="js-navbar-collapse">
+
+                <ul class="nav navbar-nav">
+                    <li ng-class="{active:isActive('/')}">
+                        <a href="#/">Home</a>
+                    </li>
+                    <li ng-class="{active:isActive('/flowrate')}">
+                        <a ng-href="#/flowrate">Flow Rate</a>
+                    </li>
+                    <li ng-class="{active:isActive('/about')}">
+                        <a ng-href="#/about">About</a>
+                    </li>
+                    <li ng-show="isLoggedIn">Logged as {{userInfo}}</a></li>
+                    <li ng-show="isLoggedIn">
+                        <a ng-href="#/logout"></a>Logout
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

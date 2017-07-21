@@ -1,30 +1,5 @@
 var ThingSpeak;
 (function (ThingSpeak) {
-    "use strict";
-    var AppModule = (function () {
-        function AppModule() {
-            // module
-            var ngFlowRate = angular.module("ngFlowRate", ["ui.router", , "dndLists"]);
-            // configs
-            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
-            // services
-            ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
-            // controllers
-            ngFlowRate.controller("HomeController", ["$scope", "$state", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
-            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
-            ngFlowRate.controller("MapViewController", ["$scope", ThingSpeak.Controllers.MapViewController]);
-            // bootstrap the app when everything has been loaded
-            angular.element(document).ready(function () {
-                angular.bootstrap(document, ["ngFlowRate"]);
-            });
-        }
-        return AppModule;
-    }());
-    ThingSpeak.AppModule = AppModule;
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
     var Configs;
     (function (Configs) {
         var AppConfig = (function () {
@@ -42,6 +17,9 @@ var ThingSpeak;
     (function (Configs) {
         var RouteConfig = (function () {
             function RouteConfig($urlRouterProvider, $stateProvider, $locationProvider) {
+                // For any unmatched url, send to 404
+                //$urlRouterProvider.when('', '/');
+                //$urlRouterProvider.otherwise('/404');
                 $locationProvider.hashPrefix('');
                 $urlRouterProvider.otherwise('/');
                 $stateProvider
@@ -49,7 +27,7 @@ var ThingSpeak;
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
-                    templateUrl: 'app/views/home/home-view.html'
+                    templateUrl: 'app/views/home-view.html'
                 })
                     .state('about', {
                     url: '/about',
@@ -80,25 +58,6 @@ var ThingSpeak;
     var Controllers;
     (function (Controllers) {
         "use strict";
-        var MapViewController = (function () {
-            function MapViewController($scope) {
-                this.$scope = $scope;
-                var that = this;
-                that.init();
-            }
-            MapViewController.prototype.init = function () {
-                var that = this;
-            };
-            return MapViewController;
-        }());
-        Controllers.MapViewController = MapViewController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Controllers;
-    (function (Controllers) {
-        "use strict";
         var AboutController = (function () {
             function AboutController($scope) {
                 this.$scope = $scope;
@@ -111,39 +70,6 @@ var ThingSpeak;
             return AboutController;
         }());
         Controllers.AboutController = AboutController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Controllers;
-    (function (Controllers) {
-        "use strict";
-        var HomeController = (function () {
-            function HomeController($scope, $state) {
-                this.$scope = $scope;
-                this.$state = $state;
-                var that = this;
-                that.init();
-            }
-            HomeController.prototype.init = function () {
-                var that = this;
-                console.log('Tumefikia scope');
-                //that.$scope.homeScope.title = "";
-                //that.$scope.homeScope.title = "Home";
-                that.navigateView("home");
-            };
-            HomeController.prototype.navigateView = function (view) {
-                console.log('Twende home');
-                var that = this;
-                that.$state.go(view);
-            };
-            HomeController.prototype.openHomeView = function () {
-                var that = this;
-                that.navigateView("home");
-            };
-            return HomeController;
-        }());
-        Controllers.HomeController = HomeController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -211,6 +137,107 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var HomeController = (function () {
+            function HomeController($scope, $state) {
+                this.$scope = $scope;
+                this.$state = $state;
+                var that = this;
+                that.init();
+            }
+            HomeController.prototype.init = function () {
+                var that = this;
+                console.log('Tumefikia scope');
+                //that.$scope.homeScope.title = "";
+                //that.$scope.homeScope.title = "Home";
+                //that.$state.go('home');
+                //that.navigateView("home");
+            };
+            HomeController.prototype.navigateView = function (view) {
+                console.log('Twende home');
+                var that = this;
+                that.$state.go(view);
+            };
+            HomeController.prototype.openHomeView = function () {
+                var that = this;
+                that.navigateView("home");
+            };
+            return HomeController;
+        }());
+        Controllers.HomeController = HomeController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var MapViewController = (function () {
+            function MapViewController($scope) {
+                this.$scope = $scope;
+                var that = this;
+                that.init();
+            }
+            MapViewController.prototype.init = function () {
+                var that = this;
+            };
+            return MapViewController;
+        }());
+        Controllers.MapViewController = MapViewController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var NavigationController = (function () {
+            function NavigationController($scope, $location) {
+                this.$scope = $scope;
+                this.$location = $location;
+                var that = this;
+                //that.$scope.navigationScope.isSelected = function (path) {
+                //    return this.isSelected(path)
+                //}.bind(this);
+            }
+            NavigationController.prototype.isSelected = function (path) {
+                return this.$location.path().substr(0, path.length) == path;
+            };
+            NavigationController.prototype.getPath = function (path) {
+                var that = this;
+                console.log(that.$location.path());
+                return path === that.$location.path();
+            };
+            ;
+            return NavigationController;
+        }());
+        Controllers.NavigationController = NavigationController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Directives;
+    (function (Directives) {
+        "use strict";
+        function TsWidgetHeader() {
+            return {
+                restrict: 'AE',
+                scope: {
+                    title: '@',
+                    subtitle: '@',
+                    rightText: '@'
+                },
+                templateUrl: '/app/views/templates/ts-widget.html',
+                link: 
+            };
+        }
+        Directives.TsWidgetHeader = TsWidgetHeader;
+    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     var Models;
     (function (Models) {
         "use strict";
@@ -253,5 +280,33 @@ var ThingSpeak;
         }());
         Services.HttpService = HttpService;
     })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    "use strict";
+    var AppModule = (function () {
+        function AppModule() {
+            // module
+            var ngFlowRate = angular.module("ngFlowRate", ["ui.router", "dndLists"]);
+            // configs
+            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
+            //Directives
+            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.TsWidgetHeader);
+            // services
+            ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
+            // controllers
+            ngFlowRate.controller("NavigationController", ["$scope", "$location", ThingSpeak.Controllers.NavigationController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$state", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
+            ngFlowRate.controller("MapViewController", ["$scope", ThingSpeak.Controllers.MapViewController]);
+            // bootstrap the app when everything has been loaded
+            angular.element(document).ready(function () {
+                angular.bootstrap(document, ["ngFlowRate"]);
+            });
+        }
+        return AppModule;
+    }());
+    ThingSpeak.AppModule = AppModule;
 })(ThingSpeak || (ThingSpeak = {}));
 //# sourceMappingURL=app.js.map

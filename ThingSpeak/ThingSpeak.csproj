@@ -25,11 +25,14 @@
     <Content Include="app\css\app.css" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
+    <Content Include="app\scripts\app.js" />
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\map-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
     <Content Include="app\views\reorder-flow-rates.html" />
+    <Content Include="app\views\templates\ts-navbar.html" />
+    <Content Include="app\views\templates\ts-widget.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
     <Content Include="Content\angular-material.layout-attributes.min.css" />
@@ -91,10 +94,12 @@
     <TypeScriptCompile Include="app-module.ts" />
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
+    <TypeScriptCompile Include="app\controllers\navigation-controller.ts" />
     <TypeScriptCompile Include="app\controllers\map-view-controller.ts" />
     <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
+    <TypeScriptCompile Include="app\directives\ts-navbar.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
@@ -122,9 +127,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\scripts\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -169,7 +172,7 @@
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
-    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
     <TypeScriptModuleKind>System</TypeScriptModuleKind>
     <TypeScriptOutFile>app/scripts/app.js</TypeScriptOutFile>
     <TypeScriptOutDir />

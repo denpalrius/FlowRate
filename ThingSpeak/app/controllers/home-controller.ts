@@ -28,7 +28,9 @@
 
             //that.$scope.homeScope.title = "Home";
 
-            that.navigateView("home");
+            //that.$state.go('home');
+
+            //that.navigateView("home");
 
         }
 
