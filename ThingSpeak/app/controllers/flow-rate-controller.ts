@@ -1,7 +1,7 @@
 ﻿module ThingSpeak.Controllers {
     "use strict";
 
-    export interface ICurrentScope {
+    interface ICurrentScope {
         maraRiverFlowRate?: ViewModels.MaraRiverFlow;
         channel?: ViewModels.Channel;
         feeds?: ViewModels.Feed[];

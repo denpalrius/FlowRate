@@ -10,7 +10,7 @@
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", Configs.RouteConfig]);
 
             //Directives
-            ngFlowRate.directive("tsWidgetHeader",Directives.TsWidgetHeader);
+            ngFlowRate.directive("tsWidgetHeader",Directives.tsWidgetHeader);
 
             // services
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);
@@ -24,7 +24,7 @@
 
            
             // bootstrap the app when everything has been loaded
-            angular.element(document).ready(function () {
+            angular.element(document).ready(() => {
                 angular.bootstrap(document, ["ngFlowRate"]);
             });
         }

@@ -1,8 +1,16 @@
 ﻿<div>
-    <input type="text" ng-model="homeScope.name"/>
-    Hapa ni {{homeScope.name}}
+    <h1>{{homeScope.pageTitle}}</h1>
+    <br/>
+    <br/>
+    Initial Position:
+    <input type="text" ng-model="homeScope.sourcePos" ng-change="HomeCtrl.checkPosition()"/>
 
-    <input type="text" ng-model="homeScope.title" />
-
-    Hapa ni {{homeScope.title}}
+    <br />
+    <br />
+    Second Position:
+    <input type="text" ng-model="homeScope.destinationPos" ng-change="HomeCtrl.checkPosition()"/>
+    
+    <br/>
+    <br />
+    <h2>{{homeScope.largerPos}}</h2>
 </div>

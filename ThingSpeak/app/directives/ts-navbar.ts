@@ -2,23 +2,39 @@
 module ThingSpeak.Directives {
     "use strict"
 
-    interface Iscope extends ng.IScope {
+    interface IScope extends ng.IScope {
         title: string;
         subtitle: string;
         rightText: string;
         allowCollapse: string;
+        isMenuCollapsed: boolean;
+        selectedmenu: any;
+        collapseMenu: any;
     }
+   
 
-    export function TsWidgetHeader(): ng.IDirective {
+    export function tsWidgetHeader(): ng.IDirective {
         return {
-            restrict: 'AE',
+            restrict: "AE",
             scope: {
                 title: '@',
                 subtitle: '@',
-                rightText: '@'
+                rightText: '@',
+                isMenuCollapsed: '@',
+                collapseMenu: '@'
+
+                 //"@"   (Text binding / one - way binding )
+                //"="   (Direct model binding / two - way binding )
+                //"&"   (Behaviour binding / Method binding  )
             },
             templateUrl: '/app/views/templates/ts-widget.html',
-            link:function
+            link(scope: IScope, $elm: JQuery, $attr: ng.IAttributes) {
+                //scope.selectedmenu = function (isMenuCollapsed){
+                //}
+                //    scope.collapseMenu({ isMenuCollapsed: isMenuCollapsed});
+                //}
+            }
+
         }
     }
 }

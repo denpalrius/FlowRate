@@ -149,20 +149,116 @@ var ThingSpeak;
             }
             HomeController.prototype.init = function () {
                 var that = this;
-                console.log('Tumefikia scope');
-                //that.$scope.homeScope.title = "";
-                //that.$scope.homeScope.title = "Home";
-                //that.$state.go('home');
-                //that.navigateView("home");
+                that.$scope.homeScope = {};
+                that.$scope.homeScope.pageTitle = "Compare Positions";
+                that.$scope.homeScope.sourcePos = "2.3.4";
+                that.$scope.homeScope.destinationPos = "3.3.41s";
+                that.$scope.homeScope.largerPos = 0;
             };
-            HomeController.prototype.navigateView = function (view) {
-                console.log('Twende home');
+            HomeController.prototype.checkPosition = function () {
                 var that = this;
-                that.$state.go(view);
+                var rs = that.comparePositions(that.$scope.homeScope.sourcePos, that.$scope.homeScope.destinationPos);
+                console.log("Largest Position:", rs);
+                that.$scope.homeScope.largerPos = parseFloat(rs);
             };
-            HomeController.prototype.openHomeView = function () {
+            HomeController.prototype.containsNaN = function (numArray) {
+                numArray.forEach(function (item) {
+                    if (isNaN(item)) {
+                        return true;
+                    }
+                    return false;
+                });
+                return false;
+            };
+            HomeController.prototype.comparePositions = function (sourcePos, destinationPos) {
                 var that = this;
-                that.navigateView("home");
+                var sourcePosArray = sourcePos.split('.').map(function (n) { return parseInt(n, 10); });
+                var destinationPosArray = destinationPos.split('.').map(function (n) { return parseInt(n, 10); });
+                console.log('SourcePosArray: ', sourcePosArray);
+                console.log('DestinationPosArray: ', destinationPosArray);
+                if (that.containsNaN(sourcePosArray) || that.containsNaN(destinationPosArray)) {
+                    console.log('You have NaN values');
+                    return "Contains NaN";
+                }
+                for (var i = 0; i < sourcePosArray.length; i++) {
+                    if (sourcePosArray[i] === destinationPosArray[i]) {
+                        continue;
+                    }
+                    else {
+                        if (i > 0) {
+                            //SourceDec and destinationDec are temporary decimal numbers to be used for comparison
+                            var sourceDec = parseFloat(sourcePosArray[i - 1].toString() + "." + sourcePosArray[i].toString());
+                            var destinationDec = 0;
+                            if (destinationPosArray.length === 1) {
+                                destinationDec = parseFloat(destinationPosArray[i - 1].toString() + "." + destinationPosArray[i].toString());
+                            }
+                            else {
+                                destinationDec = parseFloat(destinationPosArray[i - 1].toString() + "." + destinationPosArray[i].toString());
+                            }
+                            console.log('sourceDec:', sourceDec);
+                            console.log('destinationDec:', destinationDec);
+                            return sourceDec > destinationDec ? sourcePos : destinationPos;
+                        }
+                        else {
+                            if (sourcePosArray[i] > destinationPosArray[i]) {
+                                return sourcePos;
+                            }
+                            else {
+                                return destinationPos;
+                            }
+                        }
+                    }
+                }
+                if (destinationPosArray.length > sourcePosArray.length) {
+                    return destinationPos;
+                }
+                else if (destinationPosArray.length === sourcePosArray.length) {
+                    return "Equal";
+                }
+                return "Things went wrong";
+            };
+            HomeController.prototype.othercomparePositions = function (positions) {
+                var that = this;
+                positions.split(",").reduce(function (initialPos, followingPosition) {
+                    var initialPosArray = initialPos.split('.').map(function (n) { return parseInt(n, 10); });
+                    var followingPositionArray = followingPosition.split('.').map(function (n) { return parseInt(n, 10); });
+                    console.log('initialPosArray: ', initialPosArray);
+                    console.log('followingPositionArray: ', followingPositionArray);
+                    if (that.containsNaN(initialPosArray) || that.containsNaN(followingPositionArray)) {
+                        console.log('You have NaN values');
+                        return "Contains Strings";
+                    }
+                    for (var i = 0; i < initialPosArray.length; i++) {
+                        if (initialPosArray[i] === followingPositionArray[i]) {
+                            continue;
+                        }
+                        else {
+                            if (i > 0) {
+                                var dec1 = parseFloat(initialPosArray[i - 1].toString() + "." + initialPosArray[i].toString());
+                                //if (followingPositionArray.length) {
+                                //}
+                                var dec2 = parseFloat(followingPositionArray[i - 1].toString() + "." + followingPositionArray[i].toString());
+                                console.log('Dec1:', dec1);
+                                console.log('Dec1:', dec2);
+                                return dec1 > dec2 ? initialPos : followingPosition;
+                            }
+                            else {
+                                if (initialPosArray[i] > followingPositionArray[i]) {
+                                    return initialPos;
+                                }
+                                else {
+                                    return followingPosition;
+                                }
+                            }
+                        }
+                    }
+                    if (followingPositionArray.length > initialPosArray.length) {
+                        return followingPosition;
+                    }
+                    else {
+                        return "Equal";
+                    }
+                });
             };
             return HomeController;
         }());
@@ -221,19 +317,26 @@ var ThingSpeak;
     var Directives;
     (function (Directives) {
         "use strict";
-        function TsWidgetHeader() {
+        function tsWidgetHeader() {
             return {
-                restrict: 'AE',
+                restrict: "AE",
                 scope: {
                     title: '@',
                     subtitle: '@',
-                    rightText: '@'
+                    rightText: '@',
+                    isMenuCollapsed: '@',
+                    collapseMenu: '@'
                 },
                 templateUrl: '/app/views/templates/ts-widget.html',
-                link: 
+                link: function (scope, $elm, $attr) {
+                    //scope.selectedmenu = function (isMenuCollapsed){
+                    //}
+                    //    scope.collapseMenu({ isMenuCollapsed: isMenuCollapsed});
+                    //}
+                }
             };
         }
-        Directives.TsWidgetHeader = TsWidgetHeader;
+        Directives.tsWidgetHeader = tsWidgetHeader;
     })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -291,7 +394,7 @@ var ThingSpeak;
             // configs
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             //Directives
-            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.TsWidgetHeader);
+            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.tsWidgetHeader);
             // services
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers

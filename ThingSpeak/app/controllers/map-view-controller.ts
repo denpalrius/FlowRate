@@ -1,7 +1,7 @@
 ﻿module ThingSpeak.Controllers {
     "use strict";
 
-    export interface ICurrentScope {
+    interface ICurrentScope {
 
 
     }
