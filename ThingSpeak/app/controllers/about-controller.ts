@@ -12,7 +12,7 @@
 
     export class AboutController {
         constructor(
-            private $scope: ICurrentScope) {
+            private $scope: IAboutScope) {
 
             var that: AboutController = this;
             that.init();

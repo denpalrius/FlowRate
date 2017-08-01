@@ -1,4 +1,15 @@
-﻿<div ng-controller="FlowRateController as flowRateCtrl">
+﻿<div ng-controller="HomeController as HomeCtrl">
+    <div drag-circular-menu
+         angle="30"
+         placement="topRight"
+         button-config="homeScope.menuConfig"
+         menu-items="homeScope.menuItems"
+         default-open="false"
+         onwing-click="HomeCtrl.onWingClick(wing)">
+    </div>
+</div>
+
+<div>
     <h4 style="align-content:center; text-align:center">Mara River Flow Rate</h4>
     <div class="row">
         <div class="col-md-2 col-lg-2">

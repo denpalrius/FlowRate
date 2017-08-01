@@ -4,23 +4,34 @@
     export class AppModule {
         constructor() {
             // module
-            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ui.router","dndLists"]);
+            let ngFlowRate: ng.IModule = angular.module("ngFlowRate",
+                [
+                    "ui.router",
+                    "uiGmapgoogle-maps",
+                    "nemLogging",
+                    "ngCookies",
+                    "ngMessages",
+                    "ngResource",
+                    "ngSanitize",
+                    "ngTouch",
+                    "circularMenu-directive",
+                    "dndLists"]);
 
             // configs
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", Configs.RouteConfig]);
 
             //Directives
-            ngFlowRate.directive("tsWidgetHeader",Directives.tsWidgetHeader);
+            ngFlowRate.directive("tsWidgetHeader",Directives.menuToggle);
 
             // services
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);
           
             // controllers
-            ngFlowRate.controller("NavigationController", ["$scope", "$location", Controllers.NavigationController]);
+            ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
             ngFlowRate.controller("HomeController", ["$scope", "$state", Controllers.HomeController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
-            ngFlowRate.controller("MapViewController", ["$scope", Controllers.MapViewController]);
+            ngFlowRate.controller("MapViewController", ["$scope", "$state","nemSimpleLogger", Controllers.MapViewController]);
 
            
             // bootstrap the app when everything has been loaded

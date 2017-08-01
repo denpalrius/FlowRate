@@ -1,16 +1,47 @@
-﻿<div>
+﻿
+<div drag-circular-menu 
+     angle="30" 
+     placement="topRight" 
+     button-config="homeScope.menuConfig" 
+     menu-items="homeScope.menuItems" 
+     default-open="false"
+     onwing-click="HomeCtrl.onWingClick(wing)">
+</div>
+
+<div>
     <h1>{{homeScope.pageTitle}}</h1>
     <br/>
     <br/>
-    Initial Position:
+    <!--Initial Position:
     <input type="text" ng-model="homeScope.sourcePos" ng-change="HomeCtrl.checkPosition()"/>
 
     <br />
     <br />
     Second Position:
     <input type="text" ng-model="homeScope.destinationPos" ng-change="HomeCtrl.checkPosition()"/>
-    
+
     <br/>
-    <br />
-    <h2>{{homeScope.largerPos}}</h2>
+    <br/>-->
+
+    <!--<ul>
+        <li>
+            <ol>
+                <li ng-repeat="num in homeScope.nums">
+                    <h4>{{num}}</h4>
+                </li>
+            </ol>
+        </li>
+        <li>
+            <h3>Second Sorted Agenda List</h3>
+        </li>
+        <li>
+            <ol>
+                <li ng-repeat="num in homeScope.nums2">
+                    <h4>{{num}}</h4>
+                </li>
+            </ol>
+        </li>
+    </ul>-->
+
+
 </div>

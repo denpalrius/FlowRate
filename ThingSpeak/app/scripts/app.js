@@ -15,6 +15,18 @@ var ThingSpeak;
 (function (ThingSpeak) {
     var Configs;
     (function (Configs) {
+        var GoogleMapsConfig = (function () {
+            function GoogleMapsConfig() {
+            }
+            return GoogleMapsConfig;
+        }());
+        Configs.GoogleMapsConfig = GoogleMapsConfig;
+    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Configs;
+    (function (Configs) {
         var RouteConfig = (function () {
             function RouteConfig($urlRouterProvider, $stateProvider, $locationProvider) {
                 // For any unmatched url, send to 404
@@ -23,29 +35,35 @@ var ThingSpeak;
                 $locationProvider.hashPrefix('');
                 $urlRouterProvider.otherwise('/');
                 $stateProvider
-                    .state('home', {
+                    .state('Home', {
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
                     templateUrl: 'app/views/home-view.html'
                 })
-                    .state('about', {
+                    .state('About', {
                     url: '/about',
                     controller: 'AboutController',
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                    .state('mapview', {
-                    url: '/mapview',
+                    .state('Map', {
+                    url: '/map',
                     controller: 'MapViewController',
                     controllerAs: 'MapViewCtrl',
                     templateUrl: 'app/views/map-view.html'
                 })
-                    .state('flowrate', {
+                    .state('Flow Rate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
                     controllerAs: 'FlowRateCtrl',
                     templateUrl: 'app/views/raw-flow-rate-view.html'
+                })
+                    .state('Admin', {
+                    url: '/admin',
+                    controller: 'AdminController',
+                    controllerAs: 'AdminCtrl',
+                    templateUrl: 'app/views/admin-view.html'
                 });
             }
             return RouteConfig;
@@ -77,6 +95,25 @@ var ThingSpeak;
     var Controllers;
     (function (Controllers) {
         "use strict";
+        var AdminController = (function () {
+            function AdminController($scope) {
+                this.$scope = $scope;
+                var that = this;
+                that.init();
+            }
+            AdminController.prototype.init = function () {
+                var that = this;
+            };
+            return AdminController;
+        }());
+        Controllers.AdminController = AdminController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
         var FlowRateController = (function () {
             function FlowRateController($scope, $state, httpService) {
                 this.$scope = $scope;
@@ -87,7 +124,7 @@ var ThingSpeak;
             }
             FlowRateController.prototype.init = function () {
                 var that = this;
-                //that.$scope.flowRateScope = {};
+                that.$scope.flowRateScope = {};
                 that.$scope.flowRateScope.maraRiverFlowRate = {};
                 that.$scope.flowRateScope.channel = {};
                 that.$scope.flowRateScope.feeds = [];
@@ -150,115 +187,157 @@ var ThingSpeak;
             HomeController.prototype.init = function () {
                 var that = this;
                 that.$scope.homeScope = {};
-                that.$scope.homeScope.pageTitle = "Compare Positions";
-                that.$scope.homeScope.sourcePos = "2.3.4";
-                that.$scope.homeScope.destinationPos = "3.3.41s";
-                that.$scope.homeScope.largerPos = 0;
-            };
-            HomeController.prototype.checkPosition = function () {
-                var that = this;
-                var rs = that.comparePositions(that.$scope.homeScope.sourcePos, that.$scope.homeScope.destinationPos);
-                console.log("Largest Position:", rs);
-                that.$scope.homeScope.largerPos = parseFloat(rs);
-            };
-            HomeController.prototype.containsNaN = function (numArray) {
-                numArray.forEach(function (item) {
-                    if (isNaN(item)) {
-                        return true;
-                    }
-                    return false;
+                that.$scope.homeScope.pageTitle = "Agenda Reordering";
+                that.$scope.homeScope.displayLabel = "";
+                that.fillMenu();
+                //var nums = [
+                //    '1.1.1',
+                //    '10.2.3',
+                //    '2..6.7',
+                //    '21.10.4',
+                //    '3.10.12',
+                //    '3.10..12',
+                //    '4.112.5',
+                //    '4.112.16',
+                //    '6.4.23'
+                //];
+                //that.goDoStuff((agendas) as any);
+                //that.sortAgendaItems(agendas as any);
+                that.$scope.homeScope.nums2 = that.$scope.homeScope.agendaItems.sort(that.sortAgendasUpdated);
+                that.$scope.homeScope.nums2.forEach(function (num) {
+                    console.log(num);
                 });
-                return false;
             };
-            HomeController.prototype.comparePositions = function (sourcePos, destinationPos) {
+            HomeController.prototype.fillMenu = function () {
                 var that = this;
-                var sourcePosArray = sourcePos.split('.').map(function (n) { return parseInt(n, 10); });
-                var destinationPosArray = destinationPos.split('.').map(function (n) { return parseInt(n, 10); });
-                console.log('SourcePosArray: ', sourcePosArray);
-                console.log('DestinationPosArray: ', destinationPosArray);
-                if (that.containsNaN(sourcePosArray) || that.containsNaN(destinationPosArray)) {
-                    console.log('You have NaN values');
-                    return "Contains NaN";
-                }
-                for (var i = 0; i < sourcePosArray.length; i++) {
-                    if (sourcePosArray[i] === destinationPosArray[i]) {
-                        continue;
+                that.$scope.homeScope.menuConfig = {
+                    "buttonWidth": 60,
+                    "menuRadius": 180,
+                    "color": "#393c41",
+                    "offset": 25,
+                    "textColor": "#ffffff",
+                    "showIcons": true,
+                    "onlyIcon": false,
+                    "textAndIcon": true,
+                    "gutter": {
+                        "top": 35,
+                        "right": 50,
+                        "bottom": 35,
+                        "left": 35
+                    },
+                    "angles": {
+                        "topLeft": 0,
+                        "topRight": 90,
+                        "bottomRight": 180,
+                        "bottomLeft": 270
                     }
-                    else {
-                        if (i > 0) {
-                            //SourceDec and destinationDec are temporary decimal numbers to be used for comparison
-                            var sourceDec = parseFloat(sourcePosArray[i - 1].toString() + "." + sourcePosArray[i].toString());
-                            var destinationDec = 0;
-                            if (destinationPosArray.length === 1) {
-                                destinationDec = parseFloat(destinationPosArray[i - 1].toString() + "." + destinationPosArray[i].toString());
-                            }
-                            else {
-                                destinationDec = parseFloat(destinationPosArray[i - 1].toString() + "." + destinationPosArray[i].toString());
-                            }
-                            console.log('sourceDec:', sourceDec);
-                            console.log('destinationDec:', destinationDec);
-                            return sourceDec > destinationDec ? sourcePos : destinationPos;
+                };
+                that.$scope.homeScope.menuItems = [{
+                        "title": "Flow Rate",
+                        "color": "#424242",
+                        "rotate": 0,
+                        "show": 0,
+                        "titleColor": "#fff",
+                        "icon": { "color": "#fff", "name": "fa fa-line-chart", "size": 20 }
+                    }, {
+                        "title": "Map",
+                        "color": "#303030",
+                        "rotate": 0,
+                        "show": 0,
+                        "titleColor": "#fff",
+                        "icon": { "color": "#fff", "name": "fa fa-map", "size": 20 }
+                    }, {
+                        "title": "About",
+                        "color": "#212121",
+                        "rotate": 0,
+                        "show": 0,
+                        "titleColor": "#fff",
+                        "icon": { "color": "#fff", "name": "fa fa-info", "size": 25 }
+                    }, {
+                        "title": "Admin",
+                        "color": "#000000",
+                        "rotate": 0,
+                        "show": 0,
+                        "titleColor": "#fff",
+                        "icon": { "color": "#fff", "name": "fa fa-sliders", "size": 20 }
+                    }];
+            };
+            HomeController.prototype.goDoStuff = function (agendas) {
+                var that = this;
+                var sortedagendas = agendas.sort(function (a, b) {
+                    var nums1 = a.position.split(".");
+                    var nums2 = b.position.split(".");
+                    for (var i = 0; i < nums1.length; i++) {
+                        if (nums2[i]) {
+                            if (nums1[i] !== nums2[i]) {
+                                return parseInt(nums1[i]) - parseInt(nums2[i]);
+                            } //else continue
                         }
                         else {
-                            if (sourcePosArray[i] > destinationPosArray[i]) {
-                                return sourcePos;
-                            }
-                            else {
-                                return destinationPos;
-                            }
+                            return 1; //no second number in b
                         }
                     }
-                }
-                if (destinationPosArray.length > sourcePosArray.length) {
-                    return destinationPos;
-                }
-                else if (destinationPosArray.length === sourcePosArray.length) {
-                    return "Equal";
-                }
-                return "Things went wrong";
+                    //return parseInt(nums1[]) + parseInt(nums2[i]);
+                });
+                that.$scope.homeScope.nums = sortedagendas;
             };
-            HomeController.prototype.othercomparePositions = function (positions) {
-                var that = this;
-                positions.split(",").reduce(function (initialPos, followingPosition) {
-                    var initialPosArray = initialPos.split('.').map(function (n) { return parseInt(n, 10); });
-                    var followingPositionArray = followingPosition.split('.').map(function (n) { return parseInt(n, 10); });
-                    console.log('initialPosArray: ', initialPosArray);
-                    console.log('followingPositionArray: ', followingPositionArray);
-                    if (that.containsNaN(initialPosArray) || that.containsNaN(followingPositionArray)) {
-                        console.log('You have NaN values');
-                        return "Contains Strings";
+            HomeController.prototype.compare = function (a, b) {
+                var aSplit = a.split(".");
+                var bSplit = b.split(".");
+                var length = Math.min(aSplit.length, bSplit.length);
+                for (var i = 0; i < length; ++i) {
+                    if (parseInt(aSplit[i]) < parseInt(bSplit[i])) {
+                        return -1;
                     }
-                    for (var i = 0; i < initialPosArray.length; i++) {
-                        if (initialPosArray[i] === followingPositionArray[i]) {
-                            continue;
-                        }
-                        else {
-                            if (i > 0) {
-                                var dec1 = parseFloat(initialPosArray[i - 1].toString() + "." + initialPosArray[i].toString());
-                                //if (followingPositionArray.length) {
-                                //}
-                                var dec2 = parseFloat(followingPositionArray[i - 1].toString() + "." + followingPositionArray[i].toString());
-                                console.log('Dec1:', dec1);
-                                console.log('Dec1:', dec2);
-                                return dec1 > dec2 ? initialPos : followingPosition;
-                            }
-                            else {
-                                if (initialPosArray[i] > followingPositionArray[i]) {
-                                    return initialPos;
-                                }
-                                else {
-                                    return followingPosition;
-                                }
-                            }
-                        }
+                    else if (parseInt(aSplit[i]) > parseInt(bSplit[i])) {
+                        return 1;
                     }
-                    if (followingPositionArray.length > initialPosArray.length) {
-                        return followingPosition;
+                }
+                if (aSplit.length < bSplit.length) {
+                    return -1;
+                }
+                else if (aSplit.length > bSplit.length) {
+                    return 1;
+                }
+                return 0;
+            };
+            HomeController.prototype.sortAgendas = function (a, b) {
+                var nums1 = a.position.split(".");
+                var nums2 = b.position.split(".");
+                for (var i = 0; i < nums1.length; i++) {
+                    if (nums2[i]) {
+                        if (nums1[i] !== nums2[i]) {
+                            return parseInt(nums1[i]) - parseInt(nums2[i]);
+                        } //else continue
                     }
                     else {
-                        return "Equal";
+                        return 1; //no second number in b
                     }
-                });
+                }
+                //return parseInt(nums1[]) + parseInt(nums2[i]);
+            };
+            HomeController.prototype.sortAgendasUpdated = function (a, b) {
+                var nums1 = a.position.split(".");
+                var nums2 = b.position.split(".");
+                for (var i = 0; i < nums1.length; i++) {
+                    if (nums2[i]) {
+                        if (nums1[i] !== nums2[i]) {
+                            return parseInt(nums1[i]) - parseInt(nums2[i]);
+                        } //else continue
+                    }
+                    else {
+                        return 1; //no second number in b
+                    }
+                }
+            };
+            HomeController.prototype.sortAgendaItems = function (nums) {
+                var that = this;
+                that.$scope.homeScope.nums2 = nums.map(function (a) { return a.position.split('.').map(function (n) { return +n + 100000; }).join('.'); }).sort()
+                    .map(function (a) { return a.split('.').map(function (n) { return +n - 100000; }).join('.'); });
+            };
+            HomeController.prototype.onWingClick = function (wing) {
+                var that = this;
+                that.$state.go(wing.title);
             };
             return HomeController;
         }());
@@ -271,13 +350,179 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var MapViewController = (function () {
-            function MapViewController($scope) {
+            function MapViewController($scope, $state, uiGmapGoogleMapApi, nemSimpleLogger) {
                 this.$scope = $scope;
+                this.$state = $state;
+                this.uiGmapGoogleMapApi = uiGmapGoogleMapApi;
+                this.nemSimpleLogger = nemSimpleLogger;
                 var that = this;
                 that.init();
             }
             MapViewController.prototype.init = function () {
                 var that = this;
+                that.$scope.mapScope = {};
+                that.$scope.mapScope.mapName = "";
+                that.loadMap();
+            };
+            MapViewController.prototype.loadMap = function () {
+                var that = this;
+                var customMapStyle = [
+                    {
+                        "featureType": "administrative",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                            {
+                                "color": "#444444"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#f2f2f2"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#bab8cb"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "color": "#9a3fa0"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "saturation": -100
+                            },
+                            {
+                                "lightness": 45
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "simplified"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            },
+                            {
+                                "color": "#8e2b2b"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#30a4d3"
+                            },
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            },
+                            {
+                                "hue": "#00a3ff"
+                            }
+                        ]
+                    }
+                ];
+                that.$scope.mapScope.map = {
+                    center: {
+                        latitude: -1.2920659,
+                        longitude: 36.8219462
+                    },
+                    zoom: 8,
+                    options: {
+                        styles: customMapStyle,
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        scaleControl: false,
+                        rotateControl: false,
+                        zoomControl: false
+                    },
+                    bounds: {
+                        northeast: {
+                            latitude: 0.17687,
+                            longitude: 37.90833
+                        },
+                        southwest: {
+                            latitude: -0.17687,
+                            longitude: -37.90833
+                        }
+                    }
+                };
+                console.log("Map Center: ", that.$scope.mapScope.map.center);
             };
             return MapViewController;
         }());
@@ -317,26 +562,26 @@ var ThingSpeak;
     var Directives;
     (function (Directives) {
         "use strict";
-        function tsWidgetHeader() {
+        function menuToggle() {
             return {
                 restrict: "AE",
                 scope: {
                     title: '@',
-                    subtitle: '@',
-                    rightText: '@',
+                    isOpen: '@',
                     isMenuCollapsed: '@',
-                    collapseMenu: '@'
+                    section: '='
                 },
                 templateUrl: '/app/views/templates/ts-widget.html',
-                link: function (scope, $elm, $attr) {
-                    //scope.selectedmenu = function (isMenuCollapsed){
-                    //}
-                    //    scope.collapseMenu({ isMenuCollapsed: isMenuCollapsed});
-                    //}
+                link: function ($scope, $elm, $attr) {
+                    var controller = $elm.parent().controller();
+                    $scope.isOpen = function () { return controller.isOpen($scope.section); };
+                    $scope.toggle = function () {
+                        controller.toggleOpen($scope.section);
+                    };
                 }
             };
         }
-        Directives.tsWidgetHeader = tsWidgetHeader;
+        Directives.menuToggle = menuToggle;
     })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -390,19 +635,29 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", ["ui.router", "dndLists"]);
+            var ngFlowRate = angular.module("ngFlowRate", [
+                "ui.router",
+                "uiGmapgoogle-maps",
+                "nemLogging",
+                "ngCookies",
+                "ngMessages",
+                "ngResource",
+                "ngSanitize",
+                "ngTouch",
+                "circularMenu-directive",
+                "dndLists"]);
             // configs
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             //Directives
-            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.tsWidgetHeader);
+            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.menuToggle);
             // services
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers
-            ngFlowRate.controller("NavigationController", ["$scope", "$location", ThingSpeak.Controllers.NavigationController]);
+            ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
             ngFlowRate.controller("HomeController", ["$scope", "$state", ThingSpeak.Controllers.HomeController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
-            ngFlowRate.controller("MapViewController", ["$scope", ThingSpeak.Controllers.MapViewController]);
+            ngFlowRate.controller("MapViewController", ["$scope", "$state", "nemSimpleLogger", ThingSpeak.Controllers.MapViewController]);
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(function () {
                 angular.bootstrap(document, ["ngFlowRate"]);

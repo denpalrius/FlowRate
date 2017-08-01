@@ -27,7 +27,7 @@
         private init() {
             var that: FlowRateController = this;
 
-            //that.$scope.flowRateScope = {};
+            that.$scope.flowRateScope = {};
             that.$scope.flowRateScope.maraRiverFlowRate = {};
             that.$scope.flowRateScope.channel = {};
             that.$scope.flowRateScope.feeds = [];

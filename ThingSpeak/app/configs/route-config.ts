@@ -12,29 +12,35 @@
             $urlRouterProvider.otherwise('/');   
 
             $stateProvider
-                .state('home', {
+                .state('Home', {
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
                     templateUrl: 'app/views/home-view.html'
                 })
-                .state('about', {
+                .state('About', {
                     url: '/about',
                     controller: 'AboutController',
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                .state('mapview', {
-                    url: '/mapview',
+                .state('Map', {
+                    url: '/map',
                     controller: 'MapViewController',
                     controllerAs: 'MapViewCtrl',
                     templateUrl: 'app/views/map-view.html'
                 })
-                .state('flowrate', {
+                .state('Flow Rate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
                     controllerAs: 'FlowRateCtrl',
                     templateUrl: 'app/views/raw-flow-rate-view.html'
+                })
+                .state('Admin', {
+                    url: '/admin',
+                    controller: 'AdminController',
+                    controllerAs: 'AdminCtrl',
+                    templateUrl: 'app/views/admin-view.html'
                 });
 
         }

@@ -1,7 +1,35 @@
-﻿body {
+﻿html {
     font-family: 'Segoe UI', sans-serif;
+    height: 100%;
 }
 
-span {
-    font-style: italic;
+body { height: 100%; }
+
+.main-container {
+    height: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    width: 100%;
+}
+
+.map-holder {
+    height: 200px;
+    width: 100%;
+}
+
+.angular-google-map-container {
+    bottom: 0;
+    left: 0;
+    position: relative;
+    right: 0;
+    top: 0;
+}
+
+nav {
+    background-color: #fff;
+    border: 1px #000 Solid;
+    margin: 10px 0px 0px 200px;
+    padding: 5px;
+    position: absolute;
+    z-index: 100;
 }
