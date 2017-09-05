@@ -12,36 +12,12 @@
     <h1>{{homeScope.pageTitle}}</h1>
     <br/>
     <br/>
-    <!--Initial Position:
-    <input type="text" ng-model="homeScope.sourcePos" ng-change="HomeCtrl.checkPosition()"/>
-
-    <br />
-    <br />
-    Second Position:
-    <input type="text" ng-model="homeScope.destinationPos" ng-change="HomeCtrl.checkPosition()"/>
-
-    <br/>
-    <br/>-->
-
-    <!--<ul>
-        <li>
-            <ol>
-                <li ng-repeat="num in homeScope.nums">
-                    <h4>{{num}}</h4>
-                </li>
-            </ol>
-        </li>
-        <li>
-            <h3>Second Sorted Agenda List</h3>
-        </li>
-        <li>
-            <ol>
-                <li ng-repeat="num in homeScope.nums2">
-                    <h4>{{num}}</h4>
-                </li>
-            </ol>
-        </li>
-    </ul>-->
-
-
+    
+    <div class="ce-interactive-agenda-import tabLevel-{{agenda.tabLevel}}">
+        <div class="ce-number ce-number-1 pull-left">
+            <div class="te-standard te-standard-1">2.3</div>
+        </div>
+        <div class="te-standard agenda-reorder-name">Map the requirements over the available designs</div>
+        <input class="pull-right" type="checkbox" />
+    </div>
 </div>

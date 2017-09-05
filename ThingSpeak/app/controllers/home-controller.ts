@@ -86,27 +86,6 @@
             that.$scope.homeScope.displayLabel = "";
 
             that.fillMenu();
-            
-            //var nums = [
-            //    '1.1.1',
-            //    '10.2.3',
-            //    '2..6.7',
-            //    '21.10.4',
-            //    '3.10.12',
-            //    '3.10..12',
-            //    '4.112.5',
-            //    '4.112.16',
-            //    '6.4.23'
-            //];
-
-            //that.goDoStuff((agendas) as any);
-            //that.sortAgendaItems(agendas as any);
-
-            that.$scope.homeScope.nums2 = that.$scope.homeScope.agendaItems.sort(that.sortAgendasUpdated);
-
-            that.$scope.homeScope.nums2.forEach((num) => {
-                console.log(num);
-            });
         }
 
         private fillMenu() {
@@ -164,90 +143,6 @@
                 "titleColor": "#fff",
                 "icon": { "color": "#fff", "name": "fa fa-sliders", "size": 20 }
             } ];
-        }
-
-        private goDoStuff(agendas:AgendaVM[]) {
-            var that: HomeController = this;
-
-            var sortedagendas = agendas.sort((a, b) => {
-                var nums1 = a.position.split(".");
-                var nums2 = b.position.split(".");
-
-                for (var i = 0; i < nums1.length; i++) {
-                    if (nums2[i]) {
-                        if (nums1[i] !== nums2[i]) {
-                            return parseInt(nums1[i]) - parseInt(nums2[i]);
-                        }//else continue
-                    } else {
-                        return 1;//no second number in b
-                    }
-                }
-                //return parseInt(nums1[]) + parseInt(nums2[i]);
-            });
-
-            that.$scope.homeScope.nums = sortedagendas;
-        }
-
-        private compare(a:any, b:any) {
-            var aSplit = a.split(".");
-            var bSplit = b.split(".");
-
-
-            var length = Math.min(aSplit.length, bSplit.length);
-            for (var i = 0; i < length; ++i) {
-                if (parseInt(aSplit[i]) < parseInt(bSplit[i])) {
-                    return -1;
-                } else if (parseInt(aSplit[i]) > parseInt(bSplit[i])) {
-                    return 1;
-                }
-            }
-
-            if (aSplit.length < bSplit.length) {
-                return -1;
-            } else if (aSplit.length > bSplit.length) {
-                return 1;
-            }
-
-            return 0;
-        }
-
-        private sortAgendas(a:any,b:any) {
-                var nums1 = a.position.split(".");
-                var nums2 = b.position.split(".");
-
-                for (var i = 0; i < nums1.length; i++) {
-                    if (nums2[i]) {
-                        if (nums1[i] !== nums2[i]) {
-                            return parseInt(nums1[i]) - parseInt(nums2[i]);
-                        }//else continue
-                    } else {
-                        return 1;//no second number in b
-                    }
-                }
-                //return parseInt(nums1[]) + parseInt(nums2[i]);
-        
-        }
-
-        private sortAgendasUpdated(a:AgendaVM, b:AgendaVM) {
-            var nums1 = a.position.split(".");
-            var nums2 = b.position.split(".");
-
-            for (var i = 0; i < nums1.length; i++) {
-                if (nums2[i]) {
-                    if (nums1[i] !== nums2[i]) {
-                        return parseInt(nums1[i]) - parseInt(nums2[i]);
-                    }//else continue
-                } else {
-                    return 1;//no second number in b
-                }
-            }
-        }
-
-        private sortAgendaItems(nums: AgendaVM[]) {
-            var that: HomeController = this;
-
-            that.$scope.homeScope.nums2 = nums.map(a => a.position.split('.').map(n => +n + 100000).join('.')).sort()
-                .map(a => a .split('.').map(n => +n - 100000).join('.'));
         }
 
         private onWingClick(wing:any) {

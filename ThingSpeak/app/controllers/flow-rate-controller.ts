@@ -8,6 +8,8 @@
         reorderFeeds?: ViewModels.Feed[];
         isReorderFormVisible?: boolean;
         selectedFeed?: ViewModels.Feed;
+        $window?: Window;
+        $stickies?: any;
     }
 
     interface IFlowRateScope extends ng.IScope {
@@ -33,7 +35,8 @@
             that.$scope.flowRateScope.feeds = [];
             that.$scope.flowRateScope.reorderFeeds = [];
             that.$scope.flowRateScope.selectedFeed = [];
-
+            that.$scope.flowRateScope.$stickies = [];
+            
             that.getData();
         
             //TODO: Do a progress ring
@@ -42,6 +45,8 @@
             //TODO: Map
         }
 
+
+    
         public getData(): JQueryDeferred<ViewModels.MaraRiverFlow> {
             var deferred = $.Deferred();
             var that: FlowRateController = this;

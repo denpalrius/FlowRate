@@ -138,6 +138,7 @@
     <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
+    <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
     <TypeScriptCompile Include="app\directives\ts-navbar.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />

@@ -21,7 +21,8 @@
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", Configs.RouteConfig]);
 
             //Directives
-            ngFlowRate.directive("tsWidgetHeader",Directives.menuToggle);
+            ngFlowRate.directive("tsWidgetHeader", Directives.menuToggle);
+            ngFlowRate.directive("tsStickyHeader", Directives.tsStickyHeader);
 
             // services
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);

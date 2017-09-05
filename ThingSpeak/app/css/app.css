@@ -5,6 +5,14 @@
 
 body { height: 100%; }
 
+nav {
+    background-color: #fff;
+    border: 1px #000 Solid;
+    margin: 10px 0px 0px 200px;
+    padding: 5px;
+    position: absolute;
+    z-index: 100;
+}
 .main-container {
     height: 100%;
     padding-left: 0px;
@@ -13,8 +21,10 @@ body { height: 100%; }
 }
 
 .map-holder {
-    height: 200px;
-    width: 100%;
+    position: relative; 
+    overflow: hidden;
+    height: 300px;
+    width: 300px;
 }
 
 .angular-google-map-container {
@@ -25,11 +35,33 @@ body { height: 100%; }
     top: 0;
 }
 
-nav {
-    background-color: #fff;
-    border: 1px #000 Solid;
-    margin: 10px 0px 0px 200px;
-    padding: 5px;
-    position: absolute;
-    z-index: 100;
+.ce-basic-agenda-import{
+    width: 100%;
+    text-align: left;
 }
+
+.ce-interactive-agenda-import{
+    width: 100%;
+}
+
+/*Sticky Scrolling*/
+.followMeBar {
+    background-color:crimson;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+  }
+  
+  .followMeBar.fixed {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 0;
+  }
+  
+  .followMeBar.fixed.absolute {
+    position: absolute;
+  }
+  

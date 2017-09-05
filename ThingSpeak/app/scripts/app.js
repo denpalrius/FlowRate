@@ -130,6 +130,7 @@ var ThingSpeak;
                 that.$scope.flowRateScope.feeds = [];
                 that.$scope.flowRateScope.reorderFeeds = [];
                 that.$scope.flowRateScope.selectedFeed = [];
+                that.$scope.flowRateScope.$stickies = [];
                 that.getData();
                 //TODO: Do a progress ring
                 //TODO: Paginate the table
@@ -190,23 +191,6 @@ var ThingSpeak;
                 that.$scope.homeScope.pageTitle = "Agenda Reordering";
                 that.$scope.homeScope.displayLabel = "";
                 that.fillMenu();
-                //var nums = [
-                //    '1.1.1',
-                //    '10.2.3',
-                //    '2..6.7',
-                //    '21.10.4',
-                //    '3.10.12',
-                //    '3.10..12',
-                //    '4.112.5',
-                //    '4.112.16',
-                //    '6.4.23'
-                //];
-                //that.goDoStuff((agendas) as any);
-                //that.sortAgendaItems(agendas as any);
-                that.$scope.homeScope.nums2 = that.$scope.homeScope.agendaItems.sort(that.sortAgendasUpdated);
-                that.$scope.homeScope.nums2.forEach(function (num) {
-                    console.log(num);
-                });
             };
             HomeController.prototype.fillMenu = function () {
                 var that = this;
@@ -261,79 +245,6 @@ var ThingSpeak;
                         "titleColor": "#fff",
                         "icon": { "color": "#fff", "name": "fa fa-sliders", "size": 20 }
                     }];
-            };
-            HomeController.prototype.goDoStuff = function (agendas) {
-                var that = this;
-                var sortedagendas = agendas.sort(function (a, b) {
-                    var nums1 = a.position.split(".");
-                    var nums2 = b.position.split(".");
-                    for (var i = 0; i < nums1.length; i++) {
-                        if (nums2[i]) {
-                            if (nums1[i] !== nums2[i]) {
-                                return parseInt(nums1[i]) - parseInt(nums2[i]);
-                            } //else continue
-                        }
-                        else {
-                            return 1; //no second number in b
-                        }
-                    }
-                    //return parseInt(nums1[]) + parseInt(nums2[i]);
-                });
-                that.$scope.homeScope.nums = sortedagendas;
-            };
-            HomeController.prototype.compare = function (a, b) {
-                var aSplit = a.split(".");
-                var bSplit = b.split(".");
-                var length = Math.min(aSplit.length, bSplit.length);
-                for (var i = 0; i < length; ++i) {
-                    if (parseInt(aSplit[i]) < parseInt(bSplit[i])) {
-                        return -1;
-                    }
-                    else if (parseInt(aSplit[i]) > parseInt(bSplit[i])) {
-                        return 1;
-                    }
-                }
-                if (aSplit.length < bSplit.length) {
-                    return -1;
-                }
-                else if (aSplit.length > bSplit.length) {
-                    return 1;
-                }
-                return 0;
-            };
-            HomeController.prototype.sortAgendas = function (a, b) {
-                var nums1 = a.position.split(".");
-                var nums2 = b.position.split(".");
-                for (var i = 0; i < nums1.length; i++) {
-                    if (nums2[i]) {
-                        if (nums1[i] !== nums2[i]) {
-                            return parseInt(nums1[i]) - parseInt(nums2[i]);
-                        } //else continue
-                    }
-                    else {
-                        return 1; //no second number in b
-                    }
-                }
-                //return parseInt(nums1[]) + parseInt(nums2[i]);
-            };
-            HomeController.prototype.sortAgendasUpdated = function (a, b) {
-                var nums1 = a.position.split(".");
-                var nums2 = b.position.split(".");
-                for (var i = 0; i < nums1.length; i++) {
-                    if (nums2[i]) {
-                        if (nums1[i] !== nums2[i]) {
-                            return parseInt(nums1[i]) - parseInt(nums2[i]);
-                        } //else continue
-                    }
-                    else {
-                        return 1; //no second number in b
-                    }
-                }
-            };
-            HomeController.prototype.sortAgendaItems = function (nums) {
-                var that = this;
-                that.$scope.homeScope.nums2 = nums.map(function (a) { return a.position.split('.').map(function (n) { return +n + 100000; }).join('.'); }).sort()
-                    .map(function (a) { return a.split('.').map(function (n) { return +n - 100000; }).join('.'); });
             };
             HomeController.prototype.onWingClick = function (wing) {
                 var that = this;
@@ -586,6 +497,75 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
+    var Directives;
+    (function (Directives) {
+        "use strict";
+        function setStickies(stickies, $scope) {
+            if (typeof stickies === "object" && stickies instanceof jQuery && stickies.length > 0) {
+                $scope.$stickies = stickies.each(function () {
+                    var $thisSticky = $(this).wrap('<div class="followWrap" />');
+                    $thisSticky
+                        .data("originalPosition", $thisSticky.offset().top)
+                        .data("originalHeight", $thisSticky.outerHeight())
+                        .parent()
+                        .height($thisSticky.outerHeight());
+                });
+                $scope.$window.off("scroll.stickies").on("scroll.stickies", function () {
+                    whenScrolling($scope);
+                });
+            }
+        }
+        function whenScrolling($scope) {
+            $scope.$stickies.each(function (i) {
+                var $thisSticky = $(this), $stickyPosition = $thisSticky.data("originalPosition");
+                if ($stickyPosition <= $scope.$window.scrollTop()) {
+                    var $nextSticky = $scope.$stickies.eq(i + 1), $nextStickyPosition = $nextSticky.data("originalPosition") -
+                        $thisSticky.data("originalHeight");
+                    $thisSticky.addClass("fixed");
+                    if ($nextSticky.length > 0 &&
+                        $thisSticky.offset().top >= $nextStickyPosition) {
+                        $thisSticky.addClass("absolute").css("top", $nextStickyPosition);
+                        console.log("$nextSticky: ", $nextSticky);
+                    }
+                }
+                else {
+                    var $prevSticky = $scope.$stickies.eq(i - 1);
+                    $thisSticky.removeClass("fixed");
+                    if ($prevSticky.length > 0 &&
+                        $scope.$window.scrollTop() <=
+                            $thisSticky.data("originalPosition") -
+                                $thisSticky.data("originalHeight")) {
+                        $prevSticky.removeClass("absolute").removeAttr("style");
+                    }
+                }
+            });
+        }
+        function tsStickyHeader() {
+            return {
+                restrict: "AE",
+                scope: {
+                    title: '@',
+                    isOpen: '@',
+                    isMenuCollapsed: '@',
+                    section: '=',
+                    list: '='
+                },
+                link: function ($scope, $elm, $attr) {
+                    $scope.$window = angular.element(window);
+                    $scope.$stickies = $elm;
+                    $scope.$watch('list', function () {
+                        if ($scope.list.length > 0) {
+                            setStickies($elm.eq(0).children(), $scope);
+                        }
+                    });
+                }
+            };
+        }
+        Directives.tsStickyHeader = tsStickyHeader;
+    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     var Models;
     (function (Models) {
         "use strict";
@@ -650,6 +630,7 @@ var ThingSpeak;
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             //Directives
             ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.menuToggle);
+            ngFlowRate.directive("tsStickyHeader", ThingSpeak.Directives.tsStickyHeader);
             // services
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers

@@ -1,5 +1,16 @@
-﻿
-<ui-gmap-google-map ng-if="mapScope.map.center"
+﻿<div ng-controller="HomeController as HomeCtrl">
+    <div drag-circular-menu
+         angle="30"
+         placement="topRight"
+         button-config="homeScope.menuConfig"
+         menu-items="homeScope.menuItems"
+         default-open="false"
+         onwing-click="HomeCtrl.onWingClick(wing)">
+    </div>
+</div>
+
+<ui-gmap-google-map class="map-holder"
+                    ng-if="mapScope.map.center"
                     options="mapScope.map.options"
                     center="mapScope.map.center"
                     zoom="mapScope.map.zoom"
