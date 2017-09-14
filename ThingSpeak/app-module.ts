@@ -8,6 +8,7 @@
                 [
                     "ui.router",
                     "uiGmapgoogle-maps",
+                    "ngMap",
                     "nemLogging",
                     "ngCookies",
                     "ngMessages",
@@ -29,8 +30,8 @@
           
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$state", Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootscope", "$state",  Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootscope", "$state", "httpService", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
             ngFlowRate.controller("MapViewController", ["$scope", "$state","nemSimpleLogger", Controllers.MapViewController]);
 

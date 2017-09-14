@@ -6,6 +6,8 @@ var ThingSpeak;
             function AppConfig() {
             }
             AppConfig.ApiUrl = "https://thingspeak.com/channels/16153/feed.json";
+            AppConfig.googleMapsKey = "AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
+            AppConfig.googleMapsUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
             return AppConfig;
         }());
         Configs.AppConfig = AppConfig;
@@ -115,8 +117,9 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var FlowRateController = (function () {
-            function FlowRateController($scope, $state, httpService) {
+            function FlowRateController($scope, $rootScope, $state, httpService) {
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$state = $state;
                 this.httpService = httpService;
                 var that = this;
@@ -147,15 +150,20 @@ var ThingSpeak;
                     that.$scope.flowRateScope.maraRiverFlowRate = maraRiverFlowRateData;
                     that.$scope.flowRateScope.channel = maraRiverFlowRateData.channel;
                     that.$scope.flowRateScope.feeds = maraRiverFlowRateData.feeds;
-                    console.log("Mara River Flow Rate: ", that.$scope.flowRateScope.maraRiverFlowRate);
                     deferred.resolve(that.$scope.flowRateScope.maraRiverFlowRate);
                 })
                     .fail(function (error) {
                     console.log("Failed to get the JSON data");
                     deferred.reject(error);
+                }).then(function (val) {
+                    console.log("Then: ", val);
+                    var sensorLocation = {
+                        latitude: that.$scope.flowRateScope.channel.latitude,
+                        longitude: that.$scope.flowRateScope.channel.longitude,
+                    };
+                    //Notify of loaded map center
+                    that.$rootScope.$emit("map-center-loaded", sensorLocation);
                 });
-                console.log("Done fetching data....");
-                //*Assuming all data is loaded
                 return deferred;
             };
             FlowRateController.prototype.selectFeed = function (feed) {
@@ -179,8 +187,9 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope, $state) {
+            function HomeController($scope, $rootScope, $state) {
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$state = $state;
                 var that = this;
                 that.init();
@@ -188,9 +197,15 @@ var ThingSpeak;
             HomeController.prototype.init = function () {
                 var that = this;
                 that.$scope.homeScope = {};
-                that.$scope.homeScope.pageTitle = "Agenda Reordering";
+                that.$scope.homeScope.pageTitle = "AngularJS App";
                 that.$scope.homeScope.displayLabel = "";
+                that.$scope.homeScope.googleMapsUrl = "";
+                that.$rootScope.$on('map-center-loaded', function (event, data) {
+                    that.$scope.homeScope.sensorLocation = data;
+                    console.log("Map Center: ", data);
+                });
                 that.fillMenu();
+                that.loadMap();
             };
             HomeController.prototype.fillMenu = function () {
                 var that = this;
@@ -249,6 +264,174 @@ var ThingSpeak;
             HomeController.prototype.onWingClick = function (wing) {
                 var that = this;
                 that.$state.go(wing.title);
+            };
+            HomeController.prototype.loadMap = function () {
+                var that = this;
+                that.$scope.homeScope.googleMapsUrl = ThingSpeak.Configs.AppConfig.googleMapsUrl;
+                if (typeof google == "undefined") {
+                    that.$scope.homeScope.mapEnable = false;
+                    console.warn("Map cannot show");
+                }
+                else {
+                    that.$scope.homeScope.mapEnable = true;
+                    console.log("Map displaying");
+                }
+                var customMapStyle = [
+                    {
+                        "featureType": "administrative",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                            {
+                                "color": "#444444"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#f2f2f2"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "color": "#bab8cb"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "color": "#9a3fa0"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "saturation": -100
+                            },
+                            {
+                                "lightness": 45
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "simplified"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            },
+                            {
+                                "color": "#8e2b2b"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#30a4d3"
+                            },
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                            {
+                                "visibility": "on"
+                            },
+                            {
+                                "hue": "#00a3ff"
+                            }
+                        ]
+                    }
+                ];
+                that.$scope.homeScope.map = {
+                    center: {
+                        latitude: 1.2921,
+                        longitude: 36.8219
+                    },
+                    zoom: 3,
+                    options: {
+                        styles: customMapStyle,
+                        streetViewControl: false,
+                        mapTypeControl: false,
+                        scaleControl: false,
+                        rotateControl: false,
+                        zoomControl: false
+                    },
+                    bounds: {
+                        northeast: {
+                            latitude: 0.17687,
+                            longitude: 37.90833
+                        },
+                        southwest: {
+                            latitude: -0.17687,
+                            longitude: -37.90833
+                        }
+                    }
+                };
             };
             return HomeController;
         }());
@@ -517,15 +700,15 @@ var ThingSpeak;
         }
         function whenScrolling($scope) {
             $scope.$stickies.each(function (i) {
-                var $thisSticky = $(this), $stickyPosition = $thisSticky.data("originalPosition");
+                var $thisSticky = $(this);
+                var $stickyPosition = $thisSticky.data("originalPosition");
                 if ($stickyPosition <= $scope.$window.scrollTop()) {
-                    var $nextSticky = $scope.$stickies.eq(i + 1), $nextStickyPosition = $nextSticky.data("originalPosition") -
-                        $thisSticky.data("originalHeight");
+                    var $nextSticky = $scope.$stickies.eq(i + 1);
+                    var $nextStickyPosition = $nextSticky.data("originalPosition") - $thisSticky.data("originalHeight");
                     $thisSticky.addClass("fixed");
                     if ($nextSticky.length > 0 &&
                         $thisSticky.offset().top >= $nextStickyPosition) {
                         $thisSticky.addClass("absolute").css("top", $nextStickyPosition);
-                        console.log("$nextSticky: ", $nextSticky);
                     }
                 }
                 else {
@@ -558,6 +741,12 @@ var ThingSpeak;
                             setStickies($elm.eq(0).children(), $scope);
                         }
                     });
+                    //Sticky list
+                    //var stickyList = angular.element('#sticky-list');
+                    //stickyList.stickySectionHeaders({
+                    //    stickyClass: 'sticky',
+                    //    headlineSelector: 'strong'
+                    //});
                 }
             };
         }
@@ -611,6 +800,42 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
+    var Services;
+    (function (Services) {
+        var MapService = (function () {
+            function MapService(httpService) {
+                this.httpService = httpService;
+                var that = this;
+            }
+            MapService.prototype.getData = function () {
+                var deferred = $.Deferred();
+                var that = this;
+                console.log("Fetching data....");
+                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                    .done(function (response) {
+                    var maraRiverFlowRateData = response.data;
+                    deferred.resolve(maraRiverFlowRateData);
+                })
+                    .fail(function (error) {
+                    console.log("Failed to get the JSON data");
+                    deferred.reject(error);
+                }).then(function (val) {
+                    console.log("Then: ", val);
+                    that.$rootScope.mapCenter = {
+                        latitude: that.$scope.flowRateScope.channel.latitude,
+                        longitude: that.$scope.flowRateScope.channel.longitude,
+                    };
+                    console.log("Map Center: ", that.$rootScope.mapCenter);
+                });
+                return deferred;
+            };
+            return MapService;
+        }());
+        Services.MapService = MapService;
+    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     "use strict";
     var AppModule = (function () {
         function AppModule() {
@@ -618,6 +843,7 @@ var ThingSpeak;
             var ngFlowRate = angular.module("ngFlowRate", [
                 "ui.router",
                 "uiGmapgoogle-maps",
+                "ngMap",
                 "nemLogging",
                 "ngCookies",
                 "ngMessages",
@@ -635,8 +861,8 @@ var ThingSpeak;
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$state", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootscope", "$state", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootscope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
             ngFlowRate.controller("MapViewController", ["$scope", "$state", "nemSimpleLogger", ThingSpeak.Controllers.MapViewController]);
             // bootstrap the app when everything has been loaded

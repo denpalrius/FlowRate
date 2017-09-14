@@ -1,0 +1,52 @@
+﻿/*Sticky Scrolling*/
+.followMeBar {
+    background-color: crimson;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+}
+
+    .followMeBar.fixed {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 0;
+    }
+
+        .followMeBar.fixed.absolute {
+            position: absolute;
+        }
+
+
+/* Reset some list defaults for all lists */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* The main container */
+#sticky-list {
+    height: 150px;
+    overflow: hidden;
+    position: relative;
+}
+
+    /* The main list */
+    #sticky-list > ul {
+        height: 100%;
+        overflow: auto;
+    }
+
+        /* Section headers, defined through "headlineSelector" */
+        #sticky-list > ul > li strong {
+            display: block;
+        }
+
+        /* Section headers when "sticky", defined through "stickyClass" */
+        #sticky-list > ul > li.sticky strong {
+            position: absolute;
+            top: 0;
+        }

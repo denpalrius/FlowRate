@@ -1,4 +1,5 @@
-﻿html {
+﻿
+html {
     font-family: 'Segoe UI', sans-serif;
     height: 100%;
 }
@@ -23,16 +24,35 @@ nav {
 .map-holder {
     position: relative; 
     overflow: hidden;
-    height: 300px;
-    width: 300px;
+    height:100%;
+}
+.full-screen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
 }
 
-.angular-google-map-container {
-    bottom: 0;
+.fixed-bar {
+    position: fixed;
     left: 0;
-    position: relative;
     right: 0;
+    z-index: 999999;
+    width: 100%;
+    background-color: #00a087;
+    box-shadow: 0px 0px 3px 0px rgba(50, 50, 50, 0.6);
+}
+
+.top-bar{
     top: 0;
+    height: 150px;
+}
+
+.bottom-bar{
+    bottom: 0;
+    height: 100px;
 }
 
 .ce-basic-agenda-import{
@@ -43,25 +63,3 @@ nav {
 .ce-interactive-agenda-import{
     width: 100%;
 }
-
-/*Sticky Scrolling*/
-.followMeBar {
-    background-color:crimson;
-    padding: 10px 20px;
-    position: relative;
-    z-index: 1;
-    color: #fff;
-  }
-  
-  .followMeBar.fixed {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 0;
-  }
-  
-  .followMeBar.fixed.absolute {
-    position: absolute;
-  }
-  

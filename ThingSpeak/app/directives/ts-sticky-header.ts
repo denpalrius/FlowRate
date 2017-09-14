@@ -28,14 +28,12 @@ module ThingSpeak.Directives {
 
     function whenScrolling($scope: IScope) {
             $scope.$stickies.each(function (i) {
-            var $thisSticky = $(this),
-                $stickyPosition = $thisSticky.data("originalPosition");
+                var $thisSticky = $(this);
+                var $stickyPosition = $thisSticky.data("originalPosition");
 
             if ($stickyPosition <= $scope.$window.scrollTop()) {
-                var $nextSticky = $scope.$stickies.eq(i + 1),
-                    $nextStickyPosition =
-                        $nextSticky.data("originalPosition") -
-                        $thisSticky.data("originalHeight");
+                var $nextSticky = $scope.$stickies.eq(i + 1);
+                var $nextStickyPosition = $nextSticky.data("originalPosition")-$thisSticky.data("originalHeight");
 
                 $thisSticky.addClass("fixed");
 
@@ -44,7 +42,6 @@ module ThingSpeak.Directives {
                     $thisSticky.offset().top >= $nextStickyPosition
                 ) {
                     $thisSticky.addClass("absolute").css("top", $nextStickyPosition);
-                    console.log("$nextSticky: ", $nextSticky);
                 }
             } else {
                 var $prevSticky = $scope.$stickies.eq(i - 1);
@@ -84,7 +81,14 @@ module ThingSpeak.Directives {
                         setStickies($elm.eq(0).children(), $scope);
                     }
                 });
-                
+
+                //Sticky list
+
+                //var stickyList = angular.element('#sticky-list');
+                //stickyList.stickySectionHeaders({
+                //    stickyClass: 'sticky',
+                //    headlineSelector: 'strong'
+                //});
             }
         };
     }

@@ -22,21 +22,24 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\css\sticky.css" />
     <Content Include="app\css\app.css" />
     <Content Include="app\directives\circularmenu-directive.js" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
     <Content Include="app\scripts\app.js" />
     <None Include="app\scripts\cool-style.json" />
+    <Content Include="app\scripts\jquery.stickysectionheaders.js" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\map-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
     <Content Include="app\views\reorder-flow-rates.html" />
+    <Content Include="app\views\templates\fixed-scroll.html" />
     <Content Include="app\views\templates\ts-navbar.html" />
-    <Content Include="app\views\templates\top-nav.html" />
-    <Content Include="app\views\templates\ts-widget.html" />
+    <Content Include="app\views\templates\top-nav-template.html" />
+    <Content Include="app\views\templates\map-view-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
     <Content Include="Content\angular-material.layout-attributes.min.css" />
@@ -125,6 +128,8 @@
     <Content Include="Scripts\lodash.core.min.js" />
     <Content Include="Scripts\lodash.js" />
     <Content Include="Scripts\lodash.min.js" />
+    <Content Include="Scripts\ng-map.js" />
+    <Content Include="Scripts\ng-map.min.js" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +165,7 @@
     <TypeScriptCompile Include="Scripts\typings\google-maps\google-maps.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\googlemaps\google.maps.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\ngmap\ngmap.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

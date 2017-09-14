@@ -19,6 +19,7 @@
     export class FlowRateController {
         constructor(
             private $scope: IFlowRateScope,
+            private $rootScope: ng.IRootScopeService,
             private $state: angular.ui.IStateProvider,
             private httpService: Services.HttpService) {
 
@@ -58,18 +59,21 @@
                     that.$scope.flowRateScope.channel = maraRiverFlowRateData.channel;
                     that.$scope.flowRateScope.feeds = maraRiverFlowRateData.feeds;
 
-                    console.log("Mara River Flow Rate: ", that.$scope.flowRateScope.maraRiverFlowRate);
-
                     deferred.resolve(that.$scope.flowRateScope.maraRiverFlowRate);
                 })
                 .fail((error: Models.IHttpResponse) => {
                     console.log("Failed to get the JSON data");
                     deferred.reject(error);
+                }).then((val) => {
+                    console.log("Then: ", val);
+
+                    var sensorLocation = {
+                        latitude: that.$scope.flowRateScope.channel.latitude,
+                        longitude: that.$scope.flowRateScope.channel.longitude,
+                    }
+                    //Notify of loaded map center
+                    that.$rootScope.$emit("map-center-loaded", sensorLocation);
                 });
-            console.log("Done fetching data....");
-
-
-            //*Assuming all data is loaded
 
             return deferred;
         }

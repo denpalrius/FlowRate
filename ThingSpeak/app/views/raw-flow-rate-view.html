@@ -1,4 +1,5 @@
-﻿<div ng-controller="HomeController as HomeCtrl">
+﻿
+<div ng-controller="HomeController as HomeCtrl">
     <div drag-circular-menu
          angle="30"
          placement="topRight"
@@ -7,12 +8,10 @@
          default-open="false"
          onwing-click="HomeCtrl.onWingClick(wing)">
     </div>
-</div>
 
-<div>
     <h4 style="align-content:center; text-align:center">Mara River Flow Rate</h4>
     <div class="row">
-        <div class="col-md-2 col-lg-2">
+        <div class="col-md-2">
             <strong>Channel Data</strong>
             <hr />
             <br />
@@ -68,20 +67,8 @@
 
         </div>
 
-        <div class="col-md-10 col-lg-10">
-            <ts-sticky-header list="flowRateScope.feeds">
-                <div ng-repeat="feed in flowRateScope.feeds">
-                    <div class="followMeBar"> <b style="font-size:large">{{$index + 1  }} </b>  >> {{ feed.created_at }}</div>
-                    <div>Field: {{ feed.field1 }}</div>
-                    <div>
-                        A handler can also be removed by specifying the function name in the handler argument. When jQuery attaches an event handler, it assigns a unique id to the handler function. Handlers proxied by jQuery.proxy() or a similar mechanism will all have the same unique id (the proxy function), so passing proxied handlers to .off may remove more handlers than intended. In those situations it is better to attach and remove event handlers using namespaces
-                    </div>
-                    <br />
-                    <br />
-                </div>
-            </ts-sticky-header>
-
-            <table id="feedstable" class="table table-striped table-bordered table-hover hidden" style="width: 1000px; height:300px;">
+        <div class="col-md-10">
+            <table id="feedstable" class="table table-striped table-bordered table-hover" style="width: 1000px; height:300px;">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -99,7 +86,6 @@
                     </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
 

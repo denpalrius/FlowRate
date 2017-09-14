@@ -1,23 +1,22 @@
-﻿
-<div drag-circular-menu 
-     angle="30" 
-     placement="topRight" 
-     button-config="homeScope.menuConfig" 
-     menu-items="homeScope.menuItems" 
+﻿<div drag-circular-menu
+     angle="30"
+     placement="topRight"
+     button-config="homeScope.menuConfig"
+     menu-items="homeScope.menuItems"
      default-open="false"
      onwing-click="HomeCtrl.onWingClick(wing)">
 </div>
 
-<div>
-    <h1>{{homeScope.pageTitle}}</h1>
-    <br/>
-    <br/>
-    
-    <div class="ce-interactive-agenda-import tabLevel-{{agenda.tabLevel}}">
-        <div class="ce-number ce-number-1 pull-left">
-            <div class="te-standard te-standard-1">2.3</div>
-        </div>
-        <div class="te-standard agenda-reorder-name">Map the requirements over the available designs</div>
-        <input class="pull-right" type="checkbox" />
-    </div>
-</div>
+<!--Top bar-->
+<!--<div class="fixed-bar top-bar">
+
+</div>-->
+
+<div ng-include="'/app/views/templates/map-view-template.html'"></div>
+
+<!--Bottom Bar-->
+<!--<div class="fixed-bar bottom-bar">
+
+</div>-->
+
+
