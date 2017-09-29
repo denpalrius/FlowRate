@@ -7,12 +7,57 @@
      onwing-click="HomeCtrl.onWingClick(wing)">
 </div>
 
+<md-fab-toolbar style="" md-open="false" count="0"
+                md-direction="left">
+    <md-fab-trigger class="align-with-text">
+        <md-button aria-label="menu" class="md-fab md-primary">
+            <md-icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false">
+                    <path d="M0 0h18v18h-18z" fill="none"></path>
+                    <path d="M2 13.5h14v-1.5h-14v1.5zm0-4h14v-1.5h-14v1.5zm0-5.5v1.5h14v-1.5h-14z"></path>
+                </svg>
+            </md-icon>
+        </md-button>
+    </md-fab-trigger>
+
+    <md-toolbar>
+        <md-fab-actions class="md-toolbar-tools">
+            <md-button aria-label="comment" class="md-icon-button">
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false">
+                        <path d="M0 0h18v18h-18z" fill="none"></path>
+                        <path d="M2 13.5h14v-1.5h-14v1.5zm0-4h14v-1.5h-14v1.5zm0-5.5v1.5h14v-1.5h-14z"></path>
+                    </svg>
+                </md-icon>            </md-button>
+            <md-button aria-label="label" class="md-icon-button">
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false">
+                        <path d="M0 0h18v18h-18z" fill="none"></path>
+                        <path d="M2 13.5h14v-1.5h-14v1.5zm0-4h14v-1.5h-14v1.5zm0-5.5v1.5h14v-1.5h-14z"></path>
+                    </svg>
+                </md-icon>            </md-button>
+            <md-button aria-label="photo" class="md-icon-button">
+                <md-icon>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 18 18" fit="" preserveAspectRatio="xMidYMid meet" focusable="false">
+                        <path d="M0 0h18v18h-18z" fill="none"></path>
+                        <path d="M2 13.5h14v-1.5h-14v1.5zm0-4h14v-1.5h-14v1.5zm0-5.5v1.5h14v-1.5h-14z"></path>
+                    </svg>
+                </md-icon>            </md-button>
+        </md-fab-actions>
+    </md-toolbar>
+</md-fab-toolbar>
+
 <!--Top bar-->
 <!--<div class="fixed-bar top-bar">
 
 </div>-->
 
-<div ng-include="'/app/views/templates/map-view-template.html'"></div>
+<!--Left bar-->
+<div class="left-bar">
+
+</div>
+
+<div ng-if="true" ng-include="'/app/views/templates/map-view-template.html'"></div>
 
 <!--Bottom Bar-->
 <!--<div class="fixed-bar bottom-bar">

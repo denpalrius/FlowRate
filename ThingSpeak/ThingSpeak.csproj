@@ -22,6 +22,7 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\css\progress-circular.css" />
     <Content Include="app\css\sticky.css" />
     <Content Include="app\css\app.css" />
     <Content Include="app\directives\circularmenu-directive.js" />
@@ -33,13 +34,10 @@
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
-    <Content Include="app\views\map-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
-    <Content Include="app\views\reorder-flow-rates.html" />
-    <Content Include="app\views\templates\fixed-scroll.html" />
-    <Content Include="app\views\templates\ts-navbar.html" />
-    <Content Include="app\views\templates\top-nav-template.html" />
+    <Content Include="app\views\templates\fixed-scroll-template.html" />
     <Content Include="app\views\templates\map-view-template.html" />
+    <Content Include="app\views\templates\raw-flow-rate-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
     <Content Include="Content\angular-material.layout-attributes.min.css" />
@@ -73,10 +71,6 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="Scripts\angular-google-maps-street-view.js" />
-    <Content Include="Scripts\angular-google-maps-street-view.min.js" />
-    <Content Include="Scripts\angular-google-maps.js" />
-    <Content Include="Scripts\angular-google-maps.min.js" />
     <Content Include="Scripts\angular-material-mocks.js" />
     <Content Include="Scripts\angular-material.js" />
     <Content Include="Scripts\angular-material.min.js" />
@@ -90,6 +84,8 @@
     <Content Include="Scripts\angular-sanitize.js" />
     <Content Include="Scripts\angular-sanitize.min.js" />
     <Content Include="Scripts\angular-simple-logger.js" />
+    <Content Include="Scripts\angular-spinner.js" />
+    <Content Include="Scripts\angular-spinner.min.js" />
     <Content Include="Scripts\angular-touch.js" />
     <Content Include="Scripts\angular-touch.min.js" />
     <Content Include="Scripts\angular-ui-router.js" />
@@ -118,6 +114,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Scripts\angular-spinner.js.map" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\datatables.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
@@ -130,11 +127,12 @@
     <Content Include="Scripts\lodash.min.js" />
     <Content Include="Scripts\ng-map.js" />
     <Content Include="Scripts\ng-map.min.js" />
+    <Content Include="Scripts\spin.js" />
+    <Content Include="Scripts\spin.min.js" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app-module.ts" />
-    <TypeScriptCompile Include="app\configs\gmap-config.ts" />
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
@@ -152,6 +150,7 @@
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />
     <None Include="Scripts\typings\angular-resource\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-sanitize\index.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\angular-spinner\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-router.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-sortable.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
@@ -162,7 +161,6 @@
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-route.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-sanitize.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\google-maps\google-maps.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\googlemaps\google.maps.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\ngmap\ngmap.d.ts" />
@@ -207,7 +205,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6111</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:6111/</IISUrl>
+          <IISUrl>http://localhost:6132/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

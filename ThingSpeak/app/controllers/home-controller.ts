@@ -53,13 +53,11 @@
         };
         
         googleMapsUrl?: string;
-        sensorLocation?: {
-            latitude: number;
-            longitude: number;
-        };
-
+        mapCenter?:string[]
+        sensors?: ViewModels.Channel[];
         mapEnable?: boolean;
         displayLabel?: string;
+
         nums?: AgendaVM[];
         nums2?: AgendaVM[];
         agendaItems?: AgendaVM[];
@@ -123,11 +121,15 @@
             that.$scope.homeScope.pageTitle = "AngularJS App";
             that.$scope.homeScope.displayLabel = "";
             that.$scope.homeScope.googleMapsUrl = "";
+            that.$scope.homeScope.sensors = [];
 
-            that.$rootScope.$on('map-center-loaded', (event, data) => {
-                that.$scope.homeScope.sensorLocation = data;
+            that.$rootScope.$on('map-center-updated', (event, data) => {
+                that.$scope.homeScope.mapCenter = data;
+            });
 
-                console.log("Map Center: ", data);
+            that.$rootScope.$on('sensors-updated', (event, data) => {
+                that.$scope.homeScope.sensors = data;
+                console.log("sensors:", data);
             });
 
             that.fillMenu();
@@ -195,6 +197,8 @@
         private onWingClick(wing:any) {
             var that: HomeController = this;
             that.$state.go(wing.title);
+
+            console.log("State: ", that.$state.current.name);
         }
         
         private loadMap() {
@@ -206,7 +210,6 @@
                 console.warn("Map cannot show");
             } else {
                 that.$scope.homeScope.mapEnable = true;
-                console.log("Map displaying");
             }
             var customMapStyle = [
                 {
@@ -345,7 +348,7 @@
                     latitude: 1.2921,
                     longitude: 36.8219
                 },
-                zoom: 3,
+                zoom: 5,
                 options: {
                     styles: customMapStyle,
                     streetViewControl: false,
@@ -365,6 +368,11 @@
                     }
                 }
             };
+        }
+
+        private getRadius(num: number): number {
+            console.log("hit");
+            return Math.sqrt(num) * 100;
         }
     }
 }

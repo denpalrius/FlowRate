@@ -6,6 +6,10 @@
         channel?: ViewModels.Channel;
         feeds?: ViewModels.Feed[];
         reorderFeeds?: ViewModels.Feed[];
+        sensors?: ViewModels.Channel[];
+
+        pageLoadingFinished?: boolean;
+
         isReorderFormVisible?: boolean;
         selectedFeed?: ViewModels.Feed;
         $window?: Window;
@@ -21,7 +25,8 @@
             private $scope: IFlowRateScope,
             private $rootScope: ng.IRootScopeService,
             private $state: angular.ui.IStateProvider,
-            private httpService: Services.HttpService) {
+            private httpService: Services.HttpService,
+            private usSpinnerService: ISpinnerService) {
 
             var that: FlowRateController = this;
             that.init();
@@ -34,24 +39,28 @@
             that.$scope.flowRateScope.maraRiverFlowRate = {};
             that.$scope.flowRateScope.channel = {};
             that.$scope.flowRateScope.feeds = [];
+            that.$scope.flowRateScope.sensors = [];
+            that.$scope.flowRateScope.pageLoadingFinished = false;
+
             that.$scope.flowRateScope.reorderFeeds = [];
             that.$scope.flowRateScope.selectedFeed = [];
             that.$scope.flowRateScope.$stickies = [];
             
             that.getData();
-        
+
             //TODO: Do a progress ring
             //TODO: Paginate the table
             //TODO: Add charts for Field 1, field 2 ad field 3
             //TODO: Map
+
         }
-
-
-    
+        
         public getData(): JQueryDeferred<ViewModels.MaraRiverFlow> {
-            var deferred = $.Deferred();
             var that: FlowRateController = this;
-            console.log("Fetching data....");
+            that.$scope.flowRateScope.pageLoadingFinished = false;
+            console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
+
+            var deferred = $.Deferred();
             that.httpService.get(Configs.AppConfig.ApiUrl)
                 .done((response: Models.IHttpResponse) => {
                     var maraRiverFlowRateData: ViewModels.MaraRiverFlow = response.data;
@@ -65,14 +74,20 @@
                     console.log("Failed to get the JSON data");
                     deferred.reject(error);
                 }).then((val) => {
-                    console.log("Then: ", val);
 
-                    var sensorLocation = {
-                        latitude: that.$scope.flowRateScope.channel.latitude,
-                        longitude: that.$scope.flowRateScope.channel.longitude,
-                    }
-                    //Notify of loaded map center
-                    that.$rootScope.$emit("map-center-loaded", sensorLocation);
+                    var mapCenter =
+                        [
+                            that.$scope.flowRateScope.channel.latitude.toString(),
+                            that.$scope.flowRateScope.channel.longitude.toString()
+                        ];
+                    that.$rootScope.$emit("map-center-updated", mapCenter);
+
+                    that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.channel);
+                    that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
+                })
+                .done(() => {
+                    that.$scope.flowRateScope.pageLoadingFinished = true;
+                    console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
                 });
 
             return deferred;

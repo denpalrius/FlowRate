@@ -17,18 +17,6 @@ var ThingSpeak;
 (function (ThingSpeak) {
     var Configs;
     (function (Configs) {
-        var GoogleMapsConfig = (function () {
-            function GoogleMapsConfig() {
-            }
-            return GoogleMapsConfig;
-        }());
-        Configs.GoogleMapsConfig = GoogleMapsConfig;
-    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Configs;
-    (function (Configs) {
         var RouteConfig = (function () {
             function RouteConfig($urlRouterProvider, $stateProvider, $locationProvider) {
                 // For any unmatched url, send to 404
@@ -117,11 +105,12 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var FlowRateController = (function () {
-            function FlowRateController($scope, $rootScope, $state, httpService) {
+            function FlowRateController($scope, $rootScope, $state, httpService, usSpinnerService) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
                 this.$state = $state;
                 this.httpService = httpService;
+                this.usSpinnerService = usSpinnerService;
                 var that = this;
                 that.init();
             }
@@ -131,6 +120,8 @@ var ThingSpeak;
                 that.$scope.flowRateScope.maraRiverFlowRate = {};
                 that.$scope.flowRateScope.channel = {};
                 that.$scope.flowRateScope.feeds = [];
+                that.$scope.flowRateScope.sensors = [];
+                that.$scope.flowRateScope.pageLoadingFinished = false;
                 that.$scope.flowRateScope.reorderFeeds = [];
                 that.$scope.flowRateScope.selectedFeed = [];
                 that.$scope.flowRateScope.$stickies = [];
@@ -141,9 +132,10 @@ var ThingSpeak;
                 //TODO: Map
             };
             FlowRateController.prototype.getData = function () {
-                var deferred = $.Deferred();
                 var that = this;
-                console.log("Fetching data....");
+                that.$scope.flowRateScope.pageLoadingFinished = false;
+                console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
+                var deferred = $.Deferred();
                 that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
                     .done(function (response) {
                     var maraRiverFlowRateData = response.data;
@@ -156,13 +148,17 @@ var ThingSpeak;
                     console.log("Failed to get the JSON data");
                     deferred.reject(error);
                 }).then(function (val) {
-                    console.log("Then: ", val);
-                    var sensorLocation = {
-                        latitude: that.$scope.flowRateScope.channel.latitude,
-                        longitude: that.$scope.flowRateScope.channel.longitude,
-                    };
-                    //Notify of loaded map center
-                    that.$rootScope.$emit("map-center-loaded", sensorLocation);
+                    var mapCenter = [
+                        that.$scope.flowRateScope.channel.latitude.toString(),
+                        that.$scope.flowRateScope.channel.longitude.toString()
+                    ];
+                    that.$rootScope.$emit("map-center-updated", mapCenter);
+                    that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.channel);
+                    that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
+                })
+                    .done(function () {
+                    that.$scope.flowRateScope.pageLoadingFinished = true;
+                    console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
                 });
                 return deferred;
             };
@@ -200,9 +196,13 @@ var ThingSpeak;
                 that.$scope.homeScope.pageTitle = "AngularJS App";
                 that.$scope.homeScope.displayLabel = "";
                 that.$scope.homeScope.googleMapsUrl = "";
-                that.$rootScope.$on('map-center-loaded', function (event, data) {
-                    that.$scope.homeScope.sensorLocation = data;
-                    console.log("Map Center: ", data);
+                that.$scope.homeScope.sensors = [];
+                that.$rootScope.$on('map-center-updated', function (event, data) {
+                    that.$scope.homeScope.mapCenter = data;
+                });
+                that.$rootScope.$on('sensors-updated', function (event, data) {
+                    that.$scope.homeScope.sensors = data;
+                    console.log("sensors:", data);
                 });
                 that.fillMenu();
                 that.loadMap();
@@ -264,6 +264,7 @@ var ThingSpeak;
             HomeController.prototype.onWingClick = function (wing) {
                 var that = this;
                 that.$state.go(wing.title);
+                console.log("State: ", that.$state.current.name);
             };
             HomeController.prototype.loadMap = function () {
                 var that = this;
@@ -274,7 +275,6 @@ var ThingSpeak;
                 }
                 else {
                     that.$scope.homeScope.mapEnable = true;
-                    console.log("Map displaying");
                 }
                 var customMapStyle = [
                     {
@@ -412,7 +412,7 @@ var ThingSpeak;
                         latitude: 1.2921,
                         longitude: 36.8219
                     },
-                    zoom: 3,
+                    zoom: 5,
                     options: {
                         styles: customMapStyle,
                         streetViewControl: false,
@@ -432,6 +432,10 @@ var ThingSpeak;
                         }
                     }
                 };
+            };
+            HomeController.prototype.getRadius = function (num) {
+                console.log("hit");
+                return Math.sqrt(num) * 100;
             };
             return HomeController;
         }());
@@ -800,56 +804,20 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
-    var Services;
-    (function (Services) {
-        var MapService = (function () {
-            function MapService(httpService) {
-                this.httpService = httpService;
-                var that = this;
-            }
-            MapService.prototype.getData = function () {
-                var deferred = $.Deferred();
-                var that = this;
-                console.log("Fetching data....");
-                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
-                    .done(function (response) {
-                    var maraRiverFlowRateData = response.data;
-                    deferred.resolve(maraRiverFlowRateData);
-                })
-                    .fail(function (error) {
-                    console.log("Failed to get the JSON data");
-                    deferred.reject(error);
-                }).then(function (val) {
-                    console.log("Then: ", val);
-                    that.$rootScope.mapCenter = {
-                        latitude: that.$scope.flowRateScope.channel.latitude,
-                        longitude: that.$scope.flowRateScope.channel.longitude,
-                    };
-                    console.log("Map Center: ", that.$rootScope.mapCenter);
-                });
-                return deferred;
-            };
-            return MapService;
-        }());
-        Services.MapService = MapService;
-    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
     "use strict";
     var AppModule = (function () {
         function AppModule() {
             // module
             var ngFlowRate = angular.module("ngFlowRate", [
                 "ui.router",
-                "uiGmapgoogle-maps",
                 "ngMap",
+                "ngMaterial",
+                "angularSpinner",
                 "nemLogging",
                 "ngCookies",
                 "ngMessages",
                 "ngResource",
                 "ngSanitize",
-                "ngTouch",
                 "circularMenu-directive",
                 "dndLists"]);
             // configs
@@ -861,8 +829,8 @@ var ThingSpeak;
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootscope", "$state", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootscope", "$state", "httpService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService", "usSpinnerService", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
             ngFlowRate.controller("MapViewController", ["$scope", "$state", "nemSimpleLogger", ThingSpeak.Controllers.MapViewController]);
             // bootstrap the app when everything has been loaded

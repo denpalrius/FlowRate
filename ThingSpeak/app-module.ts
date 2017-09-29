@@ -7,14 +7,14 @@
             let ngFlowRate: ng.IModule = angular.module("ngFlowRate",
                 [
                     "ui.router",
-                    "uiGmapgoogle-maps",
                     "ngMap",
+                    "ngMaterial",
+                    "angularSpinner",
                     "nemLogging",
                     "ngCookies",
                     "ngMessages",
                     "ngResource",
                     "ngSanitize",
-                    "ngTouch",
                     "circularMenu-directive",
                     "dndLists"]);
 
@@ -30,8 +30,8 @@
           
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootscope", "$state",  Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootscope", "$state", "httpService", Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state",  Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService", "usSpinnerService", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
             ngFlowRate.controller("MapViewController", ["$scope", "$state","nemSimpleLogger", Controllers.MapViewController]);
 

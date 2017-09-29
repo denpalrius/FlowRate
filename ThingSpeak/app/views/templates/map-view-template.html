@@ -3,12 +3,24 @@
      ng-if="homeScope.mapEnable" 
      data-tap-disabled="true">
 
-    center="{{homeScope.sensorLocation}}"
     <ng-map class="map-holder"
-            center="-1.397527,35.034957"
-            zoom="4" 
+            center="{{homeScope.mapCenter}}"
+            zoom="5" 
             mayTypeId="TERRAIN"
             map-lazy-load="https://maps.google.com/maps/api/js"
             map-lazy-load-params="{{homeScope.googleMapsUrl}}">
+
+        <marker position="{{homeScope.mapCenter}}"
+                icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png">
+        </marker>
+        <!--<shape name="circle" ng-repeat="sensor in homeScope.sensors"
+               stroke-color="#FF0000"
+               stroke-opacity="0.8"
+               stroke-weight="2"
+               fill-color="#FF0000"
+               fill-opacity="0.35"
+               center="{{sensor.latitude}},{{sensor.longitude}}"
+               radius="{{HomeCtrl.getRadius(3857799)}}">
+        </shape>-->
     </ng-map>   
 </div>
