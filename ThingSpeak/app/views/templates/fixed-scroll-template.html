@@ -1,5 +1,8 @@
-﻿
-<div id="sticky-list">
+﻿<script>
+    $('#main-list').stickySectionHeaders();
+</script>
+
+<!--<div id="main-list">
     <ul>
         <li>
             <strong class="followMeBar">Section Headline 1</strong>
@@ -88,25 +91,22 @@
             </ul>
         </li>
     </ul>
-</div>
+</div>-->
 
-<script>
-        $('#sticky-list').stickySectionHeaders({
-            stickyClass: 'sticky',
-            headlineSelector: 'strong'
-        });
-</script>
+<hr />
 
-<ts-sticky-header class="hidden" list="flowRateScope.feeds">
-    <div ng-repeat="feed in flowRateScope.feeds |limitTo:15">
-        <div class="followMeBar">
-            <b style="font-size:large">{{$index + 1  }} </b>  >> {{ feed.created_at }}
+<div id="main-list" class="main-list">
+    <div class="feedWrapper" >
+        <div class="feedItem" ng-repeat="feed in flowRateScope.feeds">
+            <div class="followMeBar">
+                <b style="font-size:large">{{$index + 1  }} </b>  >> {{ feed.created_at }}
+            </div>
+            <div>Field: {{ feed.field1 }}</div>
+            <div>
+                A handler can also be removed by specifying the function name in the handler argument. When jQuery attaches an event handler, it assigns a unique id to the handler function. Handlers proxied by jQuery.proxy() or a similar mechanism will all have the same unique id (the proxy function), so passing proxied handlers to .off may remove more handlers than intended. In those situations it is better to attach and remove event handlers using namespaces
+            </div>
+            <br />
+            <br />
         </div>
-        <div>Field: {{ feed.field1 }}</div>
-        <div>
-            A handler can also be removed by specifying the function name in the handler argument. When jQuery attaches an event handler, it assigns a unique id to the handler function. Handlers proxied by jQuery.proxy() or a similar mechanism will all have the same unique id (the proxy function), so passing proxied handlers to .off may remove more handlers than intended. In those situations it is better to attach and remove event handlers using namespaces
-        </div>
-        <br />
-        <br />
     </div>
-</ts-sticky-header>
+</div>

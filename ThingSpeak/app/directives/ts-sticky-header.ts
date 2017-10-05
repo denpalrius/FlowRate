@@ -84,7 +84,7 @@ module ThingSpeak.Directives {
 
                 //Sticky list
 
-                //var stickyList = angular.element('#sticky-list');
+                //var stickyList = angular.element('#main-list');
                 //stickyList.stickySectionHeaders({
                 //    stickyClass: 'sticky',
                 //    headlineSelector: 'strong'

@@ -202,7 +202,7 @@ var ThingSpeak;
                 });
                 that.$rootScope.$on('sensors-updated', function (event, data) {
                     that.$scope.homeScope.sensors = data;
-                    console.log("sensors:", data);
+                    //console.log("sensors:", data);
                 });
                 that.fillMenu();
                 that.loadMap();
@@ -660,6 +660,136 @@ var ThingSpeak;
     var Directives;
     (function (Directives) {
         "use strict";
+        function dsSortingAlgorithms() {
+            return {
+                restrict: "AE",
+                scope: {
+                    list: '=?list',
+                    numberList: '=?numberList',
+                    sortedList: '=?sortedList',
+                    sortTypes: '=?sortTypes',
+                    selectedSortType: "=?selectedSortType",
+                    selectSortType: "&selectSortType",
+                    keyDownFn: "&keyDownFn"
+                },
+                templateUrl: "/app/views/templates/ds-sorting-algorithms.html",
+                link: function (scope) {
+                    init(scope);
+                    scope.selectSortType = function () {
+                        sort(scope);
+                    };
+                    scope.keyDownFn = function () {
+                        sort(scope);
+                    };
+                }
+            };
+        }
+        Directives.dsSortingAlgorithms = dsSortingAlgorithms;
+        function init(scope) {
+            scope.list = "";
+            scope.numberList = [];
+            scope.sortedList = [];
+            scope.sortTypes = [
+                { name: "Bubble Sort", code: 1 },
+                { name: "Insertion Sort", code: 2 },
+                { name: "Selection Sort", code: 3 },
+                { name: "Merge Sort", code: 4 },
+                { name: "Shell Sort", code: 5 },
+                { name: "Quick Sort", code: 6 }
+            ];
+            scope.selectedSortType = scope.sortTypes[0];
+        }
+        function sort(scope) {
+            scope.numberList = scope.list.split(',').map(function (s) {
+                if (s) {
+                    var n = parseInt(s);
+                    if (!isNaN(n) || s == ",") {
+                        return n;
+                    }
+                }
+            });
+            if (scope.selectedSortType && scope.numberList) {
+                switch (scope.selectedSortType.code) {
+                    case 1:
+                        scope.sortedList = bubbleSort(scope.numberList);
+                        break;
+                    case 2:
+                        scope.sortedList = insertionSort(scope.numberList);
+                        break;
+                    case 3:
+                        scope.sortedList = selectionSort(scope.numberList);
+                        break;
+                    case 4:
+                        scope.sortedList = mergeSort(scope.numberList);
+                        break;
+                    case 5:
+                        scope.sortedList = shellSort(scope.numberList);
+                        break;
+                    case 6:
+                        scope.sortedList = quickSort(scope.numberList);
+                        break;
+                }
+            }
+        }
+        function bubbleSort(numberList) {
+            if (numberList) {
+                var sortedList = numberList;
+                var i = 0, j = 0, len = sortedList.length, swapped = false;
+                for (i = 0; i < len; i++) {
+                    swapped = false;
+                    for (j = 0; j < len - 1; j++) {
+                        var currentValue = sortedList[j], nextValue = sortedList[j + 1];
+                        if (currentValue > nextValue) {
+                            sortedList[j] = nextValue; /* swap them */
+                            sortedList[j + 1] = currentValue;
+                            swapped = true;
+                        }
+                    }
+                    if (!swapped) {
+                        break;
+                    }
+                }
+                return sortedList;
+            }
+            return [];
+        }
+        function insertionSort(numberList) {
+            if (numberList) {
+                return numberList;
+            }
+            return [];
+        }
+        function selectionSort(numberList) {
+            if (numberList) {
+                return numberList;
+            }
+            return [];
+        }
+        function mergeSort(numberList) {
+            if (numberList) {
+                return numberList;
+            }
+            return [];
+        }
+        function shellSort(numberList) {
+            if (numberList) {
+                return numberList;
+            }
+            return [];
+        }
+        function quickSort(numberList) {
+            if (numberList) {
+                return numberList;
+            }
+            return [];
+        }
+    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Directives;
+    (function (Directives) {
+        "use strict";
         function menuToggle() {
             return {
                 restrict: "AE",
@@ -746,7 +876,7 @@ var ThingSpeak;
                         }
                     });
                     //Sticky list
-                    //var stickyList = angular.element('#sticky-list');
+                    //var stickyList = angular.element('#main-list');
                     //stickyList.stickySectionHeaders({
                     //    stickyClass: 'sticky',
                     //    headlineSelector: 'strong'
@@ -756,6 +886,26 @@ var ThingSpeak;
         }
         Directives.tsStickyHeader = tsStickyHeader;
     })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Filters;
+    (function (Filters) {
+        "use strict";
+        function TsRemoveStringFilter() {
+            return function TsRemoveStringFilter(text) {
+                if (text) {
+                    var textArray = text.split('');
+                    return textArray.map(function (txt) {
+                        if (isNaN(parseInt(txt))) {
+                            return txt;
+                        }
+                    });
+                }
+            };
+        }
+        Filters.TsRemoveStringFilter = TsRemoveStringFilter;
+    })(Filters = ThingSpeak.Filters || (ThingSpeak.Filters = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
@@ -825,6 +975,9 @@ var ThingSpeak;
             //Directives
             ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.menuToggle);
             ngFlowRate.directive("tsStickyHeader", ThingSpeak.Directives.tsStickyHeader);
+            ngFlowRate.directive("dsSortingAlgorithms", ThingSpeak.Directives.dsSortingAlgorithms);
+            //Filters
+            ngFlowRate.filter("tsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
             // services
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             // controllers

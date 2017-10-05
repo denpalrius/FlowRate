@@ -24,7 +24,11 @@
             //Directives
             ngFlowRate.directive("tsWidgetHeader", Directives.menuToggle);
             ngFlowRate.directive("tsStickyHeader", Directives.tsStickyHeader);
+            ngFlowRate.directive("dsSortingAlgorithms", Directives.dsSortingAlgorithms);
 
+            //Filters
+            ngFlowRate.filter("tsRemoveStringFilter", Filters.TsRemoveStringFilter);
+            
             // services
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);
           

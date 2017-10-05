@@ -15,34 +15,38 @@
  */
 
 (function($){
-  $.fn.stickySectionHeaders = function(options) {
+  $.fn.stickySectionHeaders = function() {
 
-    var settings = $.extend({
+    var settings = {
       stickyClass     : 'sticky',
-      headlineSelector: 'strong'
-    }, options);
+      headlineSelector: '.followMeBar'
+    };
 
-    return $(this).each(function() {
+    return $(this).each(function () {
+        console.log("MainList")
       var $this = $(this);
-      $(this).find('ul:first').bind('scroll.sticky', function(e) {
-        $(this).find('> li').each(function() {
+      $(this).find('.feedWrapper').bind('scroll.sticky', function (e) {
+          console.log("feedWrapper")
+          $(this).find('> div.feedItem').each(function () {
+              console.log("feedItem")
+
           var $this      = $(this),
               top        = $this.position().top,
               height     = $this.outerHeight(),
               $head      = $this.find(settings.headlineSelector),
               headHeight = $head.outerHeight();
-
           if (top < 0) {
-            $this.addClass(settings.stickyClass).css('paddingTop', headHeight);
+              $this.addClass(settings.stickyClass).css('paddingTop', headHeight);
+
             $head.css({
-              'top'  : (height + top < headHeight) ? (headHeight - (top + height)) * -1 : '',
-              'width': $this.outerWidth() - $head.cssSum('paddingLeft', 'paddingRight')
+                'top'  : (height + top < headHeight) ? (headHeight - (top + height)) * -1 : '',
+                'width': $this.outerWidth() - $head.cssSum('paddingLeft', 'paddingRight')
             });
           } else {
             $this.removeClass(settings.stickyClass).css('paddingTop', '');
           }
         });
-      });
+     });
     });
   };
 
@@ -52,7 +56,8 @@
    * EXAMPLE:
    * $('#my-div').cssSum('paddingLeft', 'paddingRight');
    */
-  $.fn.cssSum = function() {
+
+  $.fn.cssSum = function () {
     var $self = $(this), sum = 0;
     $(arguments).each(function(i, e) {
       sum += parseInt($self.css(e) || 0, 10);

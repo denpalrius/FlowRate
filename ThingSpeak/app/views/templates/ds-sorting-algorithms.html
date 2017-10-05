@@ -1,0 +1,34 @@
+﻿<div class="container">
+    <br />
+    <br />
+    
+    <h1>Sorting Algorithms</h1>
+    <br />
+    <hr />
+
+    <h5>Select sorting algorithm:</h5>
+    <select title="Sort Types" style="width:300px" 
+            ng-model="selectedSortType"
+            ng-options="sortType.name for sortType in sortTypes track by sortType.code"
+            ng-change="selectSortType()">
+    </select>
+
+    <br />
+    <br />
+
+    <h3>{{selectedSortType.name}}</h3>
+    <br />
+    <label>Enter comma (,) separated numbers</label>
+    <br />
+    <input type="text" ng-change="keyDownFn(list)" ng-model="list" width="100"/>
+    <br /> <br />
+
+    <label>Unsorted List Sort</label>
+    <br />
+    <span style="font-weight:200" ng-repeat="number in numberList track by $index">{{$index >=1?',':''}} {{number}}</span>
+    <br /> <br />
+
+    <label>Sorted List</label>
+    <br />
+    <span style="font-weight:200" ng-repeat="number in sortedList track by $index">{{$index >=1?',':''}} {{number}}</span>
+</div>

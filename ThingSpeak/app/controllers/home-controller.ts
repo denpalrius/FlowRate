@@ -129,7 +129,7 @@
 
             that.$rootScope.$on('sensors-updated', (event, data) => {
                 that.$scope.homeScope.sensors = data;
-                console.log("sensors:", data);
+                //console.log("sensors:", data);
             });
 
             that.fillMenu();

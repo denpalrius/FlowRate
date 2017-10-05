@@ -19,7 +19,6 @@
             position: absolute;
         }
 
-
 /* Reset some list defaults for all lists */
 ul {
     list-style: none;
@@ -27,26 +26,34 @@ ul {
     padding: 0;
 }
 
+.main-list{
+    background-color: aquamarine;
+    overflow: auto !important;
+}
 /* The main container */
-#sticky-list {
-    height: 150px;
+#main-list {
+    height: 350px;
     overflow: hidden;
     position: relative;
 }
 
+.feedWrapper {
+    height: 350px;
+}
     /* The main list */
-    #sticky-list > ul {
+    #main-list > .feedWrapper {
         height: 100%;
         overflow: auto;
     }
 
         /* Section headers, defined through "headlineSelector" */
-        #sticky-list > ul > li strong {
+        #main-list > .feedWrapper > .feedItem > .followMeBar {
             display: block;
+            width: 100%;
         }
 
         /* Section headers when "sticky", defined through "stickyClass" */
-        #sticky-list > ul > li.sticky strong {
+        #main-list > .feedWrapper > .feedItem.sticky > .followMeBar {
             position: absolute;
             top: 0;
         }

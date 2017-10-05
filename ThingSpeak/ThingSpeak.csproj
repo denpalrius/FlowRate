@@ -35,8 +35,10 @@
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
+    <Content Include="app\views\templates\ds-sorting-algorithms.html" />
     <Content Include="app\views\templates\fixed-scroll-template.html" />
     <Content Include="app\views\templates\map-view-template.html" />
+    <Content Include="app\views\templates\ts-sticky-header.html" />
     <Content Include="app\views\templates\raw-flow-rate-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
@@ -141,8 +143,10 @@
     <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
+    <TypeScriptCompile Include="app\directives\ds-sorting-algorithms.ts" />
     <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
     <TypeScriptCompile Include="app\directives\ts-navbar.ts" />
+    <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
