@@ -7,7 +7,7 @@
     <hr />
 
     <h5>Select sorting algorithm:</h5>
-    <select title="Sort Types" style="width:300px" 
+    <select title="Sort Types" style="width:400px" 
             ng-model="selectedSortType"
             ng-options="sortType.name for sortType in sortTypes track by sortType.code"
             ng-change="selectSortType()">
@@ -20,7 +20,7 @@
     <br />
     <label>Enter comma (,) separated numbers</label>
     <br />
-    <input type="text" ng-change="keyDownFn(list)" ng-model="list" width="100"/>
+    <input type="text" ng-change="keyDownFn(list)" ng-model="list" style="width:400px"/>
     <br /> <br />
 
     <label>Unsorted List Sort</label>
@@ -30,5 +30,5 @@
 
     <label>Sorted List</label>
     <br />
-    <span style="font-weight:200" ng-repeat="number in sortedList track by $index">{{$index >=1?',':''}} {{number}}</span>
+    <span style="font-weight:200" class="blink" ng-repeat="number in sortedList track by $index">{{$index >=1?',':''}} {{number}}</span>
 </div>

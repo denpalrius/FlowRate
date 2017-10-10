@@ -24,12 +24,6 @@
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                .state('Map', {
-                    url: '/map',
-                    controller: 'MapViewController',
-                    controllerAs: 'MapViewCtrl',
-                    templateUrl: 'app/views/map-view.html'
-                })
                 .state('Flow Rate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',

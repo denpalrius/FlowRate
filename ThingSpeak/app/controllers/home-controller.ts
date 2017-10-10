@@ -30,6 +30,7 @@
                 latitude: number;
                 longitude: number;
             };
+            mapTypeId: google.maps.MapTypeId;
             zoom: number;
             options: {
                 styles: ({ featureType: string; elementType: string; stylers: { color: string }[] } |
@@ -57,57 +58,20 @@
         sensors?: ViewModels.Channel[];
         mapEnable?: boolean;
         displayLabel?: string;
-
-        nums?: AgendaVM[];
-        nums2?: AgendaVM[];
-        agendaItems?: AgendaVM[];
+       
     }
 
     interface IHomeScope extends ng.IScope {
         homeScope?: ICurrentScope;
     }
-    export interface AgendaVM {
-        id?: string;
-        meetingId?: string;
-        name?: string;
-        description?: string;
-        position?: string;
-        owner?: string;
-        duration?: number;
-        createdBy?: string;
-        createdDate?: Date;
-        presenter?: string;
-        notes?: any;
-        attachments?:any;
-        links?:any;
 
-        // ui components
-        isSequentialUpload?: boolean;
-        isShowDropZone?: boolean;
-        isDropFile?: boolean;
-        isShowUploadedFiles?: boolean;
-        tempUploadedFiles?: any;
-        currentUploadedFiles?: any;
-        isAddSubItem?: boolean;
-        isShowAgendaDetails?: boolean;
-        isShowContext?: boolean;
-        isKeepContextOpen?: boolean;
-        isNotNumberedItem?: boolean;
-        isAddSingleAgendaItem?: boolean;
-        isAddSeveralAgendaItems?: boolean;
-        isShowAddMoreAgendaInfo?: boolean;
-        isShowEditMoreAgendaInfo?: boolean;
-        isPopOverOpen?: boolean;
-        isDeleteAgenda?: boolean;
-        isEditAgenda?: boolean;
-        isMoved?: boolean;
-        isSelected?: boolean;
-    }
     export class HomeController {
         constructor(
             private $scope: IHomeScope,
             private $rootScope: ng.IRootScopeService,
-            private $state: angular.ui.IStateService
+            private $state: angular.ui.IStateService,
+            private mapDataService: Services.MapDataService,
+            private NgMap: angular.map.INgMap
            ) {
 
             var that: HomeController = this;
@@ -116,7 +80,7 @@
 
         private init() {
             var that: HomeController = this;
-
+           
             that.$scope.homeScope = {};
             that.$scope.homeScope.pageTitle = "AngularJS App";
             that.$scope.homeScope.displayLabel = "";
@@ -211,6 +175,18 @@
             } else {
                 that.$scope.homeScope.mapEnable = true;
             }
+
+            var mapData = that.mapDataService.loadMapData();
+            console.log("mapData: ", mapData);
+
+
+            that.NgMap.getMap().then(function (map) {
+
+                console.log("map: ", map);
+
+
+            });
+
             var customMapStyle = [
                 {
                     "featureType": "administrative",
@@ -348,7 +324,8 @@
                     latitude: 1.2921,
                     longitude: 36.8219
                 },
-                zoom: 5,
+                mapTypeId: google.maps.MapTypeId.HYBRID,
+                zoom: 10,
                 options: {
                     styles: customMapStyle,
                     streetViewControl: false,
@@ -368,6 +345,50 @@
                     }
                 }
             };
+
+            //that.getCurrentPosition();
+        }
+
+        private getCurrentPosition() {
+            var that: HomeController = this;
+            var map: google.maps.Map;
+
+
+
+            if (!!navigator.geolocation) {
+
+                var mapOptions = {
+                    zoom: 15,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var map = new google.maps.Map(null, mapOptions);
+
+                map.setOptions(mapOptions);
+                map.setCenter({ lat: -34.397, lng: 150.644 });
+                map.setZoom(10);
+
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    var geolocate = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+                    console.log("geolocate: ", geolocate);
+                    //var infowindow = new google.maps.InfoWindow({
+                    //    map: map,
+                    //    position: geolocate,
+                    //    content:
+                    //    '<h1>Location pinned from HTML5 Geolocation!</h1>' +
+                    //    '<h2>Latitude: ' + position.coords.latitude + '</h2>' +
+                    //    '<h2>Longitude: ' + position.coords.longitude + '</h2>'
+                    //});
+
+                    map.setCenter(geolocate);
+
+                });
+
+            } else {
+                console.log('No Geolocation Support.');
+            }
+
         }
 
         private getRadius(num: number): number {

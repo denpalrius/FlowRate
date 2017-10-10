@@ -19,41 +19,18 @@
             position: absolute;
         }
 
-/* Reset some list defaults for all lists */
-ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.main-list{
-    background-color: aquamarine;
-    overflow: auto !important;
-}
-/* The main container */
 #main-list {
     height: 350px;
     overflow: hidden;
     position: relative;
 }
-
-.feedWrapper {
-    height: 350px;
+/* Section headers, defined through "headlineSelector" */
+#main-list > .feedItem > .followMeBar {
+    display: block;
+    width: 100%;
 }
-    /* The main list */
-    #main-list > .feedWrapper {
-        height: 100%;
-        overflow: auto;
-    }
-
-        /* Section headers, defined through "headlineSelector" */
-        #main-list > .feedWrapper > .feedItem > .followMeBar {
-            display: block;
-            width: 100%;
-        }
-
-        /* Section headers when "sticky", defined through "stickyClass" */
-        #main-list > .feedWrapper > .feedItem.sticky > .followMeBar {
-            position: absolute;
-            top: 0;
-        }
+/* Section headers when "sticky", defined through "stickyClass" */
+#main-list > .feedItem.sticky > .followMeBar {
+    position: absolute;
+    top: 0;
+}

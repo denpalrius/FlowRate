@@ -1,15 +1,61 @@
 var ThingSpeak;
 (function (ThingSpeak) {
+    "use strict";
+    var AppModule = (function () {
+        function AppModule() {
+            // module
+            var ngFlowRate = angular.module("ngFlowRate", [
+                "ui.router",
+                "ngMap",
+                "ngMaterial",
+                "angularSpinner",
+                "nemLogging",
+                "ngCookies",
+                "ngMessages",
+                "ngResource",
+                "ngSanitize",
+                "circularMenu-directive",
+                "dndLists"
+            ]);
+            // configs
+            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
+            //Directives
+            ngFlowRate.directive("tsStickyHeader", ThingSpeak.Directives.tsStickyHeader);
+            ngFlowRate.directive("dsSortingAlgorithms", ThingSpeak.Directives.dsSortingAlgorithms);
+            //Filters
+            ngFlowRate.filter("TsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
+            // services
+            ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
+            ngFlowRate.service("mapDataService", ["httpService", ThingSpeak.Services.MapDataService]);
+            ngFlowRate.service("thingSpeakService", ["httpService", ThingSpeak.Services.ThingSpeakService]);
+            // controllers
+            ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state", "mapDataService", "NgMap", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService", "thingSpeakService", "usSpinnerService", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
+            //ngFlowRate.controller("MapViewController", ["$scope", "$state","nemSimpleLogger", Controllers.MapViewController]);
+            // bootstrap the app when everything has been loaded
+            angular.element(document).ready(function () {
+                angular.bootstrap(document, ["ngFlowRate"]);
+            });
+        }
+        return AppModule;
+    }());
+    ThingSpeak.AppModule = AppModule;
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     var Configs;
     (function (Configs) {
         var AppConfig = (function () {
             function AppConfig() {
             }
-            AppConfig.ApiUrl = "https://thingspeak.com/channels/16153/feed.json";
-            AppConfig.googleMapsKey = "AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
-            AppConfig.googleMapsUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
             return AppConfig;
         }());
+        AppConfig.ApiUrl = "https://thingspeak.com/channels/16153/feed.json";
+        AppConfig.mapDataUri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp";
+        AppConfig.googleMapsKey = "AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
+        AppConfig.googleMapsUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
         Configs.AppConfig = AppConfig;
     })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
 })(ThingSpeak || (ThingSpeak = {}));
@@ -37,12 +83,6 @@ var ThingSpeak;
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                    .state('Map', {
-                    url: '/map',
-                    controller: 'MapViewController',
-                    controllerAs: 'MapViewCtrl',
-                    templateUrl: 'app/views/map-view.html'
-                })
                     .state('Flow Rate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
@@ -60,25 +100,6 @@ var ThingSpeak;
         }());
         Configs.RouteConfig = RouteConfig;
     })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Controllers;
-    (function (Controllers) {
-        "use strict";
-        var AboutController = (function () {
-            function AboutController($scope) {
-                this.$scope = $scope;
-                var that = this;
-                that.init();
-            }
-            AboutController.prototype.init = function () {
-                var that = this;
-            };
-            return AboutController;
-        }());
-        Controllers.AboutController = AboutController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
@@ -104,77 +125,257 @@ var ThingSpeak;
     var Controllers;
     (function (Controllers) {
         "use strict";
-        var FlowRateController = (function () {
-            function FlowRateController($scope, $rootScope, $state, httpService, usSpinnerService) {
+        var NavigationController = (function () {
+            function NavigationController($scope, $location) {
                 this.$scope = $scope;
-                this.$rootScope = $rootScope;
-                this.$state = $state;
-                this.httpService = httpService;
-                this.usSpinnerService = usSpinnerService;
+                this.$location = $location;
+                var that = this;
+                //that.$scope.navigationScope.isSelected = function (path) {
+                //    return this.isSelected(path)
+                //}.bind(this);
+            }
+            NavigationController.prototype.isSelected = function (path) {
+                return this.$location.path().substr(0, path.length) == path;
+            };
+            NavigationController.prototype.getPath = function (path) {
+                var that = this;
+                console.log(that.$location.path());
+                return path === that.$location.path();
+            };
+            ;
+            return NavigationController;
+        }());
+        Controllers.NavigationController = NavigationController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+//module ThingSpeak.Controllers {
+//    "use strict";
+//    interface ICurrentScope {
+//        mapName?: string;
+//        map?: {
+//            center: {
+//                latitude: number;
+//                longitude: number;
+//            };
+//            zoom: number;
+//            options: {
+//                styles: ({ featureType: string;elementType: string;stylers: { color: string }[] } |
+//                         { featureType: string;elementType: string;stylers: { visibility: string }[] } |
+//                         {
+//                             featureType: string;
+//                             elementType: string;
+//                             stylers: ({ saturation: number } | { lightness: number })[];
+//                         } |
+//                         { featureType: string;elementType: string;stylers: ({ visibility: string } | { color: string })[] }
+//                         |
+//                         { featureType: string;elementType: string;stylers: ({ visibility: string } | { hue: string })[] })[
+//                ];
+//                streetViewControl: boolean;
+//                mapTypeControl: boolean;
+//                scaleControl: boolean;
+//                rotateControl: boolean;
+//                zoomControl: boolean;
+//            };
+//            bounds: { northeast: { latitude: number;longitude: number };southwest: { latitude: number;longitude: number } }
+//        };
+//    }
+//    interface IMapScope extends ng.IScope {
+//        mapScope?: ICurrentScope;
+//    }
+//    export class MapViewController {
+//        constructor(
+//            private $scope: IMapScope,
+//            private $state: angular.ui.IStateService,
+//            private uiGmapGoogleMapApi: angular.ui.IStateService,
+//            private nemSimpleLogger:any) {
+//            var that: MapViewController = this;
+//            that.init();
+//        }
+//        private init() {
+//            var that: MapViewController = this;
+//            that.$scope.mapScope = {};
+//            that.$scope.mapScope.mapName = "";
+//            that.loadMap();
+//        }
+//        private loadMap() {
+//            var that: MapViewController = this;
+//            var customMapStyle = [
+//                {
+//                    "featureType": "administrative",
+//                    "elementType": "labels.text.fill",
+//                    "stylers": [
+//                        {
+//                            "color": "#444444"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "landscape",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "color": "#f2f2f2"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "landscape",
+//                    "elementType": "geometry",
+//                    "stylers": [
+//                        {
+//                            "color": "#bab8cb"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "poi",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "visibility": "off"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "poi",
+//                    "elementType": "labels",
+//                    "stylers": [
+//                        {
+//                            "color": "#9a3fa0"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "road",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "saturation": -100
+//                        },
+//                        {
+//                            "lightness": 45
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "road.highway",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "visibility": "simplified"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "road.arterial",
+//                    "elementType": "labels.icon",
+//                    "stylers": [
+//                        {
+//                            "visibility": "off"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "transit",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "visibility": "off"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "transit",
+//                    "elementType": "geometry.fill",
+//                    "stylers": [
+//                        {
+//                            "visibility": "on"
+//                        },
+//                        {
+//                            "color": "#8e2b2b"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "water",
+//                    "elementType": "all",
+//                    "stylers": [
+//                        {
+//                            "color": "#30a4d3"
+//                        },
+//                        {
+//                            "visibility": "on"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "water",
+//                    "elementType": "geometry",
+//                    "stylers": [
+//                        {
+//                            "visibility": "on"
+//                        }
+//                    ]
+//                },
+//                {
+//                    "featureType": "water",
+//                    "elementType": "geometry.fill",
+//                    "stylers": [
+//                        {
+//                            "visibility": "on"
+//                        },
+//                        {
+//                            "hue": "#00a3ff"
+//                        }
+//                    ]
+//                }
+//            ];
+//            that.$scope.mapScope.map = {
+//                center: {
+//                    latitude: -1.2920659,
+//                    longitude: 36.8219462
+//                },
+//                zoom: 8,
+//                options: {
+//                    styles: customMapStyle,
+//                    streetViewControl: false,
+//                    mapTypeControl: false,
+//                    scaleControl: false,
+//                    rotateControl: false,
+//                    zoomControl: false
+//                }, 
+//                bounds : {
+//                    northeast: {
+//                        latitude: 0.17687,
+//                        longitude: 37.90833
+//                    },
+//                    southwest: {
+//                        latitude: -0.17687,
+//                        longitude: -37.90833
+//                    }
+//                }
+//            };
+//            console.log("Map Center: ", that.$scope.mapScope.map.center);
+//        }
+//    }
+//} 
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var AboutController = (function () {
+            function AboutController($scope) {
+                this.$scope = $scope;
                 var that = this;
                 that.init();
             }
-            FlowRateController.prototype.init = function () {
+            AboutController.prototype.init = function () {
                 var that = this;
-                that.$scope.flowRateScope = {};
-                that.$scope.flowRateScope.maraRiverFlowRate = {};
-                that.$scope.flowRateScope.channel = {};
-                that.$scope.flowRateScope.feeds = [];
-                that.$scope.flowRateScope.sensors = [];
-                that.$scope.flowRateScope.pageLoadingFinished = false;
-                that.$scope.flowRateScope.reorderFeeds = [];
-                that.$scope.flowRateScope.selectedFeed = [];
-                that.$scope.flowRateScope.$stickies = [];
-                that.getData();
-                //TODO: Do a progress ring
-                //TODO: Paginate the table
-                //TODO: Add charts for Field 1, field 2 ad field 3
-                //TODO: Map
             };
-            FlowRateController.prototype.getData = function () {
-                var that = this;
-                that.$scope.flowRateScope.pageLoadingFinished = false;
-                console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
-                var deferred = $.Deferred();
-                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
-                    .done(function (response) {
-                    var maraRiverFlowRateData = response.data;
-                    that.$scope.flowRateScope.maraRiverFlowRate = maraRiverFlowRateData;
-                    that.$scope.flowRateScope.channel = maraRiverFlowRateData.channel;
-                    that.$scope.flowRateScope.feeds = maraRiverFlowRateData.feeds;
-                    deferred.resolve(that.$scope.flowRateScope.maraRiverFlowRate);
-                })
-                    .fail(function (error) {
-                    console.log("Failed to get the JSON data");
-                    deferred.reject(error);
-                }).then(function (val) {
-                    var mapCenter = [
-                        that.$scope.flowRateScope.channel.latitude.toString(),
-                        that.$scope.flowRateScope.channel.longitude.toString()
-                    ];
-                    that.$rootScope.$emit("map-center-updated", mapCenter);
-                    that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.channel);
-                    that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
-                })
-                    .done(function () {
-                    that.$scope.flowRateScope.pageLoadingFinished = true;
-                    console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
-                });
-                return deferred;
-            };
-            FlowRateController.prototype.selectFeed = function (feed) {
-                var that = this;
-                that.$scope.flowRateScope.selectedFeed = feed;
-                console.log("Selected Feed: ", feed.entry_id);
-            };
-            FlowRateController.prototype.openReorderDialog = function () {
-                var that = this;
-                that.$scope.flowRateScope.reorderFeeds = angular.copy(that.$scope.flowRateScope.feeds);
-                console.log("Reorder list: ", that.$scope.flowRateScope.reorderFeeds);
-            };
-            return FlowRateController;
+            return AboutController;
         }());
-        Controllers.FlowRateController = FlowRateController;
+        Controllers.AboutController = AboutController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -183,10 +384,12 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope, $rootScope, $state) {
+            function HomeController($scope, $rootScope, $state, mapDataService, NgMap) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
                 this.$state = $state;
+                this.mapDataService = mapDataService;
+                this.NgMap = NgMap;
                 var that = this;
                 that.init();
             }
@@ -276,6 +479,11 @@ var ThingSpeak;
                 else {
                     that.$scope.homeScope.mapEnable = true;
                 }
+                var mapData = that.mapDataService.loadMapData();
+                console.log("mapData: ", mapData);
+                that.NgMap.getMap().then(function (map) {
+                    console.log("map: ", map);
+                });
                 var customMapStyle = [
                     {
                         "featureType": "administrative",
@@ -412,7 +620,8 @@ var ThingSpeak;
                         latitude: 1.2921,
                         longitude: 36.8219
                     },
-                    zoom: 5,
+                    mapTypeId: google.maps.MapTypeId.HYBRID,
+                    zoom: 10,
                     options: {
                         styles: customMapStyle,
                         streetViewControl: false,
@@ -432,6 +641,37 @@ var ThingSpeak;
                         }
                     }
                 };
+                //that.getCurrentPosition();
+            };
+            HomeController.prototype.getCurrentPosition = function () {
+                var that = this;
+                var map;
+                if (!!navigator.geolocation) {
+                    var mapOptions = {
+                        zoom: 15,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+                    var map = new google.maps.Map(null, mapOptions);
+                    map.setOptions(mapOptions);
+                    map.setCenter({ lat: -34.397, lng: 150.644 });
+                    map.setZoom(10);
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        var geolocate = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                        console.log("geolocate: ", geolocate);
+                        //var infowindow = new google.maps.InfoWindow({
+                        //    map: map,
+                        //    position: geolocate,
+                        //    content:
+                        //    '<h1>Location pinned from HTML5 Geolocation!</h1>' +
+                        //    '<h2>Latitude: ' + position.coords.latitude + '</h2>' +
+                        //    '<h2>Longitude: ' + position.coords.longitude + '</h2>'
+                        //});
+                        map.setCenter(geolocate);
+                    });
+                }
+                else {
+                    console.log('No Geolocation Support.');
+                }
             };
             HomeController.prototype.getRadius = function (num) {
                 console.log("hit");
@@ -447,212 +687,77 @@ var ThingSpeak;
     var Controllers;
     (function (Controllers) {
         "use strict";
-        var MapViewController = (function () {
-            function MapViewController($scope, $state, uiGmapGoogleMapApi, nemSimpleLogger) {
+        var FlowRateController = (function () {
+            function FlowRateController($scope, $rootScope, $state, httpService, thingSpeakService, usSpinnerService) {
                 this.$scope = $scope;
+                this.$rootScope = $rootScope;
                 this.$state = $state;
-                this.uiGmapGoogleMapApi = uiGmapGoogleMapApi;
-                this.nemSimpleLogger = nemSimpleLogger;
+                this.httpService = httpService;
+                this.thingSpeakService = thingSpeakService;
+                this.usSpinnerService = usSpinnerService;
                 var that = this;
                 that.init();
             }
-            MapViewController.prototype.init = function () {
+            FlowRateController.prototype.init = function () {
                 var that = this;
-                that.$scope.mapScope = {};
-                that.$scope.mapScope.mapName = "";
-                that.loadMap();
+                that.$scope.flowRateScope = {};
+                that.$scope.flowRateScope.maraRiverFlowRate = {};
+                that.$scope.flowRateScope.channel = {};
+                that.$scope.flowRateScope.feeds = [];
+                that.$scope.flowRateScope.sensors = [];
+                that.$scope.flowRateScope.pageLoadingFinished = false;
+                that.$scope.flowRateScope.reorderFeeds = [];
+                that.$scope.flowRateScope.selectedFeed = [];
+                that.$scope.flowRateScope.$stickies = [];
+                that.getData();
+                //TODO: Do a progress ring
+                //TODO: Paginate the table
+                //TODO: Add charts for Field 1, field 2 ad field 3
+                //TODO: Map
             };
-            MapViewController.prototype.loadMap = function () {
+            FlowRateController.prototype.getData = function () {
                 var that = this;
-                var customMapStyle = [
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text.fill",
-                        "stylers": [
-                            {
-                                "color": "#444444"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#f2f2f2"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "color": "#bab8cb"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "labels",
-                        "stylers": [
-                            {
-                                "color": "#9a3fa0"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            },
-                            {
-                                "lightness": 45
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.highway",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.arterial",
-                        "elementType": "labels.icon",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            },
-                            {
-                                "color": "#8e2b2b"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#30a4d3"
-                            },
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            },
-                            {
-                                "hue": "#00a3ff"
-                            }
-                        ]
-                    }
-                ];
-                that.$scope.mapScope.map = {
-                    center: {
-                        latitude: -1.2920659,
-                        longitude: 36.8219462
-                    },
-                    zoom: 8,
-                    options: {
-                        styles: customMapStyle,
-                        streetViewControl: false,
-                        mapTypeControl: false,
-                        scaleControl: false,
-                        rotateControl: false,
-                        zoomControl: false
-                    },
-                    bounds: {
-                        northeast: {
-                            latitude: 0.17687,
-                            longitude: 37.90833
-                        },
-                        southwest: {
-                            latitude: -0.17687,
-                            longitude: -37.90833
-                        }
-                    }
-                };
-                console.log("Map Center: ", that.$scope.mapScope.map.center);
+                that.$scope.flowRateScope.pageLoadingFinished = false;
+                console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
+                var getThingSpeakData = that.thingSpeakService.getThingSpeakData();
+                console.log("getThingSpeakData: ", getThingSpeakData);
+                var deferred = $.Deferred();
+                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                    .done(function (response) {
+                    that.$scope.flowRateScope.maraRiverFlowRate = response.data;
+                    deferred.resolve(that.$scope.flowRateScope.maraRiverFlowRate);
+                })
+                    .fail(function (error) {
+                    console.log("Failed to get the JSON data");
+                    deferred.reject(error);
+                }).then(function (val) {
+                    var mapCenter = [
+                        that.$scope.flowRateScope.channel.latitude.toString(),
+                        that.$scope.flowRateScope.channel.longitude.toString()
+                    ];
+                    that.$rootScope.$emit("map-center-updated", mapCenter);
+                    that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.channel);
+                    that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
+                })
+                    .done(function () {
+                    that.$scope.flowRateScope.pageLoadingFinished = true;
+                    console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
+                });
+                return deferred;
             };
-            return MapViewController;
+            FlowRateController.prototype.selectFeed = function (feed) {
+                var that = this;
+                that.$scope.flowRateScope.selectedFeed = feed;
+                console.log("Selected Feed: ", feed.entry_id);
+            };
+            FlowRateController.prototype.openReorderDialog = function () {
+                var that = this;
+                that.$scope.flowRateScope.reorderFeeds = angular.copy(that.$scope.flowRateScope.feeds);
+                console.log("Reorder list: ", that.$scope.flowRateScope.reorderFeeds);
+            };
+            return FlowRateController;
         }());
-        Controllers.MapViewController = MapViewController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Controllers;
-    (function (Controllers) {
-        "use strict";
-        var NavigationController = (function () {
-            function NavigationController($scope, $location) {
-                this.$scope = $scope;
-                this.$location = $location;
-                var that = this;
-                //that.$scope.navigationScope.isSelected = function (path) {
-                //    return this.isSelected(path)
-                //}.bind(this);
-            }
-            NavigationController.prototype.isSelected = function (path) {
-                return this.$location.path().substr(0, path.length) == path;
-            };
-            NavigationController.prototype.getPath = function (path) {
-                var that = this;
-                console.log(that.$location.path());
-                return path === that.$location.path();
-            };
-            ;
-            return NavigationController;
-        }());
-        Controllers.NavigationController = NavigationController;
+        Controllers.FlowRateController = FlowRateController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -677,6 +782,7 @@ var ThingSpeak;
                     init(scope);
                     scope.selectSortType = function () {
                         sort(scope);
+                        //Blibk text
                     };
                     scope.keyDownFn = function () {
                         sort(scope);
@@ -703,7 +809,7 @@ var ThingSpeak;
             scope.numberList = scope.list.split(',').map(function (s) {
                 if (s) {
                     var n = parseInt(s);
-                    if (!isNaN(n) || s == ",") {
+                    if (!isNaN(n)) {
                         return n;
                     }
                 }
@@ -733,15 +839,16 @@ var ThingSpeak;
         }
         function bubbleSort(numberList) {
             if (numberList) {
-                var sortedList = numberList;
-                var i = 0, j = 0, len = sortedList.length, swapped = false;
+                var listToSort = angular.copy(numberList);
+                var i = 0, j = 0, len = listToSort.length, currentValue = 0, nextValue = 0, swapped = false;
                 for (i = 0; i < len; i++) {
                     swapped = false;
                     for (j = 0; j < len - 1; j++) {
-                        var currentValue = sortedList[j], nextValue = sortedList[j + 1];
+                        currentValue = listToSort[j];
+                        nextValue = listToSort[j + 1];
                         if (currentValue > nextValue) {
-                            sortedList[j] = nextValue; /* swap them */
-                            sortedList[j + 1] = currentValue;
+                            listToSort[j] = nextValue; /* swap them */
+                            listToSort[j + 1] = currentValue;
                             swapped = true;
                         }
                     }
@@ -749,13 +856,25 @@ var ThingSpeak;
                         break;
                     }
                 }
-                return sortedList;
+                return listToSort;
             }
             return [];
         }
         function insertionSort(numberList) {
             if (numberList) {
-                return numberList;
+                var listToSort = angular.copy(numberList);
+                var i = 0, j = 0, len = listToSort.length, holePosition = 0, valueToInsert = 0;
+                for (i = 0; i < len; i++) {
+                    valueToInsert = listToSort[i]; /* select value to be inserted */
+                    holePosition = i;
+                    /*locate hole position for the element to be inserted */
+                    while (holePosition > 0 && listToSort[holePosition - 1] > valueToInsert) {
+                        listToSort[holePosition] = listToSort[holePosition - 1];
+                        holePosition = holePosition - 1;
+                    }
+                    listToSort[holePosition] = valueToInsert; /* insert the number at hole position */
+                }
+                return listToSort;
             }
             return [];
         }
@@ -790,97 +909,33 @@ var ThingSpeak;
     var Directives;
     (function (Directives) {
         "use strict";
-        function menuToggle() {
-            return {
-                restrict: "AE",
-                scope: {
-                    title: '@',
-                    isOpen: '@',
-                    isMenuCollapsed: '@',
-                    section: '='
-                },
-                templateUrl: '/app/views/templates/ts-widget.html',
-                link: function ($scope, $elm, $attr) {
-                    var controller = $elm.parent().controller();
-                    $scope.isOpen = function () { return controller.isOpen($scope.section); };
-                    $scope.toggle = function () {
-                        controller.toggleOpen($scope.section);
-                    };
-                }
-            };
-        }
-        Directives.menuToggle = menuToggle;
-    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    var Directives;
-    (function (Directives) {
-        "use strict";
-        function setStickies(stickies, $scope) {
-            if (typeof stickies === "object" && stickies instanceof jQuery && stickies.length > 0) {
-                $scope.$stickies = stickies.each(function () {
-                    var $thisSticky = $(this).wrap('<div class="followWrap" />');
-                    $thisSticky
-                        .data("originalPosition", $thisSticky.offset().top)
-                        .data("originalHeight", $thisSticky.outerHeight())
-                        .parent()
-                        .height($thisSticky.outerHeight());
-                });
-                $scope.$window.off("scroll.stickies").on("scroll.stickies", function () {
-                    whenScrolling($scope);
-                });
-            }
-        }
-        function whenScrolling($scope) {
-            $scope.$stickies.each(function (i) {
-                var $thisSticky = $(this);
-                var $stickyPosition = $thisSticky.data("originalPosition");
-                if ($stickyPosition <= $scope.$window.scrollTop()) {
-                    var $nextSticky = $scope.$stickies.eq(i + 1);
-                    var $nextStickyPosition = $nextSticky.data("originalPosition") - $thisSticky.data("originalHeight");
-                    $thisSticky.addClass("fixed");
-                    if ($nextSticky.length > 0 &&
-                        $thisSticky.offset().top >= $nextStickyPosition) {
-                        $thisSticky.addClass("absolute").css("top", $nextStickyPosition);
-                    }
-                }
-                else {
-                    var $prevSticky = $scope.$stickies.eq(i - 1);
-                    $thisSticky.removeClass("fixed");
-                    if ($prevSticky.length > 0 &&
-                        $scope.$window.scrollTop() <=
-                            $thisSticky.data("originalPosition") -
-                                $thisSticky.data("originalHeight")) {
-                        $prevSticky.removeClass("absolute").removeAttr("style");
-                    }
-                }
-            });
-        }
         function tsStickyHeader() {
+            var settings = {
+                stickyClass: 'sticky',
+                headlineSelector: '.followMeBar'
+            };
             return {
-                restrict: "AE",
-                scope: {
-                    title: '@',
-                    isOpen: '@',
-                    isMenuCollapsed: '@',
-                    section: '=',
-                    list: '='
-                },
-                link: function ($scope, $elm, $attr) {
-                    $scope.$window = angular.element(window);
-                    $scope.$stickies = $elm;
-                    $scope.$watch('list', function () {
-                        if ($scope.list.length > 0) {
-                            setStickies($elm.eq(0).children(), $scope);
-                        }
+                restrict: 'A',
+                link: function (scope, mainList) {
+                    console.log("mainList: ", mainList);
+                    mainList.bind('scroll.sticky', function (e) {
+                        mainList.find('> div.feedItem').each(function () {
+                            var $this = $(this), top = $this.position().top, height = $this.outerHeight(), $head = $this.find(settings.headlineSelector), headHeight = $head.outerHeight();
+                            console.log("Scrolling..");
+                            if (top < 0) {
+                                $this.addClass(settings.stickyClass).css('paddingTop', headHeight);
+                                var totalPadding = parseInt($head.css('padding-left').replace("px", "")) +
+                                    parseInt($head.css('padding-right').replace("px", ""));
+                                $head.css({
+                                    'top': (height + top < headHeight) ? (headHeight - (top + height)) * -1 : '',
+                                    'width': $this.outerWidth() - totalPadding,
+                                });
+                            }
+                            else {
+                                $this.removeClass(settings.stickyClass).css('paddingTop', '');
+                            }
+                        });
                     });
-                    //Sticky list
-                    //var stickyList = angular.element('#main-list');
-                    //stickyList.stickySectionHeaders({
-                    //    stickyClass: 'sticky',
-                    //    headlineSelector: 'strong'
-                    //});
                 }
             };
         }
@@ -925,6 +980,62 @@ var ThingSpeak;
 (function (ThingSpeak) {
     var Services;
     (function (Services) {
+        var ThingSpeakService = (function () {
+            function ThingSpeakService(httpService) {
+                this.httpService = httpService;
+                var that = this;
+            }
+            ThingSpeakService.prototype.getThingSpeakData = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                    .done(function (response) {
+                    var maraRiverFlowRate = response.data;
+                    deferred.resolve(maraRiverFlowRate);
+                })
+                    .fail(function (error) {
+                    console.log("Failed to get the maraRiverFlowRate JSON data");
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            return ThingSpeakService;
+        }());
+        Services.ThingSpeakService = ThingSpeakService;
+    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Services;
+    (function (Services) {
+        var MapDataService = (function () {
+            function MapDataService(httpService) {
+                this.httpService = httpService;
+                var that = this;
+            }
+            MapDataService.prototype.loadMapData = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                that.httpService.get(ThingSpeak.Configs.AppConfig.mapDataUri)
+                    .done(function (response) {
+                    var mapData = response.data;
+                    deferred.resolve(mapData);
+                })
+                    .fail(function (error) {
+                    console.log("Failed to get the GeoJSON data");
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            return MapDataService;
+        }());
+        Services.MapDataService = MapDataService;
+    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Services;
+    (function (Services) {
         var HttpService = (function () {
             function HttpService($http) {
                 this.$http = $http;
@@ -951,48 +1062,5 @@ var ThingSpeak;
         }());
         Services.HttpService = HttpService;
     })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
-    "use strict";
-    var AppModule = (function () {
-        function AppModule() {
-            // module
-            var ngFlowRate = angular.module("ngFlowRate", [
-                "ui.router",
-                "ngMap",
-                "ngMaterial",
-                "angularSpinner",
-                "nemLogging",
-                "ngCookies",
-                "ngMessages",
-                "ngResource",
-                "ngSanitize",
-                "circularMenu-directive",
-                "dndLists"]);
-            // configs
-            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
-            //Directives
-            ngFlowRate.directive("tsWidgetHeader", ThingSpeak.Directives.menuToggle);
-            ngFlowRate.directive("tsStickyHeader", ThingSpeak.Directives.tsStickyHeader);
-            ngFlowRate.directive("dsSortingAlgorithms", ThingSpeak.Directives.dsSortingAlgorithms);
-            //Filters
-            ngFlowRate.filter("tsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
-            // services
-            ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
-            // controllers
-            ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService", "usSpinnerService", ThingSpeak.Controllers.FlowRateController]);
-            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
-            ngFlowRate.controller("MapViewController", ["$scope", "$state", "nemSimpleLogger", ThingSpeak.Controllers.MapViewController]);
-            // bootstrap the app when everything has been loaded
-            angular.element(document).ready(function () {
-                angular.bootstrap(document, ["ngFlowRate"]);
-            });
-        }
-        return AppModule;
-    }());
-    ThingSpeak.AppModule = AppModule;
 })(ThingSpeak || (ThingSpeak = {}));
 //# sourceMappingURL=app.js.map

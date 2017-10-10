@@ -10,7 +10,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <TypeScriptToolsVersion>2.0</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -38,7 +38,6 @@
     <Content Include="app\views\templates\ds-sorting-algorithms.html" />
     <Content Include="app\views\templates\fixed-scroll-template.html" />
     <Content Include="app\views\templates\map-view-template.html" />
-    <Content Include="app\views\templates\ts-sticky-header.html" />
     <Content Include="app\views\templates\raw-flow-rate-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
@@ -145,10 +144,11 @@
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
     <TypeScriptCompile Include="app\directives\ds-sorting-algorithms.ts" />
     <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
-    <TypeScriptCompile Include="app\directives\ts-navbar.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
+    <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
+    <TypeScriptCompile Include="app\services\map-data-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
     <TypeScriptCompile Include="app\viewmodels\thingspeak-vm.ts" />
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />

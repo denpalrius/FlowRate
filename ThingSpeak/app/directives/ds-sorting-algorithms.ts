@@ -34,6 +34,9 @@
 
                 scope.selectSortType = function () {
                     sort(scope);
+
+                    //Blibk text
+
                 }
 
                 scope.keyDownFn = function () {
@@ -62,7 +65,7 @@
         scope.numberList = scope.list.split(',').map((s) => {
             if (s) {
                 let n = parseInt(s);
-                if (!isNaN(n) || s == ",") {
+                if (!isNaN(n)) {
                     return n;
                 }
             }
@@ -94,17 +97,18 @@
 
     function bubbleSort(numberList:number[]): number[] {
         if (numberList) {
-            let sortedList = numberList;
+            let listToSort = angular.copy(numberList);
 
-            let i = 0, j = 0, len = sortedList.length, swapped = false;
+            let i = 0, j = 0, len = listToSort.length, currentValue = 0, nextValue=0, swapped = false;
 
             for (i=0; i < len; i++){
                 swapped = false;
                 for (j=0; j < len-1; j++) {
-                    let currentValue = sortedList[j], nextValue = sortedList[j + 1];
+                    currentValue = listToSort[j];
+                    nextValue = listToSort[j + 1];
                     if (currentValue > nextValue) {  /* compare the adjacent elements */
-                        sortedList[j] = nextValue;   /* swap them */
-                        sortedList[j + 1] = currentValue;
+                        listToSort[j] = nextValue;   /* swap them */
+                        listToSort[j + 1] = currentValue;
                         swapped = true;
                     }
                 }
@@ -112,14 +116,27 @@
                     break;
                 }
             }
-            return sortedList;
+            return listToSort;
         }
         return [];
     }
+
     function insertionSort(numberList: number[]): number[] {
         if (numberList) {
+            let listToSort = angular.copy(numberList);
 
-            return numberList;
+            let i = 0, j = 0, len = listToSort.length, holePosition = 0, valueToInsert  = 0;
+            for (i = 0; i < len; i++){
+                valueToInsert = listToSort[i]; /* select value to be inserted */
+                holePosition = i;
+                /*locate hole position for the element to be inserted */
+                while (holePosition > 0 && listToSort[holePosition - 1] > valueToInsert) {
+                    listToSort[holePosition] = listToSort[holePosition - 1];
+                    holePosition = holePosition - 1;
+                }
+                listToSort[holePosition] = valueToInsert; /* insert the number at hole position */
+            }
+            return listToSort;
         }
         return [];
     }

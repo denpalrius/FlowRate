@@ -9,15 +9,18 @@
      data-tap-disabled="true">
 
     <ng-map class="map-holder"
-            center="{{homeScope.mapCenter}}"
-            zoom="5" 
-            mayTypeId="TERRAIN"
+            center="current-location"
+            zoom="7" 
+            mayTypeId="HYBRID"
             map-lazy-load="https://maps.google.com/maps/api/js"
             map-lazy-load-params="{{homeScope.googleMapsUrl}}">
 
-        <marker position="{{homeScope.mapCenter}}"
+        <marker position="current-location"
                 icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png">
         </marker>
+        <!--<info-window position="current-location">
+            <span>Location found using HTML5.</span>
+        </info-window>-->
         <!--<shape name="circle" ng-repeat="sensor in homeScope.sensors"
                stroke-color="#FF0000"
                stroke-opacity="0.8"

@@ -1,7 +1,6 @@
 ﻿module ThingSpeak.Services {
     export class HttpService {
-        constructor(
-            private $http: ng.IHttpService) {
+        constructor(private $http: ng.IHttpService) {
             var that: HttpService = this;
         }
 

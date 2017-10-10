@@ -26,6 +26,7 @@
             private $rootScope: ng.IRootScopeService,
             private $state: angular.ui.IStateProvider,
             private httpService: Services.HttpService,
+            private thingSpeakService: Services.ThingSpeakService,
             private usSpinnerService: ISpinnerService) {
 
             var that: FlowRateController = this;
@@ -60,14 +61,14 @@
             that.$scope.flowRateScope.pageLoadingFinished = false;
             console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
 
+            var getThingSpeakData = that.thingSpeakService.getThingSpeakData();
+            console.log("getThingSpeakData: ", getThingSpeakData);
+
+
             var deferred = $.Deferred();
             that.httpService.get(Configs.AppConfig.ApiUrl)
                 .done((response: Models.IHttpResponse) => {
-                    var maraRiverFlowRateData: ViewModels.MaraRiverFlow = response.data;
-                    that.$scope.flowRateScope.maraRiverFlowRate = maraRiverFlowRateData;
-                    that.$scope.flowRateScope.channel = maraRiverFlowRateData.channel;
-                    that.$scope.flowRateScope.feeds = maraRiverFlowRateData.feeds;
-
+                    that.$scope.flowRateScope.maraRiverFlowRate = response.data;
                     deferred.resolve(that.$scope.flowRateScope.maraRiverFlowRate);
                 })
                 .fail((error: Models.IHttpResponse) => {
