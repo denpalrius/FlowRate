@@ -117,12 +117,12 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Scripts\angular-spinner.js.map" />
-    <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\datatables.js" />
-    <Content Include="Scripts\jquery-3.1.1.js" />
-    <Content Include="Scripts\jquery-3.1.1.min.js" />
-    <Content Include="Scripts\jquery-3.1.1.slim.js" />
-    <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
+    <None Include="Scripts\jquery-3.2.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.2.1.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.js" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
     <Content Include="Scripts\lodash.core.js" />
     <Content Include="Scripts\lodash.core.min.js" />
     <Content Include="Scripts\lodash.js" />
@@ -153,7 +153,10 @@
     <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
     <TypeScriptCompile Include="app\services\map-data-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
+    <TypeScriptCompile Include="app\models\couch-db-model.ts" />
     <TypeScriptCompile Include="app\viewmodels\thingspeak-vm.ts" />
+    <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.2.1.min.map" />
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />
     <None Include="Scripts\typings\angular-resource\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-sanitize\index.d.ts" />
@@ -174,8 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.1.1.min.map" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

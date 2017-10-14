@@ -6,7 +6,7 @@ var ThingSpeak;
             function AppConfig() {
             }
             AppConfig.ApiUrl = "https://thingspeak.com/channels/16153/feed.json";
-            AppConfig.couchDbPath = "http://192.168.15.180:5984/";
+            AppConfig.couchDbPath = "http://192.168.15.180:5984/expenses";
             AppConfig.couchDbAdmin = "mzitoh";
             AppConfig.couchDbPass = "suse";
             AppConfig.kenyaCountiesUri = "https://raw.githubusercontent.com/mikelmaron/kenya-election-data/master/data/counties.geojson";
@@ -110,13 +110,26 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var CouchDbController = (function () {
-            function CouchDbController($scope) {
+            function CouchDbController($scope, $state, couchDbService) {
                 this.$scope = $scope;
+                this.$state = $state;
+                this.couchDbService = couchDbService;
                 var that = this;
                 that.init();
             }
             CouchDbController.prototype.init = function () {
                 var that = this;
+                that.$scope.couchDbScope = {};
+                that.$scope.couchDbScope.expenses = {};
+                that.loadCouchData();
+            };
+            CouchDbController.prototype.loadCouchData = function () {
+                var that = this;
+                //that.$scope.couchDbScope.expenses = that.couchDbService.getItems();
+                that.couchDbService.getExpenses().done(function (expenses) {
+                    that.$scope.couchDbScope.expenses = expenses;
+                    console.log("Expenses: ", that.$scope.couchDbScope.expenses.rows);
+                });
             };
             return CouchDbController;
         }());
@@ -1017,26 +1030,56 @@ var ThingSpeak;
     var Services;
     (function (Services) {
         var CouchDbService = (function () {
-            function CouchDbService($http) {
+            function CouchDbService($http, httpService) {
                 this.$http = $http;
+                this.httpService = httpService;
                 var that = this;
             }
-            CouchDbService.prototype.get = function (url) {
+            CouchDbService.prototype.getItems = function () {
+                var that = this;
+                that.$http.get(ThingSpeak.Configs.AppConfig.couchDbPath + '/_design/expenses/_view/byName')
+                    .then(function (response) {
+                    return response.data;
+                });
+                return {};
+            };
+            CouchDbService.prototype.getExpenses = function () {
                 var that = this;
                 var deferred = $.Deferred();
-                that.$http({
-                    method: 'GET',
-                    url: url,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                that.httpService.get(ThingSpeak.Configs.AppConfig.couchDbPath + '/_design/expenses/_view/byName')
+                    .done(function (response) {
+                    var expenses = response.data;
+                    deferred.resolve(expenses);
                 })
-                    .then(function (successresponse) {
-                    deferred.resolve(successresponse);
-                }, function (errorResponse) {
-                    deferred.reject(errorResponse);
+                    .fail(function () {
+                    console.log("Failed to get the data from Couch Db");
                 });
                 return deferred;
+            };
+            CouchDbService.prototype.createItem = function (data) {
+                var that = this;
+                var req = {
+                    method: 'PUT',
+                    url: '/portfolioapp/' + data._id,
+                    data: data,
+                };
+                return that.$http(req);
+            };
+            CouchDbService.prototype.getAllItems = function () {
+                var that = this;
+                var req = {
+                    method: 'GET',
+                    url: '/portfolioapp/_design/app/_view/show_all'
+                };
+                return that.$http(req);
+            };
+            CouchDbService.prototype.deleteItem = function (data) {
+                var that = this;
+                var req = {
+                    method: 'DELETE',
+                    url: '/portfolioapp/' + data._id + '?rev=' + data._rev
+                };
+                return that.$http(req);
             };
             return CouchDbService;
         }());
@@ -1159,7 +1202,7 @@ var ThingSpeak;
             ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
             ngFlowRate.service("mapDataService", ["httpService", ThingSpeak.Services.MapDataService]);
             ngFlowRate.service("thingSpeakService", ["httpService", ThingSpeak.Services.ThingSpeakService]);
-            ngFlowRate.service("CouchDbService", ["httpService", ThingSpeak.Services.CouchDbService]);
+            ngFlowRate.service("CouchDbService", ["$http", "httpService", ThingSpeak.Services.CouchDbService]);
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
             ngFlowRate.controller("NavigationController", ["$scope", "$location", ThingSpeak.Controllers.NavigationController]);

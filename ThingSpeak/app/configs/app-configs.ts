@@ -2,7 +2,7 @@
     export class AppConfig {
         public static ApiUrl: string = "https://thingspeak.com/channels/16153/feed.json";
 
-        public static couchDbPath: string = "http://192.168.15.180:5984/";
+        public static couchDbPath: string = "http://192.168.15.180:5984/expenses";
         public static couchDbAdmin: string = "mzitoh";
         public static couchDbPass: string = "suse";
 

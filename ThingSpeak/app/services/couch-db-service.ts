@@ -1,26 +1,66 @@
 ﻿module ThingSpeak.Services {
     export class CouchDbService {
-        constructor(private $http: ng.IHttpService) {
+        constructor(
+            private $http: ng.IHttpService,
+            private httpService: Services.HttpService) {
             var that: CouchDbService = this;
         }
 
-        public get<T>(url: string): JQueryDeferred<T> {
+        public getItems(): Models.couchDbModel{
             var that: CouchDbService = this;
+            that.$http.get(Configs.AppConfig.couchDbPath + '/_design/expenses/_view/byName')
+                .then(function (response) {
+                    return response.data;
+                });
+            return {};
+        }
+
+        public getExpenses(): JQueryDeferred<Models.couchDbModel> {
+            var that: CouchDbService = this;
+
             var deferred = $.Deferred();
-            that.$http({
-                method: 'GET',
-                url: url,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then((successresponse) => {
-                deferred.resolve(successresponse);
-                },
-                (errorResponse) => {
-                    deferred.reject(errorResponse);
+
+            that.httpService.get(Configs.AppConfig.couchDbPath + '/_design/expenses/_view/byName')
+                .done((response: Models.IHttpResponse) => {
+                    var expenses = response.data;
+                    deferred.resolve(expenses);
+                })
+                .fail(() => {
+                    console.log("Failed to get the data from Couch Db");
                 });
             return deferred;
         }
+
+        private createItem(data: any) {
+            var that: CouchDbService = this;
+
+        var req = {
+            method: 'PUT',
+            url: '/portfolioapp/' + data._id,
+            data: data,
+        };
+        return that.$http(req);
+    }
+
+        private getAllItems() {
+            var that: CouchDbService = this;
+
+        var req = {
+            method: 'GET',
+            url: '/portfolioapp/_design/app/_view/show_all'
+        };
+        return that.$http(req);
+    }
+
+        private deleteItem(data: any) {
+            var that: CouchDbService = this;
+
+        var req = {
+            method: 'DELETE',
+            url: '/portfolioapp/' + data._id + '?rev=' + data._rev
+        };
+        return that.$http(req);
+    }
+
     }
 }

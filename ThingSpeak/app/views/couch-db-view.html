@@ -9,4 +9,10 @@
     </div>
 </div>
 
-<h1>Couc Db</h1>
+<h1>Couch Db</h1>
+
+<strong>Item :  Price</strong>
+
+<div style="margin:5px" ng-repeat="row in couchDbScope.expenses.rows">
+    <span>{{row.key}} : {{row.value}}</span>
+</div>

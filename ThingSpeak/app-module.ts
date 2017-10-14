@@ -32,7 +32,7 @@
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);
             ngFlowRate.service("mapDataService", ["httpService", Services.MapDataService]);
             ngFlowRate.service("thingSpeakService", ["httpService", Services.ThingSpeakService]);
-            ngFlowRate.service("CouchDbService", ["httpService", Services.CouchDbService]);
+            ngFlowRate.service("CouchDbService", ["$http","httpService", Services.CouchDbService]);
           
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
