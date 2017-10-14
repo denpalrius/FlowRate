@@ -10,7 +10,7 @@
             var deferred = $.Deferred();
             that.httpService.get(Configs.AppConfig.ApiUrl)
                 .done((response: Models.IHttpResponse) => {
-                   var maraRiverFlowRate = response.data;
+                    var maraRiverFlowRate = response.data;
                     deferred.resolve(maraRiverFlowRate);
                 })
                 .fail((error: Models.IHttpResponse) => {

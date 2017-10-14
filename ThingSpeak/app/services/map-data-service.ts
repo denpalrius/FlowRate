@@ -8,16 +8,15 @@
             var that: MapDataService = this;
            
             var deferred = $.Deferred();
-            that.httpService.get(Configs.AppConfig.mapDataUri)
+            that.httpService.get(Configs.AppConfig.kenyaCountiesUri)
                 .done((response: Models.IHttpResponse) => {
-                    var mapData = response.data;
-                    deferred.resolve(mapData);
+                    var mapDataResponse = response;
+                    deferred.resolve(mapDataResponse);
                 })
                 .fail((error: Models.IHttpResponse) => {
                     console.log("Failed to get the GeoJSON data");
                     deferred.reject(error);
                 });
-
             return deferred;
         }
     }
