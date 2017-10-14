@@ -31,6 +31,7 @@
     <Content Include="app\scripts\app.js" />
     <None Include="app\scripts\cool-style.json" />
     <Content Include="app\scripts\jquery.stickysectionheaders.js" />
+    <Content Include="app\views\couch-db-view.html" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
@@ -136,6 +137,7 @@
     <TypeScriptCompile Include="app-module.ts" />
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
+    <TypeScriptCompile Include="app\controllers\couch-db-controller.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
     <TypeScriptCompile Include="app\controllers\navigation-controller.ts" />
     <TypeScriptCompile Include="app\controllers\map-view-controller.ts" />
@@ -147,6 +149,7 @@
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
+    <TypeScriptCompile Include="app\services\couch-db-service.ts" />
     <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
     <TypeScriptCompile Include="app\services\map-data-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />

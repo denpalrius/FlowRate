@@ -258,36 +258,37 @@
                 }
             };
 
-            that.$scope.homeScope.menuItems = [{
-                "title": "Flow Rate",
-                "color": "#424242",
-                "rotate": 0,
-                "show": 0,
-                "titleColor": "#fff",
-                "icon": { "color": "#fff", "name": "fa fa-line-chart", "size": 20 }
-            }, {
-                "title": "Home",
-                "color": "#303030",
-                "rotate": 0,
-                "show": 0,
-                "titleColor": "#fff",
-                "icon": { "color": "#fff", "name": "fa fa-map", "size": 20 }
-            }, {
-                "title": "About",
-                "color": "#212121",
-                "rotate": 0,
-                "show": 0,
-                "titleColor": "#fff",
-                "icon": { "color": "#fff", "name": "fa fa-info", "size": 25 }
-            }, {
-                "title": "Admin",
-                "color": "#000000",
-                "rotate": 0,
-                "show": 0,
-                "titleColor": "#fff",
-                "icon": { "color": "#fff", "name": "fa fa-sliders", "size": 20 }
-            }];
-        }
+            that.$scope.homeScope.menuItems = [
+                {
+                    "title": "Flow Rate",
+                    "color": "#424242",
+                    "rotate": 0,
+                    "show": 0,
+                    "titleColor": "#fff",
+                    "icon": { "color": "#fff", "name": "fa fa-line-chart", "size": 20 }
+                }, {
+                    "title": "Home",
+                    "color": "#303030",
+                    "rotate": 0,
+                    "show": 0,
+                    "titleColor": "#fff",
+                    "icon": { "color": "#fff", "name": "fa fa-map", "size": 20 }
+                }, {
+                    "title": "Couch Db",
+                    "color": "#212121",
+                    "rotate": 0,
+                    "show": 0,
+                    "titleColor": "#fff",
+                    "icon": { "color": "#fff", "name": "fa fa-info", "size": 25 }
+                }, {
+                    "title": "Admin",
+                    "color": "#000000",
+                    "rotate": 0,
+                    "show": 0,
+                    "titleColor": "#fff",
+                    "icon": { "color": "#fff", "name": "fa fa-sliders", "size": 20 }
+                }];
+            }
 
         private onWingClick(wing: any) {
             var that: HomeController = this;
@@ -327,7 +328,7 @@
                     mapTypeId: google.maps.MapTypeId.HYBRID,
                     zoom: 8,
                     options: {
-                        styles: this.$scope.homeScop.customMapStyle,
+                        styles: this.$scope.homeScope.customMapStyle,
                         streetViewControl: false,
                         mapTypeControl: false,
                         scaleControl: false,
@@ -336,7 +337,7 @@
                     }
             }
 
-            var markers = [];
+
 
             that.mapDataService.loadMapData()
                 .done((response: Models.IHttpResponse) => {
@@ -368,7 +369,7 @@
                         //thisMap.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/google.json');
                         var nyc = "https://data.cityofnewyork.us/resource/fhrw-4uyv.geojson";
                         thisMap.data.loadGeoJson(nyc, null, function (features) {
-                            console.log("features: ", features);
+                            //console.log("features: ", features);
 
                         });
 
@@ -397,8 +398,8 @@
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         var geolocate = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                        console.log("geolocate: ", geolocate);
-                        console.log("position: ", position);
+                        //console.log("geolocate: ", geolocate);
+                        //console.log("position: ", position);
 
                         return geolocate;
                     },

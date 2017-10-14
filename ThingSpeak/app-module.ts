@@ -32,13 +32,15 @@
             ngFlowRate.service("httpService", ["$http", Services.HttpService]);
             ngFlowRate.service("mapDataService", ["httpService", Services.MapDataService]);
             ngFlowRate.service("thingSpeakService", ["httpService", Services.ThingSpeakService]);
+            ngFlowRate.service("CouchDbService", ["httpService", Services.CouchDbService]);
           
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
+            ngFlowRate.controller("NavigationController", ["$scope", "$location", Controllers.NavigationController]);
             ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state","mapDataService", "NgMap", Controllers.HomeController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService","thingSpeakService", "usSpinnerService", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
-            //ngFlowRate.controller("MapViewController", ["$scope", "$state","nemSimpleLogger", Controllers.MapViewController]);
+            ngFlowRate.controller("CouchDbController", ["$scope", "$state","CouchDbService", Controllers.CouchDbController]);
 
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(() => {

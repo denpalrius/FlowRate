@@ -24,6 +24,12 @@
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
+                .state('Couch Db', {
+                    url: '/couchdb',
+                    controller: 'CouchDbController',
+                    controllerAs: 'CouchCtrl',
+                    templateUrl: 'app/views/couch-db-view.html'
+                })
                 .state('Flow Rate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
@@ -36,7 +42,6 @@
                     controllerAs: 'AdminCtrl',
                     templateUrl: 'app/views/admin-view.html'
                 });
-
         }
     }
 }
