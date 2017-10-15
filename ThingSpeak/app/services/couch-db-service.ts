@@ -31,6 +31,39 @@
             return deferred;
         }
 
+        public getPouchExpenses(): Models.Row[] {
+            var that: CouchDbService = this;
+
+            var docs: Models.Row[] = [];
+
+            // Create a PouchDB instance
+            var db = new PouchDB("expenses");
+            var doc = {
+
+                "_id":new Date().toISOString(),
+                "name": "Mittens",
+                "occupation": "kitten",
+                "age": 3,
+                "hobbies": [
+                    "playing with balls of yarn",
+                    "chasing laser pointers",
+                    "lookin' hella cute"
+                ]
+            };
+            db.put(doc);
+
+            db.allDocs({ include_docs: true })
+                .then(function (dc: Models.couchDbModel) {
+                    console.log("Pouch Object: ", dc.rows);
+                    docs = dc.rows;
+                })
+                .catch(function (err: any) {
+                    console.log(err);
+                });
+
+            return docs;
+        }
+
         private createItem(data: any) {
             var that: CouchDbService = this;
 

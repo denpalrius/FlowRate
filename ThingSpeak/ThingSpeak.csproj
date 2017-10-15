@@ -34,6 +34,7 @@
     <Content Include="app\views\couch-db-view.html" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
+    <Content Include="app\views\dmm\sales-form.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
     <Content Include="app\views\templates\ds-sorting-algorithms.html" />
@@ -129,6 +130,7 @@
     <Content Include="Scripts\lodash.min.js" />
     <Content Include="Scripts\ng-map.js" />
     <Content Include="Scripts\ng-map.min.js" />
+    <Content Include="Scripts\pouchdb-6.3.4.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
     <Content Include="web.config" />
@@ -147,6 +149,7 @@
     <TypeScriptCompile Include="app\directives\ds-sorting-algorithms.ts" />
     <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
+    <TypeScriptCompile Include="app\models\dmm-model.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
     <TypeScriptCompile Include="app\services\couch-db-service.ts" />
@@ -174,6 +177,21 @@
     <TypeScriptCompile Include="Scripts\typings\googlemaps\google.maps.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\ngmap\ngmap.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-fruitdown\pouchdb-adapter-fruitdown.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-http\pouchdb-adapter-http.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-idb\pouchdb-adapter-idb.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-leveldb\pouchdb-adapter-leveldb.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-localstorage\pouchdb-adapter-localstorage.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-memory\pouchdb-adapter-memory.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-node-websql\pouchdb-adapter-node-websql.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-adapter-websql\pouchdb-adapter-websql.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-browser\pouchdb-browser.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-core\pouchdb-core.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-http\pouchdb-http.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-mapreduce\pouchdb-mapreduce.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-node\pouchdb-node.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb-replication\pouchdb-replication.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\pouchdb\pouchdb.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

@@ -77,3 +77,26 @@ nav {
     width:20%;
     box-shadow: 0px 0px 3px 0px rgba(240, 232, 232, 0.59);
 }
+
+.no-left-padding{
+    padding-left:0px;
+}
+.no-right-padding{
+    padding-right:0px;
+}
+
+.btn-lg{
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.sales-header{
+    font-size: x-large;
+    font-weight: 700;
+}
+
+.date-header{
+    float:right; 
+    clear:left;
+    color:gray;
+}

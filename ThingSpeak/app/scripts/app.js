@@ -6,9 +6,7 @@ var ThingSpeak;
             function AppConfig() {
             }
             AppConfig.ApiUrl = "https://thingspeak.com/channels/16153/feed.json";
-            AppConfig.couchDbPath = "http://192.168.15.180:5984/expenses";
-            AppConfig.couchDbAdmin = "mzitoh";
-            AppConfig.couchDbPass = "suse";
+            AppConfig.couchDbPath = "http://192.168.15.180:5984/dmm-kenya";
             AppConfig.kenyaCountiesUri = "https://raw.githubusercontent.com/mikelmaron/kenya-election-data/master/data/counties.geojson";
             AppConfig.mapDataUri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp";
             AppConfig.googleMapsKey = "AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
@@ -120,16 +118,36 @@ var ThingSpeak;
             CouchDbController.prototype.init = function () {
                 var that = this;
                 that.$scope.couchDbScope = {};
+                that.$scope.couchDbScope.dateToday = "";
+                that.$scope.couchDbScope.salesFormData = {};
+                that.$scope.couchDbScope.dateToday = that.getDate();
+                that.submitSalesData();
                 that.$scope.couchDbScope.expenses = {};
-                that.loadCouchData();
+                //that.loadCouchData();
+            };
+            CouchDbController.prototype.getDate = function () {
+                var dateOptions = {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                };
+                return new Date().toLocaleTimeString("en-us", dateOptions);
+            };
+            CouchDbController.prototype.submitSalesData = function () {
+                var that = this;
             };
             CouchDbController.prototype.loadCouchData = function () {
                 var that = this;
                 //that.$scope.couchDbScope.expenses = that.couchDbService.getItems();
-                that.couchDbService.getExpenses().done(function (expenses) {
-                    that.$scope.couchDbScope.expenses = expenses;
-                    console.log("Expenses: ", that.$scope.couchDbScope.expenses.rows);
-                });
+                //that.couchDbService.getExpenses().done((expenses) => {
+                //    that.$scope.couchDbScope.expenses = expenses;
+                //    console.log("Expenses: ", that.$scope.couchDbScope.expenses.rows);
+                //});
+                //that.$scope.couchDbScope.expenses.rows = that.couchDbService.getPouchExpenses();
+                //console.log("Expenses: ", that.$scope.couchDbScope.expenses.rows);
             };
             return CouchDbController;
         }());
@@ -1055,6 +1073,33 @@ var ThingSpeak;
                     console.log("Failed to get the data from Couch Db");
                 });
                 return deferred;
+            };
+            CouchDbService.prototype.getPouchExpenses = function () {
+                var that = this;
+                var docs = [];
+                // Create a PouchDB instance
+                var db = new PouchDB("expenses");
+                var doc = {
+                    "_id": new Date().toISOString(),
+                    "name": "Mittens",
+                    "occupation": "kitten",
+                    "age": 3,
+                    "hobbies": [
+                        "playing with balls of yarn",
+                        "chasing laser pointers",
+                        "lookin' hella cute"
+                    ]
+                };
+                db.put(doc);
+                db.allDocs({ include_docs: true })
+                    .then(function (dc) {
+                    console.log("Pouch Object: ", dc.rows);
+                    docs = dc.rows;
+                })
+                    .catch(function (err) {
+                    console.log(err);
+                });
+                return docs;
             };
             CouchDbService.prototype.createItem = function (data) {
                 var that = this;
