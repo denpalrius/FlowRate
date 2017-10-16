@@ -2,8 +2,8 @@
     export class AppConfig {
         public static ApiUrl: string = "https://thingspeak.com/channels/16153/feed.json";
 
-        public static couchDbPath: string = "http://192.168.15.180:5984/dmm-kenya";
-
+        //public static couchDbPath: string = "http://mzitoh:suse@192.168.15.180:5984/dmm-kenya";
+        public static couchDbPath: string = "http://mzitoh:suse@localhost:5984/dmm-kenya";
 
         public static kenyaCountiesUri: string = "https://raw.githubusercontent.com/mikelmaron/kenya-election-data/master/data/counties.geojson";
         public static mapDataUri: string = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp";

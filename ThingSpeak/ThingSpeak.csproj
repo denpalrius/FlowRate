@@ -34,6 +34,7 @@
     <Content Include="app\views\couch-db-view.html" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
+    <Content Include="app\views\dmm\order-form.html" />
     <Content Include="app\views\dmm\sales-form.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
@@ -137,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app-module.ts" />
+    <TypeScriptCompile Include="app\configs\theme-config.ts" />
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
     <TypeScriptCompile Include="app\controllers\couch-db-controller.ts" />
@@ -149,6 +151,7 @@
     <TypeScriptCompile Include="app\directives\ds-sorting-algorithms.ts" />
     <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
+    <TypeScriptCompile Include="app\helper\guid-helper.ts" />
     <TypeScriptCompile Include="app\models\dmm-model.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
@@ -162,6 +165,9 @@
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />
     <None Include="Scripts\typings\angular-resource\index.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\angular-material\angular-material-0.8.3.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\angular-material\angular-material-0.9.0.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\angular-material\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-sanitize\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-spinner\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-router.d.ts" />

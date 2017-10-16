@@ -1,11 +1,114 @@
 ﻿module ThingSpeak.Services {
     export class CouchDbService {
-        constructor(
-            private $http: ng.IHttpService,
-            private httpService: Services.HttpService) {
+
+        db: any = {};
+
+        constructor( private $http: ng.IHttpService, private httpService: Services.HttpService) {
+
             var that: CouchDbService = this;
+
+            that.db = new PouchDB("dmm-kenya");
+
+            that.SyncDb();
+        }
+        
+        private  SyncDb() {
+            var that: CouchDbService = this;
+
+            //Update online Db
+            that.db.replicate.to(Configs.AppConfig.couchDbPath)
+                .then(function (result: any) {
+                    console.log("Comletion Message: ", result);
+                })
+                .catch(function (err: any) {
+                    console.log("Sync Error: ", err);
+                });
+
+            //Update offline Db
+            that.db.replicate.from(Configs.AppConfig.couchDbPath)
+                .then(function (result: any) {
+                    console.log("Comletion Message: ", result);
+                })
+                .catch(function (err: any) {
+                    console.log("Sync Error: ", err);
+                });
         }
 
+        public loadSalesData(): Models.SalesForm[] {
+            var that: CouchDbService = this;
+
+            var salesData: Models.SalesForm[] = [];
+            var salesDocs: Models.Doc[] = [];
+
+            that.db.allDocs({
+                include_docs: true,
+                attachments: true
+            }).then(function (response: Models.PuchDbObject) {
+                var rows = response.rows;
+
+                rows.forEach((row: Models.Row) => {
+                    salesDocs.push(row.doc);
+                    salesData.push(row.doc.salesData);
+                });
+
+                console.log("Sales Data: ", salesData);
+                console.log("Sales Documents: ", salesDocs);
+                return salesData;
+            })
+            .catch(function (err: any) {
+                console.log(err);
+            });
+            return [];
+        }
+
+        public addSalesData(salesData: Models.SalesForm) {
+            var that: CouchDbService = this;
+
+            var newGuid = Helpers.GuidHelper.getNewGUIDString();
+            var newSalesDoc: Models.Doc = {
+                salesData,
+                _id: newGuid
+            };
+            that.db.put(newSalesDoc)
+                .then(function () {
+                    console.log("Doc saved successfully");
+                }).catch(function (err: any) {
+                    console.log("Something happened: ", err);
+                });
+        }
+
+        public submitOrderData(salesData: Models.SalesForm) {
+            var that: CouchDbService = this;
+
+            var newGuid = Helpers.GuidHelper.getNewGUIDString();
+            var newSalesDoc: Models.Doc = {
+                salesData,
+                _id: newGuid
+            };
+            that.db.put(newSalesDoc)
+                .then(function () {
+                    console.log("Doc saved successfully");
+                }).catch(function (err: any) {
+                    console.log("Something happened: ", err);
+                });
+        }
+
+        public updateSalesData(salesDoc: Models.Doc) {
+            var that: CouchDbService = this;
+            that.db.get(salesDoc).then(function (doc:any) {
+                    doc.stuff = "Stuff";
+                    return that.db.put(doc);
+                }).then(function () {
+                    return that.db.get(salesDoc);
+                }).then(function (doc: any) {
+                    console.log(doc);
+                }).catch(function (err: any) {
+                    console.log("Something happened: ", err);
+                });;
+        }
+
+
+        //CouchDb stuff using $resource
         public getItems(): Models.couchDbModel{
             var that: CouchDbService = this;
             that.$http.get(Configs.AppConfig.couchDbPath + '/_design/expenses/_view/byName')
@@ -29,38 +132,6 @@
                     console.log("Failed to get the data from Couch Db");
                 });
             return deferred;
-        }
-
-        public getPouchExpenses(): Models.Row[] {
-            var that: CouchDbService = this;
-
-            var docs: Models.Row[] = [];
-
-            // Create a PouchDB instance
-            var db = new PouchDB("expenses");
-            var doc = {
-                "_id":new Date().toISOString(),
-                "name": "Mittens",
-                "occupation": "kitten",
-                "age": 3,
-                "hobbies": [
-                    "playing with balls of yarn",
-                    "chasing laser pointers",
-                    "lookin' hella cute"
-                ]
-            };
-            db.put(doc);
-
-            db.allDocs({ include_docs: true })
-                .then(function (dc: Models.couchDbModel) {
-                    console.log("Pouch Object: ", dc.rows);
-                    docs = dc.rows;
-                })
-                .catch(function (err: any) {
-                    console.log(err);
-                });
-
-            return docs;
         }
 
         private createItem(data: any) {

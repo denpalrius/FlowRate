@@ -1,12 +1,28 @@
-﻿<div class="container">
+﻿<!--<nav class="navbar navbar-toggleable-md navbar-inverse">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">DMM KEnya</a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="#">Features</a>
+            <a class="nav-item nav-link" href="#">Pricing</a>
+            <a class="nav-item nav-link disabled" href="#">Disabled</a>
+        </div>
+    </div>
+</nav>-->
+<br />
+<br />
+<br />
 
+<div class="container">
 
         <span class="sales-header">Sales Report Form</span>
-        <span class="date-header">Date: {{couchDbScope.salesFormData.dateToday}}</span>
+        <span class="date-header">Date: {{couchDbScope.salesFormData.date}}</span>
 
 
-    <hr />
-    <div>
+    <div ng-hide="false">
         <form>
             <div class="form-row">
                 <div class="form-group col-md-6 no-left-padding">
@@ -25,7 +41,7 @@
                 </div>
                 <div class="form-group col-md-6 no-right-padding">
                     <label for="phoneNumber" class="col-form-label">Phone number</label>
-                    <input type="tel" class="form-control" id="phoneNumber" ng-model="couchDbScope.salesFormData.phoneNumber" placeholder="Phone number">
+                    <input type="text" class="form-control" id="phoneNumber" ng-model="couchDbScope.salesFormData.phoneNumber" placeholder="Phone number">
                 </div>
             </div>
             <div class="form-row">
@@ -70,11 +86,11 @@
             <div class="form-row">
                 <div class="form-group col-md-6 no-left-padding">
                     <label for="gelCharges" class="col-form-label">Charges for gels</label>
-                    <input type="number" class="form-control" id="gelCharges" ng-model="couchDbScope.salesFormData.gelCharges" placeholder="How much do you charge for gels?">
+                    <input type="text" class="form-control" id="gelCharges" ng-model="couchDbScope.salesFormData.gelCharges" placeholder="How much do you charge for gels?">
                 </div>
                 <div class="form-group col-md-6 no-right-padding">
                     <label for="gelMarketPrice" class="col-form-label">Market price for gels</label>
-                    <input type="number" class="form-control" id="gelMarketPrice" ng-model="couchDbScope.salesFormData.gelMarketPrice" placeholder="What is the price of gels in the market?">
+                    <input type="text" class="form-control" id="gelMarketPrice" ng-model="couchDbScope.salesFormData.gelMarketPrice" placeholder="What is the price of gels in the market?">
                 </div>
             </div>
             <div class="form-group">
@@ -87,7 +103,7 @@
             </div>
             <div class="form-group">
                 <label for="machineInterest" class="col-form-label">When would you like us to have a demo of our machine?</label>
-                <textarea class="form-control" id="machineInterest" rows="3" ng-model="couchDbScope.salesFormData.salesFormData.machineInterest" placeholder="If interested in the machine when would you like us to have demonstrations?"></textarea>
+                <textarea class="form-control" id="machineInterest" rows="3" ng-model="couchDbScope.salesFormData.machineInterest" placeholder="If interested in the machine when would you like us to have demonstrations?"></textarea>
             </div>
             <br />
             <button ng-click="CouchCtrl.submitSalesData()" type="submit" class="btn btn-primary btn-lg">Save</button>

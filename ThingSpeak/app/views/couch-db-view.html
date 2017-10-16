@@ -1,20 +1,3 @@
-﻿<div ng-controller="HomeController as HomeCtrl">
-    <div drag-circular-menu
-         angle="30"
-         placement="topRight"
-         button-config="homeScope.menuConfig"
-         menu-items="homeScope.menuItems"
-         default-open="false"
-         onwing-click="HomeCtrl.onWingClick(wing)">
-    </div>
-</div>
+﻿<div ng-include="'/app/views/dmm/order-form.html'"></div>
 
-<!--<h1>Couch Db</h1>
-
-<strong>Item :  Price</strong>
-
-<div style="margin:5px" ng-repeat="row in couchDbScope.expenses.rows">
-    <span>{{row.key}} : {{row.value}}</span>
-</div>-->
-
-<div ng-include="'/app/views/dmm/sales-form.html'"></div>
+<!--<div ng-include="'/app/views/dmm/sales-form.html'"></div>-->

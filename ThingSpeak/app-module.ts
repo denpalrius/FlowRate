@@ -20,6 +20,8 @@
 
             // configs
             ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", Configs.RouteConfig]);
+            ngFlowRate.config(["$mdThemingProvider","$mdIconProvider", Configs.ThemeConfig]);
+            ngFlowRate.config([Configs.AppConfig]);
 
             //Directives
             ngFlowRate.directive("tsStickyHeader", Directives.tsStickyHeader);

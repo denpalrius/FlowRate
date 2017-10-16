@@ -1,17 +1,17 @@
 ﻿module ThingSpeak.Models {
     
     export interface SalesForm {
-        id?: string;
-        date?: string;
+        dateCreated?: string;
+        companyCode?: string;
         companyName?: string;
         location?: string;
-        phoneNumber?: number;
+        phoneNumber?: string;
         contactPerson?: string;
         salesPerson?: string;
         salonOwner?: string;
         brancesNumber?: number;
         salonsEmployees?: number;
-        dayCustomers?: string;
+        dayCustomers?: number;
         weekdayCustomers?: number;
         weekendCustomers?: number;
         gelCharges?: string;
@@ -22,5 +22,27 @@
         customersSignature?: string;
         salesPersonSignature?: string;
         managersSignature?: string;
+    }
+
+    export interface OrderForm {
+        companyData?: SalesForm;
+        orderDate?: string;
+        modeOfPayment?: PaymentMode;
+        orderItems?: OrderItem[];
+        lastAggregateTotalPrice?: string;
+    }
+
+    export interface OrderItem{
+        ItemNumber?: string;
+        description?: string;
+        unitPrice?: string;
+        quantity?: string;
+        totalPrice?: string;
+    }
+
+    export enum PaymentMode {
+        cash,
+        cheque,
+        other
     }
 }
