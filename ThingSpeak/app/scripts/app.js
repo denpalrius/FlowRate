@@ -118,14 +118,13 @@ var ThingSpeak;
             CouchDbController.prototype.init = function () {
                 var that = this;
                 that.$scope.couchDbScope = {};
-                that.$scope.couchDbScope.dateToday = "";
                 that.$scope.couchDbScope.salesFormData = {};
-                that.$scope.couchDbScope.dateToday = that.getDate();
-                that.submitSalesData();
                 that.$scope.couchDbScope.expenses = {};
-                //that.loadCouchData();
+                that.getDate();
+                //that.loadSalesData();
             };
             CouchDbController.prototype.getDate = function () {
+                var that = this;
                 var dateOptions = {
                     weekday: "long",
                     year: "numeric",
@@ -134,10 +133,52 @@ var ThingSpeak;
                     hour: "2-digit",
                     minute: "2-digit"
                 };
-                return new Date().toLocaleTimeString("en-us", dateOptions);
+                var today = new Date().toLocaleTimeString("en-us", dateOptions);
+                that.$scope.couchDbScope.salesFormData.date = today;
+            };
+            CouchDbController.prototype.loadSalesData = function () {
+                var that = this;
+                var salesData = [];
+                var db = new PouchDB("dmm-kenya");
+                db.allDocs({ include_docs: true })
+                    .then(function (sales) {
+                    salesData = sales.rows;
+                    console.log("Sales Data: ", salesData[0].doc);
+                })
+                    .catch(function (err) {
+                    console.log(err);
+                });
             };
             CouchDbController.prototype.submitSalesData = function () {
                 var that = this;
+                var dt = that.$scope.couchDbScope.salesFormData;
+                //db.put(dt);
+                var db = new PouchDB("dmm-kenya");
+                var newSalesForm = {
+                    "_id": new Date().toISOString(),
+                    "companyName": "st",
+                    "location": "st",
+                    "contactPerson": "st",
+                    "phoneNumber": 123,
+                    "salonOwner": "st",
+                    "salesPerson": "st",
+                    "brancesNumber": 123,
+                    "salonsEmployees": 123,
+                    "dayCustomers": "st",
+                    "weekdayCustomers": 123,
+                    "weekendCustomers": 123,
+                    "gelCharges": "st",
+                    "gelMarketPrice": "st",
+                    "machineWorth": "st",
+                    "machineBenefit": "st",
+                    "machineInterest": "st",
+                    "customersSignature": "st",
+                    "salesPersonSignature": "st",
+                    "managersSignature": "st"
+                };
+                //db.put(newSalesForm);
+                //add then
+                //add catch
             };
             CouchDbController.prototype.loadCouchData = function () {
                 var that = this;

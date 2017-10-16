@@ -39,7 +39,6 @@
             // Create a PouchDB instance
             var db = new PouchDB("expenses");
             var doc = {
-
                 "_id":new Date().toISOString(),
                 "name": "Mittens",
                 "occupation": "kitten",

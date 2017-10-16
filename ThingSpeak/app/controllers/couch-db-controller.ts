@@ -3,7 +3,7 @@
 
     interface ICurrentScope {
         dateToday?: string;
-        salesFormData?: Models.couchDbModel;
+        salesFormData?: Models.SalesForm;
 
         expenses?: Models.couchDbModel;
     }
@@ -24,20 +24,19 @@
 
         private init() {
             var that: CouchDbController = this;
+
             that.$scope.couchDbScope = {};
-            that.$scope.couchDbScope.dateToday = "";
             that.$scope.couchDbScope.salesFormData = {};
-
-
-            that.$scope.couchDbScope.dateToday = that.getDate();
-            that.submitSalesData();
-
             that.$scope.couchDbScope.expenses = {};
 
-            //that.loadCouchData();
+            that.getDate();
+
+            //that.loadSalesData();
         }
 
-        private getDate(): string {
+        private getDate() {
+            var that: CouchDbController = this;
+
             var dateOptions = {
                 weekday: "long",
                 year: "numeric",
@@ -47,11 +46,61 @@
                 minute: "2-digit"
             }; 
 
-           return new Date().toLocaleTimeString("en-us", dateOptions);
+            var today = new Date().toLocaleTimeString("en-us", dateOptions);
+            that.$scope.couchDbScope.salesFormData.date = today;
+        }
+
+        public loadSalesData() {
+            var that: CouchDbController = this;
+
+            var salesData:any = [];
+            var db = new PouchDB("dmm-kenya");
+
+            db.allDocs({ include_docs: true })
+                .then(function (sales: any) {
+                    salesData = sales.rows;
+
+                    console.log("Sales Data: ", salesData[0].doc);
+
+                })
+                .catch(function (err: any) {
+                    console.log(err);
+                });
         }
 
         private submitSalesData() {
             var that: CouchDbController = this;
+
+            var dt = that.$scope.couchDbScope.salesFormData;
+            //db.put(dt);
+
+            var db = new PouchDB("dmm-kenya");
+
+            var newSalesForm = {
+                "_id": new Date().toISOString(),
+                "companyName": "st",
+                "location": "st",
+                "contactPerson": "st",
+                "phoneNumber": 123,
+                "salonOwner": "st",
+                "salesPerson": "st",
+                "brancesNumber": 123,
+                "salonsEmployees": 123,
+                "dayCustomers": "st",
+                "weekdayCustomers": 123,
+                "weekendCustomers": 123,
+                "gelCharges": "st",
+                "gelMarketPrice": "st",
+                "machineWorth": "st",
+                "machineBenefit": "st",
+                "machineInterest": "st",
+                "customersSignature": "st",
+                "salesPersonSignature": "st",
+                "managersSignature": "st"
+            };
+            //db.put(newSalesForm);
+            //add then
+            //add catch
 
         }
         private loadCouchData() {
