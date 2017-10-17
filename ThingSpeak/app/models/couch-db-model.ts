@@ -1,8 +1,4 @@
 ﻿module ThingSpeak.Models {
-    // To parse this data:
-    //
-    //   import { couchDbModel } from "./GettingStarted;
-    //   let value: GettingStarted = JSON.parse(json);
 
     export interface couchDbModel {
         offset?: number;
@@ -11,36 +7,43 @@
     }
 
     export interface PuchDbObject {
-        rows: Row[];
-        offset: number;
-        total_rows: number;
+        rows?: Row[];
+        offset?: number;
+        total_rows?: number;
     }
 
     export interface Row {
-        id: string;
-        doc: Doc;
-        key: string;
-        value: Value;
+        id?: string;
+        doc?: SalesDoc;
+        key?: string;
+        value?: Value;
     }
 
-    export interface Doc {
-        _id: string;
+    export interface SalesDoc {
+        _id?: string;
         _attachments?: Attachments;
         _rev?: string;
-        salesData: SalesForm;
+        salesData?: SalesForm;
+    }
+
+    export interface OrderDoc {
+        _id?: string;
+        _attachments?: Attachments;
+        _rev?: string;
+        orderForm?: OrderForm;
     }
 
     export interface Attachments {
-        "attachment/its-id": AttachmentItsId;
+        attachmentId?: AttachmentItsId;
     }
 
     export interface AttachmentItsId {
-        data: string;
-        content_type: string;
-        digest: string;
+        data?: string;
+        content_type?: string;
+        digest?: string;
     }
 
     export interface Value {
-        rev: string;
+        rev?: string;
     }
 }

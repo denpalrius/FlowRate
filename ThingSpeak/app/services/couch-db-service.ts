@@ -18,7 +18,7 @@
             //Update online Db
             that.db.replicate.to(Configs.AppConfig.couchDbPath)
                 .then(function (result: any) {
-                    console.log("Comletion Message: ", result);
+                    //console.log("Comletion Message: ", result);
                 })
                 .catch(function (err: any) {
                     console.log("Sync Error: ", err);
@@ -27,7 +27,7 @@
             //Update offline Db
             that.db.replicate.from(Configs.AppConfig.couchDbPath)
                 .then(function (result: any) {
-                    console.log("Comletion Message: ", result);
+                    //console.log("Comletion Message: ", result);
                 })
                 .catch(function (err: any) {
                     console.log("Sync Error: ", err);
@@ -38,7 +38,6 @@
             var that: CouchDbService = this;
 
             var salesData: Models.SalesForm[] = [];
-            var salesDocs: Models.Doc[] = [];
 
             that.db.allDocs({
                 include_docs: true,
@@ -47,25 +46,48 @@
                 var rows = response.rows;
 
                 rows.forEach((row: Models.Row) => {
-                    salesDocs.push(row.doc);
                     salesData.push(row.doc.salesData);
                 });
 
-                console.log("Sales Data: ", salesData);
-                console.log("Sales Documents: ", salesDocs);
-                return salesData;
+                //console.log("Sales Data: ", salesData);
             })
             .catch(function (err: any) {
-                console.log(err);
+                console.log("Error: ", err);
             });
-            return [];
+            return salesData
+        }
+
+        public loadSalesDocs(): Models.SalesDoc[] {
+            var that: CouchDbService = this;
+
+            var salesDocs: Models.SalesDoc[] = [];
+
+            that.db.allDocs({
+                include_docs: true,
+                attachments: true
+            }).then(function (response: Models.PuchDbObject) {
+                var rows = response.rows;
+
+                rows.forEach((row: Models.Row) => {
+                    if (row.doc.salesData){
+                        salesDocs.push(row.doc);
+                    }
+                });
+
+                return salesDocs;
+                //console.log("Sales Documents: ", salesDocs);
+                })
+                .catch(function (err: any) {
+                    console.log("Error: ",err);
+                });
+            return salesDocs;
         }
 
         public addSalesData(salesData: Models.SalesForm) {
             var that: CouchDbService = this;
 
             var newGuid = Helpers.GuidHelper.getNewGUIDString();
-            var newSalesDoc: Models.Doc = {
+            var newSalesDoc: Models.SalesDoc = {
                 salesData,
                 _id: newGuid
             };
@@ -77,23 +99,23 @@
                 });
         }
 
-        public submitOrderData(salesData: Models.SalesForm) {
+        public submitOrderData(orderForm: Models.OrderForm) {
             var that: CouchDbService = this;
 
             var newGuid = Helpers.GuidHelper.getNewGUIDString();
-            var newSalesDoc: Models.Doc = {
-                salesData,
-                _id: newGuid
+            var newOrderDoc: Models.OrderDoc = {
+                _id: newGuid,
+                orderForm
             };
-            that.db.put(newSalesDoc)
+            that.db.put(newOrderDoc)
                 .then(function () {
-                    console.log("Doc saved successfully");
+                    console.log("Order doc saved successfully");
                 }).catch(function (err: any) {
                     console.log("Something happened: ", err);
                 });
         }
 
-        public updateSalesData(salesDoc: Models.Doc) {
+        public updateSalesData(salesDoc: Models.SalesDoc) {
             var that: CouchDbService = this;
             that.db.get(salesDoc).then(function (doc:any) {
                     doc.stuff = "Stuff";
@@ -106,7 +128,6 @@
                     console.log("Something happened: ", err);
                 });;
         }
-
 
         //CouchDb stuff using $resource
         public getItems(): Models.couchDbModel{

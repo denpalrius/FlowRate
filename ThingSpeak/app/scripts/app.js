@@ -134,10 +134,11 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var CouchDbController = (function () {
-            function CouchDbController($scope, $state, couchDbService) {
+            function CouchDbController($scope, $state, couchDbService, $timeout) {
                 this.$scope = $scope;
                 this.$state = $state;
                 this.couchDbService = couchDbService;
+                this.$timeout = $timeout;
                 var that = this;
                 that.init();
             }
@@ -147,8 +148,12 @@ var ThingSpeak;
                 that.$scope.couchDbScope.salesFormData = {};
                 that.$scope.couchDbScope.orderFormData = {};
                 that.$scope.couchDbScope.newOrderItem = {};
+                that.$scope.couchDbScope.allSalesDocs = [];
+                that.$scope.couchDbScope.selectedSalesDoc = {};
+                that.$scope.couchDbScope.searchTerm = "";
                 that.$scope.couchDbScope.salesFormData.dateCreated = that.setDate();
                 that.$scope.couchDbScope.orderFormData.orderDate = that.setDate();
+                that.$scope.couchDbScope.orderFormData.modeOfPayment = ThingSpeak.Models.PaymentMode.cash;
                 var dummySalesData = {
                     brancesNumber: 3,
                     companyName: "Ukulima coop",
@@ -168,7 +173,7 @@ var ThingSpeak;
                     weekdayCustomers: 45,
                     weekendCustomers: 23,
                 };
-                that.$scope.couchDbScope.salesFormData = dummySalesData;
+                //that.$scope.couchDbScope.salesFormData = dummySalesData;
                 var dummyOrderData = {
                     orderDate: that.setDate(),
                     companyData: dummySalesData,
@@ -194,15 +199,30 @@ var ThingSpeak;
                             totalPrice: ""
                         }]
                 };
-                that.$scope.couchDbScope.orderFormData = dummyOrderData;
+                //that.$scope.couchDbScope.orderFormData = dummyOrderData;
+                that.$scope.couchDbScope.allSalesDocs = that.loadAllSalesData();
             };
-            CouchDbController.prototype.setTotalItemPrice = function (orderData) {
-                if (orderData) {
-                    orderData.orderItems.forEach(function (item) {
-                        if (isNaN(parseFloat(item.unitPrice)) && isNaN(parseFloat(item.quantity))) {
-                            item.totalPrice = (parseFloat(item.unitPrice) * parseFloat(item.quantity)).toString();
-                        }
-                    });
+            CouchDbController.prototype.changeState = function (state) {
+                var that = this;
+                //that.$state.go(state);
+                console.log("state: ", state);
+            };
+            CouchDbController.prototype.loadAllSalesData = function () {
+                var that = this;
+                var salesDoc = that.couchDbService.loadSalesDocs();
+                console.log("salesDoc: ", salesDoc);
+                if (salesDoc.length > 0) {
+                    that.$scope.couchDbScope.selectedSalesDoc = salesDoc[0];
+                }
+                return salesDoc;
+            };
+            CouchDbController.prototype.setTotalItemPrice = function (orderItem) {
+                if (orderItem) {
+                    var unitPrice = parseFloat(orderItem.unitPrice);
+                    var quantity = parseFloat(orderItem.quantity);
+                    if (!isNaN(unitPrice) && !isNaN(quantity)) {
+                        orderItem.totalPrice = (unitPrice * quantity).toString();
+                    }
                 }
             };
             CouchDbController.prototype.setDate = function () {
@@ -246,27 +266,36 @@ var ThingSpeak;
                     salesFormData.companyCode = companyCode;
                 }
             };
-            CouchDbController.prototype.changePayment = function () {
-                var that = this;
-                console.log("Choosen option: ", that.$scope.couchDbScope.orderFormData.modeOfPayment);
-            };
             CouchDbController.prototype.submitSalesData = function () {
                 var that = this;
                 that.generateCompanyCode(that.$scope.couchDbScope.salesFormData);
                 that.couchDbService.addSalesData(that.$scope.couchDbScope.salesFormData);
                 that.$scope.couchDbScope.salesFormData = {};
             };
-            CouchDbController.prototype.submitOrderForm = function () {
-                var that = this;
-                that.setTotalItemPrice(that.$scope.couchDbScope.orderFormData);
-                that.couchDbService.submitOrderData(that.$scope.couchDbScope.orderFormData);
-                that.$scope.couchDbScope.orderFormData = {};
-            };
             CouchDbController.prototype.addNewOrderItem = function () {
                 var that = this;
                 if (that.$scope.couchDbScope.newOrderItem && that.$scope.couchDbScope.orderFormData) {
+                    that.setTotalItemPrice(that.$scope.couchDbScope.newOrderItem);
                     that.$scope.couchDbScope.orderFormData.orderItems.push(that.$scope.couchDbScope.newOrderItem);
+                    that.$scope.couchDbScope.newOrderItem = {};
                 }
+            };
+            CouchDbController.prototype.submitOrderForm = function () {
+                var that = this;
+                that.$scope.couchDbScope.orderFormData.orderItems.map(function (item) {
+                    if (!item.totalPrice) {
+                        that.setTotalItemPrice(item);
+                    }
+                });
+                that.couchDbService.submitOrderData(that.$scope.couchDbScope.orderFormData);
+                that.$scope.couchDbScope.orderFormData = {};
+            };
+            CouchDbController.prototype.selectOrderCompany = function (doc) {
+                var that = this;
+                that.$scope.couchDbScope.selectedSalesDoc = doc;
+                console.log("Selected doc: ", doc.salesData);
+                console.log("SearchTerm: ", that.$scope.couchDbScope.searchTerm);
+                that.$scope.couchDbScope.searchTerm = "";
             };
             return CouchDbController;
         }());
@@ -1227,7 +1256,7 @@ var ThingSpeak;
                 //Update online Db
                 that.db.replicate.to(ThingSpeak.Configs.AppConfig.couchDbPath)
                     .then(function (result) {
-                    console.log("Comletion Message: ", result);
+                    //console.log("Comletion Message: ", result);
                 })
                     .catch(function (err) {
                     console.log("Sync Error: ", err);
@@ -1235,7 +1264,7 @@ var ThingSpeak;
                 //Update offline Db
                 that.db.replicate.from(ThingSpeak.Configs.AppConfig.couchDbPath)
                     .then(function (result) {
-                    console.log("Comletion Message: ", result);
+                    //console.log("Comletion Message: ", result);
                 })
                     .catch(function (err) {
                     console.log("Sync Error: ", err);
@@ -1244,6 +1273,23 @@ var ThingSpeak;
             CouchDbService.prototype.loadSalesData = function () {
                 var that = this;
                 var salesData = [];
+                that.db.allDocs({
+                    include_docs: true,
+                    attachments: true
+                }).then(function (response) {
+                    var rows = response.rows;
+                    rows.forEach(function (row) {
+                        salesData.push(row.doc.salesData);
+                    });
+                    //console.log("Sales Data: ", salesData);
+                })
+                    .catch(function (err) {
+                    console.log("Error: ", err);
+                });
+                return salesData;
+            };
+            CouchDbService.prototype.loadSalesDocs = function () {
+                var that = this;
                 var salesDocs = [];
                 that.db.allDocs({
                     include_docs: true,
@@ -1251,17 +1297,17 @@ var ThingSpeak;
                 }).then(function (response) {
                     var rows = response.rows;
                     rows.forEach(function (row) {
-                        salesDocs.push(row.doc);
-                        salesData.push(row.doc.salesData);
+                        if (row.doc.salesData) {
+                            salesDocs.push(row.doc);
+                        }
                     });
-                    console.log("Sales Data: ", salesData);
-                    console.log("Sales Documents: ", salesDocs);
-                    return salesData;
+                    return salesDocs;
+                    //console.log("Sales Documents: ", salesDocs);
                 })
                     .catch(function (err) {
-                    console.log(err);
+                    console.log("Error: ", err);
                 });
-                return [];
+                return salesDocs;
             };
             CouchDbService.prototype.addSalesData = function (salesData) {
                 var that = this;
@@ -1277,16 +1323,16 @@ var ThingSpeak;
                     console.log("Something happened: ", err);
                 });
             };
-            CouchDbService.prototype.submitOrderData = function (salesData) {
+            CouchDbService.prototype.submitOrderData = function (orderForm) {
                 var that = this;
                 var newGuid = ThingSpeak.Helpers.GuidHelper.getNewGUIDString();
-                var newSalesDoc = {
-                    salesData: salesData,
-                    _id: newGuid
+                var newOrderDoc = {
+                    _id: newGuid,
+                    orderForm: orderForm
                 };
-                that.db.put(newSalesDoc)
+                that.db.put(newOrderDoc)
                     .then(function () {
-                    console.log("Doc saved successfully");
+                    console.log("Order doc saved successfully");
                 }).catch(function (err) {
                     console.log("Something happened: ", err);
                 });

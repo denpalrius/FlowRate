@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\css\progress-circular.css" />
+    <Content Include="app\css\form style.css" />
     <Content Include="app\css\sticky.css" />
     <Content Include="app\css\app.css" />
     <Content Include="app\directives\circularmenu-directive.js" />
@@ -34,6 +35,7 @@
     <Content Include="app\views\couch-db-view.html" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
+    <Content Include="app\views\dmm\order-company.html" />
     <Content Include="app\views\dmm\order-form.html" />
     <Content Include="app\views\dmm\sales-form.html" />
     <Content Include="app\views\home-view.html" />

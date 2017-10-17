@@ -1,103 +1,76 @@
-﻿<nav class="nav nav-tabs" id="myTab" role="tablist">
-    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-expanded="true">Home</a>
-    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile">Profile</a>
-    <div class="dropdown">
-        <a class="nav-item nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-        </a>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" id="nav-dropdown1-tab" href="#nav-dropdown1" role="tab" data-toggle="tab" aria-controls="nav-dropdown1">@fat</a>
-            <a class="dropdown-item" id="nav-dropdown2-tab" href="#nav-dropdown2" role="tab" data-toggle="tab" aria-controls="nav-dropdown2">@mdo</a>
-        </div>
-    </div>
-</nav>
-<div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">...</div>
-    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
-    <div class="tab-pane fade" id="nav-dropdown1" role="tabpanel" aria-labelledby="nav-dropdown1-tab">...</div>
-    <div class="tab-pane fade" id="nav-dropdown2" role="tabpanel" aria-labelledby="nav-dropdown2-tab">...</div>
+﻿
+<div layout="row">
+    <h5>Select payment mode: </h5>
+    <md-radio-group layout="row" style="margin-top:5px; margin-left:40px;margin">
+        <md-radio-button value="Apple" class="md-primary">Cash</md-radio-button>
+        <md-radio-button value="Banana" class="md-primary"> Checque </md-radio-button>
+        <md-radio-button value="Mango" class="md-primary">Other</md-radio-button>
+    </md-radio-group>
+
 </div>
+<br />
 
-<div class="container">
-    {{couchDbScope.orderFormData.SalesForm.companyName}} <br />
-    {{couchDbScope.orderFormData.SalesForm.location}} <br />
-    {{couchDbScope.orderFormData.SalesForm.phoneNumber}} <br />
-    {{couchDbScope.orderFormData.SalesForm.contactPerson}} <br />
-    {{couchDbScope.orderFormData.SalesForm.salesPerson}} <br />
+    <h5>Add new order item:</h5>
+    <br />
 
-    <h5>Select sorting algorithm:</h5>
-    <select title="Payment Mode" 
-            style="width:400px"
-            ng-change="CouchCtrl.changePayment"
-            ng-model="couchDbScope.orderFormData.SalesForm.modeOfPayment">
-        <option value="cash">cash</option>
-        <option value="cheque">cheque</option>
-        <option value="other">other</option>
-     </select>
-
-
-    <md-content layout-padding>
-        <div>
-            <div>Add new Item</div>
-            <form>
-                <div class="form-row">
-                    <div class="form-group col-md-4 no-left-padding">
-                        <label for="description" class="col-form-label">Description</label>
-                        <input type="text" class="form-control" id="description" 
-                               ng-model="that.$scope.couchDbScope.newOrderItem.description" 
-                               placeholder="Description">
-                    </div>
-                    <div class="form-group col-md-4 no-left-padding">
-                        <label for="unitPrice" class="col-form-label">Unit Price</label>
-                        <input type="text" class="form-control" id="unitPrice" 
-                               ng-model="that.$scope.couchDbScope.newOrderItem.unitPrice" 
-                               placeholder="Unit Price">
-                    </div>
-                    <div class="form-group col-md-4 no-right-padding">
-                        <label for="quantity" class="col-form-label">Quantity</label>
-                        <input type="text" class="form-control" id="quantity" 
-                               ng-model="that.$scope.couchDbScope.newOrderItem.quantity" 
-                               placeholder="Quantity">
-                    </div>
-                </div>
-               
+    <form>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="description" class="col-form-label">Description</label>
+                <input type="text" class="form-control" id="description"
+                       ng-model="couchDbScope.newOrderItem.description"
+                       placeholder="Description">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="unitPrice" class="col-form-label">Unit Price</label>
+                <input type="text" class="span2 form-control" id="unitPrice"
+                       ng-model="couchDbScope.newOrderItem.unitPrice"
+                       placeholder="Unit Price">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="quantity" class="col-form-label">Quantity</label>
+                <input type="text" class="form-control" id="quantity"
+                       ng-model="couchDbScope.newOrderItem.quantity"
+                       placeholder="Quantity">
+            </div>
+            <div class="form-group col-md-3">
+                <label class="col-form-label" style="color:transparent">Add</label>
                 <br />
-                <button type="button" class="btn btn-outline-success">Success</button>
-
                 <button ng-click="CouchCtrl.addNewOrderItem()" type="submit" class="btn btn-outline-success">
                     <span class="glyphicon glyphicon-plus"></span>
                     <span>Add</span>
                 </button>
-                <br />
-                <br />
-
-            </form>
-
+            </div>
         </div>
-        <hr />
-        <div>
-            <table>
+        <br />
+        <br />
+        <br />
+    </form>
+
+    <hr />
+    <div>
+        <table class="table">
+            <thead>
                 <tr>
-                    <th>No</th>.
+                    <th>No</th>
                     <th>Description</th>
-                    <th>Unit Price</th>.
+                    <th>Unit Price</th>
                     <th>Quantity</th>
+                    <th>Total Price</th>
                 </tr>
-
-                <tr ng-repeat="orderItem in couchDbScope.orderFormData.orderItems by orderItem.ItemNumber "
-                    ng-init="orderItem.ItemNumber = $index+1">
-                    <td>{{orderItem.ItemNumber}}</td>
-                    <td>{{orderItem.description}}</td>
-                    <td>{{orderItem.unitPrice}}</td>
-                    <td>{{orderItem.quantity}}</td>
-                </tr>
-
-            </table>
-        </div>
-    </md-content>
+            </thead>
+            <tr ng-repeat="orderItem in couchDbScope.orderFormData.orderItems track by $index"
+                ng-init="orderItem.ItemNumber = $index+1">
+                <td>{{orderItem.ItemNumber}}</td>
+                <td>{{orderItem.description}}</td>
+                <td>{{orderItem.unitPrice}}</td>
+                <td>{{orderItem.quantity}}</td>
+                <td>{{orderItem.totalPrice}}</td>
+            </tr>
+        </table>
+    </div>
 
     <button ng-click="CouchCtrl.submitOrderForm()" type="submit" class="btn btn-outline-success btn-lg">
-        <span>Submit Order</span>
+        <span>Submit Order </span>
         <span class="glyphicon glyphicon-send"></span>
     </button>
-</div>
