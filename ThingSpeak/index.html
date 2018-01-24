@@ -2,7 +2,9 @@
 
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Thingspeak</title>
     <base href="/">
 
@@ -19,14 +21,17 @@
     <script src="Scripts/jquery-3.2.1.js"></script>
     <script src="Scripts/bootstrap.js"></script>
     <script src="Scripts/angular.js"></script>
-    <script src="Scripts/angular-ui-router.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw"></script>
+    <script src="Scripts/angular-route.js"></script>
+    <script async defer src="https://maps.google.com/maps/api/js?key=AIzaSyDV7uaICGPtGK6jAXCvBYDEBMn2UfC0-Og&libraries=placeses,visualization,drawing,geometry,places"></script>
+
 
     <script src="app/scripts/app.js"></script>
 </head>
 
 <body>
-    <div ui-view class="main-container"></div>
+    <div id="ngFlowRate">
+        <div ng-view class="main-container"></div>
+    </div>
 
     <script type="text/javascript">
         var app = new ThingSpeak.AppModule();

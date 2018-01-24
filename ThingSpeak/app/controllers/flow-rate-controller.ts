@@ -24,7 +24,7 @@
         constructor(
             private $scope: IFlowRateScope,
             private $rootScope: ng.IRootScopeService,
-            private $state: angular.ui.IStateProvider,
+            private $location: ng.ILocationService,
             private httpService: Services.HttpService,
             private thingSpeakService: Services.ThingSpeakService,
             private $timeout: ng.ITimeoutService) {

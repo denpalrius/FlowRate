@@ -1,42 +1,31 @@
 ﻿module ThingSpeak.Configs {
     export class RouteConfig {
-        constructor(
-            $urlRouterProvider: angular.ui.IUrlRouterProvider,
-            $stateProvider: angular.ui.IStateProvider,
-            $locationProvider: ng.ILocationProvider) {
-
-            // For any unmatched url, send to 404
-            //$urlRouterProvider.when('', '/');
-            //$urlRouterProvider.otherwise('/404');
-
-            $locationProvider.hashPrefix('');
-            $urlRouterProvider.otherwise('/');   
-
-            $stateProvider
-                .state('home', {
-                    url: '/',
-                    controller: 'HomeController',
+        constructor($routeProvider: ng.route.IRouteProvider, $locationProvider: ng.ILocationProvider) {
+            $routeProvider
+                .when("/home", {
+                    templateUrl: '/app/views/home.html',
                     controllerAs: 'HomeCtrl',
-                    templateUrl: 'app/views/home-view.html'
+                    controller: 'HomeController',
                 })
-                .state('about', {
-                    url: '/about',
-                    controller: 'AboutController',
+                .when("/about", {
+                    templateUrl: '/app/views/about.html',
                     controllerAs: 'AboutCtrl',
-                    templateUrl: 'app/views/about-view.html'
+                    controller: 'AboutController',
                 })
-                .state('flowrate', {
-                    url: '/flowrate',
-                    controller: 'FlowRateController',
-                    controllerAs: 'FlowRateCtrl',
-                    templateUrl: 'app/views/raw-flow-rate-view.html'
-                })
-                .state('Admin', {
-                    url: '/admin',
-                    controller: 'AdminController',
+                .when("/admin", {
+                    templateUrl: '/app/views/admin.html',
                     controllerAs: 'AdminCtrl',
-                    templateUrl: 'app/views/admin-view.html'
+                    controller: 'AdminController',
+                })
+                .when("/flowrate", {
+                    templateUrl: '/app/views/flow-rate.html',
+                    controllerAs: 'FlowRateCtrl',
+                    controller: 'FlowRateController',
+                })
+                .otherwise({
+                    redirectTo: "/home",
                 });
+            $locationProvider.html5Mode(true);
         }
     }
 }

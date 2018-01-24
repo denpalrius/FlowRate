@@ -18,37 +18,32 @@ var ThingSpeak;
     var Configs;
     (function (Configs) {
         var RouteConfig = (function () {
-            function RouteConfig($urlRouterProvider, $stateProvider, $locationProvider) {
-                // For any unmatched url, send to 404
-                //$urlRouterProvider.when('', '/');
-                //$urlRouterProvider.otherwise('/404');
-                $locationProvider.hashPrefix('');
-                $urlRouterProvider.otherwise('/');
-                $stateProvider
-                    .state('home', {
-                    url: '/',
-                    controller: 'HomeController',
+            function RouteConfig($routeProvider, $locationProvider) {
+                $routeProvider
+                    .when("/home", {
+                    templateUrl: '/app/views/home.html',
                     controllerAs: 'HomeCtrl',
-                    templateUrl: 'app/views/home-view.html'
+                    controller: 'HomeController',
                 })
-                    .state('about', {
-                    url: '/about',
-                    controller: 'AboutController',
+                    .when("/about", {
+                    templateUrl: '/app/views/about.html',
                     controllerAs: 'AboutCtrl',
-                    templateUrl: 'app/views/about-view.html'
+                    controller: 'AboutController',
                 })
-                    .state('flowrate', {
-                    url: '/flowrate',
-                    controller: 'FlowRateController',
-                    controllerAs: 'FlowRateCtrl',
-                    templateUrl: 'app/views/raw-flow-rate-view.html'
-                })
-                    .state('Admin', {
-                    url: '/admin',
-                    controller: 'AdminController',
+                    .when("/admin", {
+                    templateUrl: '/app/views/admin.html',
                     controllerAs: 'AdminCtrl',
-                    templateUrl: 'app/views/admin-view.html'
+                    controller: 'AdminController',
+                })
+                    .when("/flowrate", {
+                    templateUrl: '/app/views/flow-rate.html',
+                    controllerAs: 'FlowRateCtrl',
+                    controller: 'FlowRateController',
+                })
+                    .otherwise({
+                    redirectTo: "/home",
                 });
+                $locationProvider.html5Mode(true);
             }
             return RouteConfig;
         }());
@@ -99,10 +94,10 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var FlowRateController = (function () {
-            function FlowRateController($scope, $rootScope, $state, httpService, thingSpeakService, $timeout) {
+            function FlowRateController($scope, $rootScope, $location, httpService, thingSpeakService, $timeout) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
-                this.$state = $state;
+                this.$location = $location;
                 this.httpService = httpService;
                 this.thingSpeakService = thingSpeakService;
                 this.$timeout = $timeout;
@@ -201,10 +196,10 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope, $rootScope, $state) {
+            function HomeController($scope, $rootScope, $location) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
-                this.$state = $state;
+                this.$location = $location;
                 var that = this;
                 that.init();
             }
@@ -411,32 +406,6 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
-    var Controllers;
-    (function (Controllers) {
-        "use strict";
-        var MapViewController = (function () {
-            function MapViewController($scope, $state) {
-                this.$scope = $scope;
-                this.$state = $state;
-                var that = this;
-                that.init();
-            }
-            MapViewController.prototype.init = function () {
-                var that = this;
-                that.$scope.mapScope = {};
-                that.$scope.mapScope.mapName = "";
-                that.loadMap();
-            };
-            MapViewController.prototype.loadMap = function () {
-                var that = this;
-            };
-            return MapViewController;
-        }());
-        Controllers.MapViewController = MapViewController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
-var ThingSpeak;
-(function (ThingSpeak) {
     var Directives;
     (function (Directives) {
         "use strict";
@@ -575,7 +544,7 @@ var ThingSpeak;
             scope.marker = new google.maps.Marker({
                 position: scope.userLocation,
                 map: scope.map,
-                title: 'Default Location'
+                title: 'User Location'
             });
         }
         function TsGoogleMap($timeout, $log) {
@@ -591,10 +560,6 @@ var ThingSpeak;
                 },
                 templateUrl: '/app/views/templates/ts-google-map-template.html',
                 link: function (scope, $elm, attr) {
-                    // init first (Loading map + marker)
-                    //console.log("Elem : ", [$($elm).find("#googleMapSearchBox"), $($elm)[0], $("#googleMapSearchBox")]);
-                    //console.log("Elem : ", document.getElementById("googleMapSearchBox"));
-                    //console.log("Elem : ", $elm("#googleMapSearchBox")[0]);
                     init(scope, $timeout);
                     $timeout(5).then(function () {
                         //Change this once you Move Input to Directive
@@ -819,13 +784,12 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", [
-                "ui.router"
-            ]);
+            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute"]);
             // configs
-            ngFlowRate.config(["$urlRouterProvider", "$stateProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             ngFlowRate.config([ThingSpeak.Configs.AppConfig]);
+            ngFlowRate.config(["$routeProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             //Directives
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", ThingSpeak.Directives.TsGoogleMap]);
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
             // services
@@ -833,8 +797,8 @@ var ThingSpeak;
             ngFlowRate.service("thingSpeakService", ["httpService", ThingSpeak.Services.ThingSpeakService]);
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$state", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$state", "httpService", "thingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "httpService", "thingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(function () {

@@ -169,7 +169,7 @@
             scope.marker = new google.maps.Marker({
                 position: scope.userLocation,
                 map: scope.map,
-                title: 'Default Location'
+                title: 'User Location'
             });
         }
 
@@ -186,11 +186,6 @@
                 },
                 templateUrl: '/app/views/templates/ts-google-map-template.html',
                 link: function (scope: IScope, $elm: Object, attr) {
-                    // init first (Loading map + marker)
-                    //console.log("Elem : ", [$($elm).find("#googleMapSearchBox"), $($elm)[0], $("#googleMapSearchBox")]);
-                    //console.log("Elem : ", document.getElementById("googleMapSearchBox"));
-                    //console.log("Elem : ", $elm("#googleMapSearchBox")[0]);
-
                     init(scope, $timeout);
 
                     $timeout(5).then(() => {
@@ -270,7 +265,6 @@
                                     getUserLocationFn(navigator)
                                         .done((latLong: google.maps.LatLng) => {
                                             scope.map.setCenter(latLong);
-
                                         });
                                     //loadListeners(scope, $timeout);
                                 });

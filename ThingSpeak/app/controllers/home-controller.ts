@@ -20,7 +20,7 @@
         constructor(
             private $scope: IHomeScope,
             private $rootScope: ng.IRootScopeService,
-            private $state: angular.ui.IStateService) {
+            private $location: ng.ILocationService) {
             var that: HomeController = this;
             that.init();
         }
