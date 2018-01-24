@@ -22,26 +22,16 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\css\progress-circular.css" />
     <Content Include="app\css\form style.css" />
-    <Content Include="app\css\sticky.css" />
     <Content Include="app\css\app.css" />
-    <Content Include="app\directives\circularmenu-directive.js" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
     <Content Include="app\scripts\app.js" />
     <None Include="app\scripts\cool-style.json" />
-    <Content Include="app\scripts\jquery.stickysectionheaders.js" />
-    <Content Include="app\views\couch-db-view.html" />
     <Content Include="app\views\admin-view.html" />
     <Content Include="app\views\about-view.html" />
-    <Content Include="app\views\dmm\order-company.html" />
-    <Content Include="app\views\dmm\order-form.html" />
-    <Content Include="app\views\dmm\sales-form.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
-    <Content Include="app\views\templates\ds-sorting-algorithms.html" />
-    <Content Include="app\views\templates\fixed-scroll-template.html" />
     <Content Include="app\views\templates\map-view-template.html" />
     <Content Include="app\views\templates\raw-flow-rate-template.html" />
     <Content Include="Content\angular-material.css" />
@@ -131,8 +121,6 @@
     <Content Include="Scripts\lodash.core.min.js" />
     <Content Include="Scripts\lodash.js" />
     <Content Include="Scripts\lodash.min.js" />
-    <Content Include="Scripts\ng-map.js" />
-    <Content Include="Scripts\ng-map.min.js" />
     <Content Include="Scripts\pouchdb-6.3.4.js" />
     <Content Include="Scripts\spin.js" />
     <Content Include="Scripts\spin.min.js" />
@@ -140,36 +128,25 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app-module.ts" />
-    <TypeScriptCompile Include="app\configs\theme-config.ts" />
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
-    <TypeScriptCompile Include="app\controllers\couch-db-controller.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
-    <TypeScriptCompile Include="app\controllers\navigation-controller.ts" />
     <TypeScriptCompile Include="app\controllers\map-view-controller.ts" />
     <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
-    <TypeScriptCompile Include="app\directives\ds-sorting-algorithms.ts" />
-    <TypeScriptCompile Include="app\directives\ts-sticky-header.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
+    <TypeScriptCompile Include="app\helper\hashing-helper.ts" />
     <TypeScriptCompile Include="app\helper\guid-helper.ts" />
-    <TypeScriptCompile Include="app\models\dmm-model.ts" />
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
-    <TypeScriptCompile Include="app\services\couch-db-service.ts" />
     <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
-    <TypeScriptCompile Include="app\services\map-data-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
-    <TypeScriptCompile Include="app\models\couch-db-model.ts" />
     <TypeScriptCompile Include="app\viewmodels\thingspeak-vm.ts" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />
     <None Include="Scripts\typings\angular-resource\index.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angular-material\angular-material-0.8.3.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angular-material\angular-material-0.9.0.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angular-material\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-sanitize\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-spinner\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-router.d.ts" />
@@ -210,7 +187,9 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="app\directives\" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -239,7 +218,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6111</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:6132/</IISUrl>
+          <IISUrl>http://localhost:6111/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

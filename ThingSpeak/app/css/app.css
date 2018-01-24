@@ -7,7 +7,6 @@
     height: 100%;
 }
 
-  
 .navbar {
       padding-top: 15px;
       padding-bottom: 15px;
@@ -17,11 +16,13 @@
       font-size: 12px;
       letter-spacing: 5px;
   }
-  
+
 .navbar-nav  li a:hover {
       color: #1abc9c !important;
 }
-
+.navbar-brand {
+    color: #1abc9c !important;
+}
 .main-container {
     height: 100%;
     padding-left: 0px;
@@ -122,7 +123,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     height:200px;
-    width:500px;
+    width:80%;
     overflow:auto;
     list-style:none;
 }
@@ -163,4 +164,25 @@
     font-weight: normal;
     vertical-align: middle;
     cursor: pointer;
+}
+
+.lineOnHeader{
+    width: fit-content;
+    margin: 12px;
+    padding-left: 5px;
+    padding-right: 10px;
+    margin-top: -30px;
+    background-color: white;
+}
+hr{
+    border-top: 1px solid #1abc9c;
+}
+
+label{
+    font-weight: 500;
+    color: inherit;
+    font-size: 14px;
+}
+.form-control{
+    font-size: 13px;
 }

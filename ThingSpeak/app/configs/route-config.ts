@@ -8,6 +8,7 @@
             // For any unmatched url, send to 404
             //$urlRouterProvider.when('', '/');
             //$urlRouterProvider.otherwise('/404');
+
             $locationProvider.hashPrefix('');
             $urlRouterProvider.otherwise('/');   
 
@@ -23,12 +24,6 @@
                     controller: 'AboutController',
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
-                })
-                .state('Couch Db', {
-                    url: '/couchdb',
-                    controller: 'CouchDbController',
-                    controllerAs: 'CouchCtrl',
-                    templateUrl: 'app/views/couch-db-view.html'
                 })
                 .state('Flow Rate', {
                     url: '/flowrate',

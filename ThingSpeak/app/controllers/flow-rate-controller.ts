@@ -27,7 +27,7 @@
             private $state: angular.ui.IStateProvider,
             private httpService: Services.HttpService,
             private thingSpeakService: Services.ThingSpeakService,
-            private usSpinnerService: ISpinnerService) {
+            private $timeout: ng.ITimeoutService) {
 
             var that: FlowRateController = this;
             that.init();
@@ -50,7 +50,7 @@
             that.$scope.flowRateScope.$stickies = [];
             
             //that.getData();
-            //that.getFlowRateData();
+            that.getFlowRateData();
 
             //TODO: Do a progress ring
             //TODO: Paginate the table
@@ -65,24 +65,26 @@
             //console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
 
             that.thingSpeakService.getThingSpeakData()
-                .done((response: any) => {
-                    var maraRiverFlowRate = response.data;
-                    that.$scope.flowRateScope.maraRiverFlowRate = response.data;
-                    console.log("flow data : ", that.$scope.flowRateScope.maraRiverFlowRate);
-                    console.log("response data: ", response.data);
+                .done((response: ViewModels.MaraRiverFlow) => {
+                    that.$timeout(0).then(() => {
+                        that.$scope.flowRateScope.maraRiverFlowRate = response;
 
-                    var mapCenter =
-                        [
-                            that.$scope.flowRateScope.maraRiverFlowRate.channel.latitude.toString(),
-                            that.$scope.flowRateScope.maraRiverFlowRate.channel.longitude.toString()
-                        ];
-                    that.$rootScope.$emit("map-center-updated", mapCenter);
+                        console.log("Feeds: ", that.$scope.flowRateScope.maraRiverFlowRate.feeds);
 
-                    that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.maraRiverFlowRate.channel);
-                    that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
+                        var mapCenter =
+                            [
+                                that.$scope.flowRateScope.maraRiverFlowRate.channel.latitude.toString(),
+                                that.$scope.flowRateScope.maraRiverFlowRate.channel.longitude.toString()
+                            ];
 
-                    that.$scope.flowRateScope.pageLoadingFinished = true;
-                    //console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
+                        that.$rootScope.$emit("map-center-updated", mapCenter);
+
+                        that.$scope.flowRateScope.sensors.push(that.$scope.flowRateScope.maraRiverFlowRate.channel);
+                        that.$rootScope.$emit("sensors-updated", that.$scope.flowRateScope.sensors);
+
+                        that.$scope.flowRateScope.pageLoadingFinished = true;
+                        //console.log("Page loaded", that.$scope.flowRateScope.pageLoadingFinished);
+                    });
                 })
                 .fail(() => {
                     console.log("Failed to get the JSON data");
