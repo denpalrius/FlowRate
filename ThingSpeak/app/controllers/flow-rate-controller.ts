@@ -69,7 +69,7 @@
                     that.$timeout(0).then(() => {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
 
-                        console.log("Feeds: ", that.$scope.flowRateScope.maraRiverFlowRate.feeds);
+                        //console.log("Feeds: ", that.$scope.flowRateScope.maraRiverFlowRate.feeds);
 
                         var mapCenter =
                             [

@@ -13,19 +13,19 @@
             $urlRouterProvider.otherwise('/');   
 
             $stateProvider
-                .state('Home', {
+                .state('home', {
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
                     templateUrl: 'app/views/home-view.html'
                 })
-                .state('About', {
+                .state('about', {
                     url: '/about',
                     controller: 'AboutController',
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                .state('Flow Rate', {
+                .state('flowrate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
                     controllerAs: 'FlowRateCtrl',

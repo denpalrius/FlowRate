@@ -25,19 +25,19 @@ var ThingSpeak;
                 $locationProvider.hashPrefix('');
                 $urlRouterProvider.otherwise('/');
                 $stateProvider
-                    .state('Home', {
+                    .state('home', {
                     url: '/',
                     controller: 'HomeController',
                     controllerAs: 'HomeCtrl',
                     templateUrl: 'app/views/home-view.html'
                 })
-                    .state('About', {
+                    .state('about', {
                     url: '/about',
                     controller: 'AboutController',
                     controllerAs: 'AboutCtrl',
                     templateUrl: 'app/views/about-view.html'
                 })
-                    .state('Flow Rate', {
+                    .state('flowrate', {
                     url: '/flowrate',
                     controller: 'FlowRateController',
                     controllerAs: 'FlowRateCtrl',
@@ -137,7 +137,7 @@ var ThingSpeak;
                     .done(function (response) {
                     that.$timeout(0).then(function () {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
-                        console.log("Feeds: ", that.$scope.flowRateScope.maraRiverFlowRate.feeds);
+                        //console.log("Feeds: ", that.$scope.flowRateScope.maraRiverFlowRate.feeds);
                         var mapCenter = [
                             that.$scope.flowRateScope.maraRiverFlowRate.channel.latitude.toString(),
                             that.$scope.flowRateScope.maraRiverFlowRate.channel.longitude.toString()
@@ -214,6 +214,8 @@ var ThingSpeak;
                 that.$scope.homeScope.pageTitle = "AngularJS App";
                 that.$scope.homeScope.googleMapsUrl = "";
                 that.$scope.homeScope.sensors = [];
+                that.$scope.homeScope.currentLocation = new Object();
+                that.$scope.homeScope.userAddress = "";
                 that.$scope.homeScope.customMapStyle = [
                     {
                         "featureType": "administrative",
@@ -345,115 +347,50 @@ var ThingSpeak;
                         ]
                     }
                 ];
-                that.$rootScope.$on('map-center-updated', function (event, data) {
-                    that.$scope.homeScope.mapCenter = data;
-                });
-                that.$rootScope.$on('sensors-updated', function (event, data) {
-                    that.$scope.homeScope.sensors = data;
-                    //console.log("sensors:", data);
-                });
-                that.loadMap();
-            };
-            HomeController.prototype.loadMap = function () {
-                var that = this;
-                that.$scope.homeScope.googleMapsUrl = ThingSpeak.Configs.AppConfig.googleMapsUrl;
-                if (typeof google == "undefined") {
-                    that.$scope.homeScope.mapEnable = false;
-                    console.warn("Map cannot show");
-                }
-                else {
-                    that.$scope.homeScope.mapEnable = true;
-                }
+                //that.$rootScope.$on('map-center-updated', (event, data) => {
+                //    that.$scope.homeScope.mapCenter = data;
+                //});
+                //that.$rootScope.$on('sensors-updated', (event, data) => {
+                //    that.$scope.homeScope.sensors = data;
+                //    //console.log("sensors:", data);
+                //});
                 that.loadMapData();
             };
             HomeController.prototype.loadMapData = function () {
                 var that = this;
-                var pos = that.getCurrentPosition();
-                if (pos) {
-                    var address = that.getAddress(pos);
-                    if (address) {
-                        var infowindow = new google.maps.InfoWindow({
-                            content: address
-                        });
-                    }
-                }
-                var mapOptions = {
-                    mapTypeId: google.maps.MapTypeId.TERRAIN,
-                    zoom: 8,
-                    center: pos,
-                    styles: this.$scope.homeScope.customMapStyle,
-                    streetViewControl: true,
-                    mapTypeControl: true,
-                    scaleControl: true,
-                    rotateControl: true,
-                    zoomControl: true
-                };
-                //that.mapDataService.loadMapData()
-                //    .done((response: Models.IHttpResponse) => {
-                //        var kenyaCountriesData = response.data;
-                //        that.NgMap.getMap().then(function (thisMap) {
-                //        thisMap.setOptions(mapOptions);
-                //        if (pos) thisMap.setCenter(pos);
-                //var myMarker = new google.maps.Marker({
-                //             position: pos,
-                //             map: thisMap,
-                //             title: 'Sensor Location'
-                //         });
-                //        myMarker.addListener('click', function () {
-                //            console.log("Marker clicked");
-                //            infowindow.open(thisMap, myMarker)
-                //        });
-                //        if (kenyaCountriesData) {
-                //            //var geojson = JSON .parse(kenyaCountriesData);
-                //            //thisMap.data.addGeoJson(geojson);
-                //            //var kenyaHealthSites = "https://data.humdata.org/dataset/65b34def-4e7a-4dff-93ff-66a0c276d99d/resource/308d62cd-a66d-4d41-afc3-9971bf81b7ec/download/kenya.geojson";
-                //            //thisMap.data.loadGeoJson(kenyaHealthSites);
-                //            //thisMap.data.loadGeoJson('https://storage.googleapis.com/mapsdevsite/json/google.json');
-                //            //var nyc = "https://data.cityofnewyork.us/resource/fhrw-4uyv.geojson";
-                //            //thisMap.data.loadGeoJson(nyc, null, function (features) {
-                //                //console.log("features: ", features);
-                //            //});
-                //            //var heatmapData = [];
-                //            //if (kenyaCountriesData.features) {
-                //            //    for (var i = 0; i < kenyaCountriesData.features.length; i++) {
-                //            //        var coords = kenyaCountriesData.features[i].geometry.coordinates;
-                //            //        var latLng = new google.maps.LatLng(coords[1], coords[0]);
-                //            //        var marker = new google.maps.Marker({
-                //            //            position: latLng,
-                //            //            map: thisMap
-                //            //        });
-                //            //    }
-                //            //}
-                //        }
-                //    });
-                //});
+                that.getCurrentPosition()
+                    .done(function (geolocation) {
+                    that.getAddress(geolocation);
+                })
+                    .fail(function (error) {
+                    console.error(error);
+                });
             };
             //GeoCoding
             HomeController.prototype.getCurrentPosition = function () {
-                var that = this;
                 if (navigator.geolocation) {
+                    var deferred = $.Deferred();
                     navigator.geolocation.getCurrentPosition(function (position) {
-                        var geolocate = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                        //console.log("geolocate: ", geolocate);
-                        //console.log("position: ", position);
-                        return geolocate;
+                        deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                     }, function (error) {
-                        console.log("Error: ", error);
+                        deferred.reject("User did not accept location permission");
                     });
                 }
                 else {
-                    console.log("Geolocation is not supported by yout device");
+                    deferred.reject("Geolocation is not supported by yout device");
                 }
-                return null;
+                return deferred;
             };
             //Reverse Geocoding
             HomeController.prototype.getAddress = function (latLong) {
+                var that = this;
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({ 'location': latLong }, function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                        console.log("Reverse Geocode results: ", results);
-                        if (results[1]) {
-                            return results[0].formatted_address;
+                        //console.log("Reverse Geocode results: ", results)
+                        if (results[0]) {
+                            that.$scope.homeScope.userAddress = results[0].formatted_address;
+                            console.log("currentAddress: ", that.$scope.homeScope.userAddress);
                         }
                         else {
                             console.log("No results found");
@@ -463,7 +400,6 @@ var ThingSpeak;
                         console.log("Geocoder failed due to: " + status);
                     }
                 });
-                return "";
             };
             HomeController.prototype.getRadius = function (num) {
                 return Math.sqrt(num) * 100;
@@ -473,32 +409,276 @@ var ThingSpeak;
         Controllers.HomeController = HomeController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
-//module ThingSpeak.Controllers {
-//    "use strict";
-//    interface ICurrentScope {
-//        mapName?: string;
-//    }
-//    interface IMapScope extends ng.IScope {
-//        mapScope?: ICurrentScope;
-//    }
-//    export class MapViewController {
-//        constructor(
-//            private $scope: IMapScope,
-//            private $state: angular.ui.IStateService) {
-//            var that: MapViewController = this;
-//            that.init();
-//        }
-//        private init() {
-//            var that: MapViewController = this;
-//            that.$scope.mapScope = {};
-//            that.$scope.mapScope.mapName = "";
-//            that.loadMap();
-//        }
-//        private loadMap() {
-//            var that: MapViewController = this;
-//        }
-//    }
-//} 
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var MapViewController = (function () {
+            function MapViewController($scope, $state) {
+                this.$scope = $scope;
+                this.$state = $state;
+                var that = this;
+                that.init();
+            }
+            MapViewController.prototype.init = function () {
+                var that = this;
+                that.$scope.mapScope = {};
+                that.$scope.mapScope.mapName = "";
+                that.loadMap();
+            };
+            MapViewController.prototype.loadMap = function () {
+                var that = this;
+            };
+            return MapViewController;
+        }());
+        Controllers.MapViewController = MapViewController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Directives;
+    (function (Directives) {
+        "use strict";
+        function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+        function getUserLocationFn(_navigator) {
+            if (_navigator.geolocation) {
+                var deferred = $.Deferred();
+                _navigator.geolocation.getCurrentPosition(function (position) {
+                    deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+                }, function (error) {
+                    deferred.reject("User did not accept location permission");
+                });
+            }
+            else {
+                deferred.reject("Geolocation not supported");
+            }
+            return deferred;
+        }
+        function getUserAddress(_position, _address) {
+            var deferred = $.Deferred();
+            var geocoder = new google.maps.Geocoder();
+            var req = null;
+            if (_position) {
+                req = {
+                    location: _position,
+                };
+            }
+            else if (_address) {
+                req = {
+                    address: _address,
+                };
+            }
+            if (req) {
+                geocoder.geocode(req, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        console.log("Reverse Geocode results: ", results);
+                        if (results.length) {
+                            console.log("Reverse Geocode", results[0]);
+                            deferred.resolve(results[0]);
+                        }
+                        else {
+                            console.log("No results found");
+                            //TODO: add description
+                            deferred.reject(null);
+                        }
+                    }
+                    else {
+                        console.log("Geocoder failed due to: " + status);
+                        //TODO: add description
+                        deferred.reject(null);
+                    }
+                });
+            }
+            return deferred;
+        }
+        function loadCurrentAddress(pos, scope, $timeout) {
+            getUserAddress(pos, null)
+                .done(function (geoCodeResult) {
+                $timeout(0).then(function () {
+                    scope.currentLocation = geoCodeResult.formatted_address;
+                    console.log("Reverse output Address", scope.currentLocation);
+                });
+            })
+                .fail(function (error) {
+                //TODO: handle error
+            });
+        }
+        function loadListeners(scope, $timeout) {
+            // click map listener  
+            scope.map.addListener('click', function (e) {
+                var clickLocation = e.latLng;
+                console.log("e: ", e);
+                scope.marker.setPosition(clickLocation);
+                getUserAddress(clickLocation, null)
+                    .done(function (geoCodeResult) {
+                    $timeout(0).then(function () {
+                        scope.currentLocation = geoCodeResult.formatted_address;
+                        console.log("Reverse output", scope.currentLocation);
+                    });
+                })
+                    .fail(function (error) {
+                    //TODO: handle error
+                });
+            });
+            if (scope.isShowSearchBar) {
+                // click autocomplete listener
+                scope.googleMapAutoComplete.addListener('place_changed', function (e) {
+                    var place = scope.googleMapAutoComplete.getPlace();
+                    console.warn("Event : ", e);
+                    $timeout(0).then(function () {
+                        console.log("Place : ", [place, scope]);
+                        scope.marker.setPosition(place.geometry.location);
+                        scope.currentLocation = place.formatted_address;
+                        scope.map.setCenter(place.geometry.location);
+                    });
+                });
+            }
+        }
+        function attachSearchBar() {
+            console.log("Input : ", $("#googleMapSearchBox"));
+            var searchInput = $("#googleMapSearchBox")[0];
+            return new google.maps.places.Autocomplete(searchInput);
+        }
+        function init(scope, $timeout) {
+            scope.types = "['establishment']";
+            scope.infoWindow = new google.maps.InfoWindow;
+            scope.geocoder = new google.maps.Geocoder;
+            var mapOptions = {
+                zoomControl: true,
+                mapTypeControl: true,
+                //maxZoom: 15,
+                //minZoom: 4,
+                panControl: false,
+                draggable: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP,
+                    style: google.maps.ZoomControlStyle.SMALL
+                },
+                scaleControl: true,
+                rotateControl: true,
+                center: scope.userLocation,
+                zoom: 17,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                    mapTypeIds: [google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
+                }
+            };
+            //console.warn("Location : ", $("#locationMap")[0]);
+            scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
+            scope.marker = new google.maps.Marker({
+                position: scope.userLocation,
+                map: scope.map,
+                title: 'Default Location'
+            });
+        }
+        function TsGoogleMap($timeout, $log) {
+            var ddo = {
+                restrict: 'AE',
+                scope: {
+                    currentLocation: '=currentLocation',
+                    getUserLocationClick: '&getUserLocationClick',
+                    isShowSearchBar: '=isShowSearchBar'
+                    //    "@"   (Text binding / one - way binding )
+                    //    "="   (Direct model binding / two - way binding )
+                    //    "&"   (Behaviour binding / Method binding  )
+                },
+                templateUrl: '/app/views/templates/ts-google-map-template.html',
+                link: function (scope, $elm, attr) {
+                    // init first (Loading map + marker)
+                    //console.log("Elem : ", [$($elm).find("#googleMapSearchBox"), $($elm)[0], $("#googleMapSearchBox")]);
+                    //console.log("Elem : ", document.getElementById("googleMapSearchBox"));
+                    //console.log("Elem : ", $elm("#googleMapSearchBox")[0]);
+                    init(scope, $timeout);
+                    $timeout(5).then(function () {
+                        //Change this once you Move Input to Directive
+                        if (scope.isShowSearchBar) {
+                            scope.googleMapAutoComplete = attachSearchBar();
+                            console.warn("scope.googleMapAutoComplete: ", scope.googleMapAutoComplete);
+                            scope.getUserLocationClick = function () {
+                                getUserLocationFn(navigator)
+                                    .done(function (pos) {
+                                    scope.marker.setPosition(pos);
+                                    scope.map.setCenter(pos);
+                                })
+                                    .fail(function (error) {
+                                    //set a manual location
+                                    scope.userLocation = null;
+                                });
+                            };
+                            getUserLocationFn(navigator)
+                                .done(function (latLong) {
+                                scope.userLocation = latLong;
+                                getUserAddress(scope.userLocation, null)
+                                    .done(function (geoCodeResult) {
+                                    $timeout(0).then(function () {
+                                        scope.currentLocation = geoCodeResult.formatted_address;
+                                        scope.marker.setPosition(scope.userLocation);
+                                        scope.map.setCenter(scope.userLocation);
+                                        console.log("Reverse output Address", scope.currentLocation);
+                                    });
+                                })
+                                    .fail(function (error) {
+                                    //TODO: handle error
+                                });
+                                // loadCurrentAddress(scope.userLocation, scope, $timeout);
+                                loadListeners(scope, $timeout);
+                            })
+                                .fail(function (error) {
+                                scope.userLocation = null;
+                                init(scope, $timeout);
+                                loadListeners(scope, $timeout);
+                                scope.getUserLocationClick = function () {
+                                    getUserLocationFn(navigator)
+                                        .done(function (pos) {
+                                        scope.marker.setPosition(pos);
+                                        scope.map.setCenter(pos);
+                                    })
+                                        .then(function (pos) {
+                                        // loadCurrentAddress(pos, scope, $timeout);
+                                    })
+                                        .fail(function (error) {
+                                        //set a manual location
+                                        scope.userLocation = null;
+                                        loadListeners(scope, $timeout);
+                                    });
+                                };
+                            });
+                        }
+                        else {
+                            // get addresss  
+                            getUserAddress(null, scope.currentLocation)
+                                .done(function (geoCodeResult) {
+                                init(scope, $timeout); //map fails to load without calling init()
+                                // loadListeners(scope, $timeout);
+                                $log.info("Meeting Location ", scope.currentLocation);
+                                $log.info("Geocode Result ", geoCodeResult.geometry.location);
+                                scope.marker.setPosition(geoCodeResult.geometry.location);
+                                scope.map.setCenter(geoCodeResult.geometry.location);
+                            })
+                                .fail(function (error) {
+                                $log.error("Failed to get address : ", error);
+                                getUserLocationFn(navigator)
+                                    .done(function (latLong) {
+                                    scope.map.setCenter(latLong);
+                                });
+                                //loadListeners(scope, $timeout);
+                            });
+                        }
+                    });
+                }
+            };
+            return ddo;
+        }
+        Directives.TsGoogleMap = TsGoogleMap;
+    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
+})(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
     var Filters;

@@ -24,6 +24,7 @@
   <ItemGroup>
     <Content Include="app\css\form style.css" />
     <Content Include="app\css\app.css" />
+    <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
     <Content Include="app\scripts\app.js" />
@@ -32,7 +33,8 @@
     <Content Include="app\views\about-view.html" />
     <Content Include="app\views\home-view.html" />
     <Content Include="app\views\raw-flow-rate-view.html" />
-    <Content Include="app\views\templates\map-view-template.html" />
+    <Content Include="app\views\templates\modal-template.html" />
+    <Content Include="app\views\templates\ts-google-map-template.html" />
     <Content Include="app\views\templates\raw-flow-rate-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
@@ -131,7 +133,6 @@
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
-    <TypeScriptCompile Include="app\controllers\map-view-controller.ts" />
     <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
@@ -187,9 +188,7 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\directives\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,0 +1,21 @@
+﻿<div ng-show="isShowSearchBar">
+    <label for="meetingLocation" class="te-lable col-xs-2 col-md-2">Location: </label>
+
+    <div class="col-xs-9 col-md-9" id="locationSearchBoxContainer">
+        <input type="text"
+               size="80"
+               id="googleMapSearchBox"
+               class="ie-single-line te-input-text googleMapSearchBox"
+               name="currentLocation"
+               placeholder="Add an address or postcode"
+               ng-model="currentLocation" />
+    </div>
+
+    <span class="be-icon col-xs-1 col-md-1" ng-click="getUserLocationClick()" style="background-color:#00a550; margin-left:10px;">
+        <img alt="Location" src="../../../app/assets/icons/icon_Location.svg" style="width:30px;" />
+    </span>
+</div>
+
+<!--Directive Guide-->
+<!--<div map-input map-place="outerDirPlace" ></div>-->
+<div id="locationMap" />
