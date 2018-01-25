@@ -24,7 +24,10 @@
   <ItemGroup>
     <Content Include="app\css\form style.css" />
     <Content Include="app\css\app.css" />
+    <TypeScriptCompile Include="app\configs\theme-config.ts" />
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
+    <Content Include="app\images\sensor-round.png" />
+    <Content Include="app\images\sensor-searching.png" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
     <Content Include="app\scripts\app.js" />
@@ -100,7 +103,6 @@
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\angular-aria.min.js.map" />
     <Content Include="app\scripts\map-style.json" />
-    <Content Include="app\scripts\light-simple-map-style.json" />
     <Content Include="Scripts\angular-messages.min.js.map" />
     <Content Include="Scripts\angular-cookies.min.js.map" />
     <Content Include="Scripts\angular-resource.min.js.map" />

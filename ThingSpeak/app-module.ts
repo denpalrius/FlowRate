@@ -4,14 +4,15 @@
     export class AppModule {
         constructor() {
             // module
-            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute"]);
+            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages"]);
 
             // configs
             ngFlowRate.config([Configs.AppConfig]);
             ngFlowRate.config(["$routeProvider", "$locationProvider", Configs.RouteConfig]);
+            ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", Configs.ThemeConfig]);
 
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "httpService", Directives.TsGoogleMap]);
 
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", Filters.TsRemoveStringFilter);

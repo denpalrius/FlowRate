@@ -176,7 +176,7 @@
             //    //console.log("sensors:", data);
             //});
 
-            that.loadMapData();
+            //that.loadMapData();
 
         }
 

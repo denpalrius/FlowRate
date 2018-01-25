@@ -52,6 +52,34 @@ var ThingSpeak;
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
 (function (ThingSpeak) {
+    var Configs;
+    (function (Configs) {
+        var ThemeConfig = (function () {
+            function ThemeConfig($mdThemingProvider, $mdIconProvider) {
+                $mdThemingProvider.theme('default')
+                    .primaryPalette('cyan', {
+                    'default': '400',
+                    'hue-1': '100',
+                    'hue-2': '600',
+                    'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+                })
+                    .accentPalette('deep-orange', {
+                    'default': '700' // use shade 200 for default, and keep all other shades the same
+                });
+                // Enable browser color
+                $mdThemingProvider.enableBrowserColor({
+                    theme: 'default',
+                    palette: 'accent',
+                    hue: '700' // Default is '800'
+                });
+            }
+            return ThemeConfig;
+        }());
+        Configs.ThemeConfig = ThemeConfig;
+    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
     var Controllers;
     (function (Controllers) {
         "use strict";
@@ -349,7 +377,7 @@ var ThingSpeak;
                 //    that.$scope.homeScope.sensors = data;
                 //    //console.log("sensors:", data);
                 //});
-                that.loadMapData();
+                //that.loadMapData();
             };
             HomeController.prototype.loadMapData = function () {
                 var that = this;
@@ -447,9 +475,9 @@ var ThingSpeak;
             if (req) {
                 geocoder.geocode(req, function (results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
-                        console.log("Reverse Geocode results: ", results);
+                        //console.log("Reverse Geocode results: ", results)
                         if (results.length) {
-                            console.log("Reverse Geocode", results[0]);
+                            //console.log("Reverse Geocode", results[0]);
                             deferred.resolve(results[0]);
                         }
                         else {
@@ -511,14 +539,107 @@ var ThingSpeak;
             }
         }
         function attachSearchBar() {
-            console.log("Input : ", $("#googleMapSearchBox"));
+            //console.log("Input : ", $("#googleMapSearchBox"));
             var searchInput = $("#googleMapSearchBox")[0];
             return new google.maps.places.Autocomplete(searchInput);
         }
-        function init(scope, $timeout) {
+        function loadMapStyles(http) {
+            var deferred = $.Deferred();
+            http.get("app/scripts/map-style.json")
+                .done(function (response) {
+                console.log("Loaded style: ", response.data);
+                deferred.resolve(response.data);
+            })
+                .fail(function (error) {
+                console.log("Failed to load custom map style");
+                deferred.reject(error);
+            });
+            return deferred;
+        }
+        function init(scope, $timeout, http) {
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
             scope.geocoder = new google.maps.Geocoder;
+            var mapStyles = [
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#444444"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "color": "#f2f2f2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "saturation": -100
+                        },
+                        {
+                            "lightness": 45
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "simplified"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": [
+                        {
+                            "color": "#46bcec"
+                        },
+                        {
+                            "visibility": "on"
+                        }
+                    ]
+                }
+            ];
             var mapOptions = {
                 zoomControl: true,
                 mapTypeControl: true,
@@ -528,18 +649,14 @@ var ThingSpeak;
                 draggable: true,
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_TOP,
-                    style: google.maps.ZoomControlStyle.SMALL
+                    style: google.maps.ZoomControlStyle.DEFAULT
                 },
                 scaleControl: true,
                 rotateControl: true,
                 center: scope.userLocation,
                 zoom: 17,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                    mapTypeIds: [google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN]
-                }
+                styles: mapStyles
             };
-            //console.warn("Location : ", $("#locationMap")[0]);
             scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
             scope.marker = new google.maps.Marker({
                 position: scope.userLocation,
@@ -547,7 +664,7 @@ var ThingSpeak;
                 title: 'User Location'
             });
         }
-        function TsGoogleMap($timeout, $log) {
+        function TsGoogleMap($timeout, $log, http) {
             var ddo = {
                 restrict: 'AE',
                 scope: {
@@ -560,7 +677,7 @@ var ThingSpeak;
                 },
                 templateUrl: '/app/views/templates/ts-google-map-template.html',
                 link: function (scope, $elm, attr) {
-                    init(scope, $timeout);
+                    init(scope, $timeout, http);
                     $timeout(5).then(function () {
                         //Change this once you Move Input to Directive
                         if (scope.isShowSearchBar) {
@@ -586,7 +703,7 @@ var ThingSpeak;
                                         scope.currentLocation = geoCodeResult.formatted_address;
                                         scope.marker.setPosition(scope.userLocation);
                                         scope.map.setCenter(scope.userLocation);
-                                        console.log("Reverse output Address", scope.currentLocation);
+                                        //console.log("Reverse output Address", scope.currentLocation);
                                     });
                                 })
                                     .fail(function (error) {
@@ -784,12 +901,13 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute"]);
+            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages"]);
             // configs
             ngFlowRate.config([ThingSpeak.Configs.AppConfig]);
             ngFlowRate.config(["$routeProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
+            ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", ThingSpeak.Configs.ThemeConfig]);
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", ThingSpeak.Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "httpService", ThingSpeak.Directives.TsGoogleMap]);
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
             // services
