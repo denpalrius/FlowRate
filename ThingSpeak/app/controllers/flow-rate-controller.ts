@@ -25,8 +25,8 @@
             private $scope: IFlowRateScope,
             private $rootScope: ng.IRootScopeService,
             private $location: ng.ILocationService,
-            private httpService: Services.HttpService,
-            private thingSpeakService: Services.ThingSpeakService,
+            private HttpService: Services.HttpService,
+            private ThingSpeakService: Services.ThingSpeakService,
             private $timeout: ng.ITimeoutService) {
 
             var that: FlowRateController = this;
@@ -64,7 +64,7 @@
             that.$scope.flowRateScope.pageLoadingFinished = false;
             //console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
 
-            that.thingSpeakService.getThingSpeakData()
+            that.ThingSpeakService.getThingSpeakData()
                 .done((response: ViewModels.MaraRiverFlow) => {
                     that.$timeout(0).then(() => {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
@@ -98,7 +98,7 @@
 
             var deferred = $.Deferred();
             
-            that.httpService.get(Configs.AppConfig.ApiUrl)
+            that.HttpService.get(Configs.AppConfig.ApiUrl)
                 .done((response: Models.IHttpResponse) => {
 
                     console.log("response.data", response.data);

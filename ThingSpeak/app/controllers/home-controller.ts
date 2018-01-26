@@ -20,7 +20,8 @@
         constructor(
             private $scope: IHomeScope,
             private $rootScope: ng.IRootScopeService,
-            private $location: ng.ILocationService) {
+            private $location: ng.ILocationService,
+            private FirebaseService: Services.FirebaseService) {
             var that: HomeController = this;
             that.init();
         }
@@ -167,72 +168,15 @@
                 }
             ];
 
-            //that.$rootScope.$on('map-center-updated', (event, data) => {
-            //    that.$scope.homeScope.mapCenter = data;
-            //});
-
-            //that.$rootScope.$on('sensors-updated', (event, data) => {
-            //    that.$scope.homeScope.sensors = data;
-            //    //console.log("sensors:", data);
-            //});
-
-            //that.loadMapData();
+            that.doFirebaseStuff();
 
         }
 
-        private loadMapData() {
+        private doFirebaseStuff() {
             var that: HomeController = this;
 
-            that.getCurrentPosition()
-                .done((geolocation) => {
-                    that.getAddress(geolocation);
-                })
-                .fail((error) => {
-                    console.error(error);
-                });
-        }
+            //that.FirebaseService.readFromFirebase();
 
-        //GeoCoding
-        private getCurrentPosition(): JQueryDeferred<google.maps.LatLng> {
-            if (navigator.geolocation) {
-                var deferred = $.Deferred();
-
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-                    },
-                    (error) => {
-                        deferred.reject("User did not accept location permission");
-                    });
-            } else {
-                deferred.reject("Geolocation is not supported by yout device");
-            }
-
-            return deferred;
-        }
-
-        //Reverse Geocoding
-        private getAddress(latLong: google.maps.LatLng) {
-            var that: HomeController = this;
-            var geocoder = new google.maps.Geocoder();
-
-            geocoder.geocode({ 'location': latLong }, function (results: any, status: any) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    //console.log("Reverse Geocode results: ", results)
-                    if (results[0]) {
-                        that.$scope.homeScope.userAddress = results[0].formatted_address;
-                        console.log("currentAddress: ", that.$scope.homeScope.userAddress);
-                    } else {
-                        console.log("No results found");
-                    }
-                } else {
-                    console.log("Geocoder failed due to: " + status);
-                }
-            });
-        }
-
-        private getRadius(num: number): number {
-            return Math.sqrt(num) * 100;
         }
     }
 }

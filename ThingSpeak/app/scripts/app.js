@@ -122,12 +122,12 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var FlowRateController = (function () {
-            function FlowRateController($scope, $rootScope, $location, httpService, thingSpeakService, $timeout) {
+            function FlowRateController($scope, $rootScope, $location, HttpService, ThingSpeakService, $timeout) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
                 this.$location = $location;
-                this.httpService = httpService;
-                this.thingSpeakService = thingSpeakService;
+                this.HttpService = HttpService;
+                this.ThingSpeakService = ThingSpeakService;
                 this.$timeout = $timeout;
                 var that = this;
                 that.init();
@@ -156,7 +156,7 @@ var ThingSpeak;
                 var that = this;
                 that.$scope.flowRateScope.pageLoadingFinished = false;
                 //console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
-                that.thingSpeakService.getThingSpeakData()
+                that.ThingSpeakService.getThingSpeakData()
                     .done(function (response) {
                     that.$timeout(0).then(function () {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
@@ -181,7 +181,7 @@ var ThingSpeak;
                 that.$scope.flowRateScope.pageLoadingFinished = false;
                 console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
                 var deferred = $.Deferred();
-                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                that.HttpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
                     .done(function (response) {
                     console.log("response.data", response.data);
                     that.$scope.flowRateScope.maraRiverFlowRate = response.data;
@@ -224,10 +224,11 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope, $rootScope, $location) {
+            function HomeController($scope, $rootScope, $location, FirebaseService) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
                 this.$location = $location;
+                this.FirebaseService = FirebaseService;
                 var that = this;
                 that.init();
             }
@@ -370,62 +371,11 @@ var ThingSpeak;
                         ]
                     }
                 ];
-                //that.$rootScope.$on('map-center-updated', (event, data) => {
-                //    that.$scope.homeScope.mapCenter = data;
-                //});
-                //that.$rootScope.$on('sensors-updated', (event, data) => {
-                //    that.$scope.homeScope.sensors = data;
-                //    //console.log("sensors:", data);
-                //});
-                //that.loadMapData();
+                that.doFirebaseStuff();
             };
-            HomeController.prototype.loadMapData = function () {
+            HomeController.prototype.doFirebaseStuff = function () {
                 var that = this;
-                that.getCurrentPosition()
-                    .done(function (geolocation) {
-                    that.getAddress(geolocation);
-                })
-                    .fail(function (error) {
-                    console.error(error);
-                });
-            };
-            //GeoCoding
-            HomeController.prototype.getCurrentPosition = function () {
-                if (navigator.geolocation) {
-                    var deferred = $.Deferred();
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-                    }, function (error) {
-                        deferred.reject("User did not accept location permission");
-                    });
-                }
-                else {
-                    deferred.reject("Geolocation is not supported by yout device");
-                }
-                return deferred;
-            };
-            //Reverse Geocoding
-            HomeController.prototype.getAddress = function (latLong) {
-                var that = this;
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'location': latLong }, function (results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        //console.log("Reverse Geocode results: ", results)
-                        if (results[0]) {
-                            that.$scope.homeScope.userAddress = results[0].formatted_address;
-                            console.log("currentAddress: ", that.$scope.homeScope.userAddress);
-                        }
-                        else {
-                            console.log("No results found");
-                        }
-                    }
-                    else {
-                        console.log("Geocoder failed due to: " + status);
-                    }
-                });
-            };
-            HomeController.prototype.getRadius = function (num) {
-                return Math.sqrt(num) * 100;
+                //that.FirebaseService.readFromFirebase();
             };
             return HomeController;
         }());
@@ -556,7 +506,7 @@ var ThingSpeak;
             });
             return deferred;
         }
-        function init(scope, $timeout, http) {
+        function init(scope, $timeout) {
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
             scope.geocoder = new google.maps.Geocoder;
@@ -664,7 +614,7 @@ var ThingSpeak;
                 title: 'User Location'
             });
         }
-        function TsGoogleMap($timeout, $log, http) {
+        function TsGoogleMap($timeout, $log) {
             var ddo = {
                 restrict: 'AE',
                 scope: {
@@ -677,7 +627,7 @@ var ThingSpeak;
                 },
                 templateUrl: '/app/views/templates/ts-google-map-template.html',
                 link: function (scope, $elm, attr) {
-                    init(scope, $timeout, http);
+                    init(scope, $timeout);
                     $timeout(5).then(function () {
                         //Change this once you Move Input to Directive
                         if (scope.isShowSearchBar) {
@@ -840,6 +790,31 @@ var ThingSpeak;
 (function (ThingSpeak) {
     var Services;
     (function (Services) {
+        var FirebaseService = (function () {
+            function FirebaseService($firebaseObject) {
+                this.$firebaseObject = $firebaseObject;
+                var that = this;
+            }
+            FirebaseService.prototype.readFromFirebase = function () {
+                var that = this;
+                //var deferred = $.Deferred();
+                //const rootRef = firebase.database().ref().child('data-db');
+                //const ref = rootRef.child('object');
+                //var syncObject = that.$firebaseObject(ref);
+                // synchronize the object with a three-way data binding
+                // click on `index.html` above to see it used in the DOM!
+                //syncObject.$bindTo($scope, "data");
+                //return deferred;
+            };
+            return FirebaseService;
+        }());
+        Services.FirebaseService = FirebaseService;
+    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Services;
+    (function (Services) {
         var HttpService = (function () {
             function HttpService($http) {
                 this.$http = $http;
@@ -872,14 +847,14 @@ var ThingSpeak;
     var Services;
     (function (Services) {
         var ThingSpeakService = (function () {
-            function ThingSpeakService(httpService) {
-                this.httpService = httpService;
+            function ThingSpeakService(HttpService) {
+                this.HttpService = HttpService;
                 var that = this;
             }
             ThingSpeakService.prototype.getThingSpeakData = function () {
                 var that = this;
                 var deferred = $.Deferred();
-                that.httpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                that.HttpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
                     .done(function (response) {
                     var maraRiverFlowRate = response.data;
                     deferred.resolve(maraRiverFlowRate);
@@ -901,22 +876,23 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages"]);
+            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "firebase"]);
             // configs
             ngFlowRate.config([ThingSpeak.Configs.AppConfig]);
             ngFlowRate.config(["$routeProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", ThingSpeak.Configs.ThemeConfig]);
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "httpService", ThingSpeak.Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", ThingSpeak.Directives.TsGoogleMap]);
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
             // services
-            ngFlowRate.service("httpService", ["$http", ThingSpeak.Services.HttpService]);
-            ngFlowRate.service("thingSpeakService", ["httpService", ThingSpeak.Services.ThingSpeakService]);
+            ngFlowRate.service("HttpService", ["$http", ThingSpeak.Services.HttpService]);
+            ngFlowRate.service("ThingSpeakService", ["HttpService", ThingSpeak.Services.ThingSpeakService]);
+            ngFlowRate.service("FirebaseService", ["$firebaseObject", ThingSpeak.Services.FirebaseService]);
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", ThingSpeak.Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "httpService", "thingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", "FirebaseService", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.AboutController]);
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(function () {
@@ -928,7 +904,7 @@ var ThingSpeak;
     ThingSpeak.AppModule = AppModule;
 })(ThingSpeak || (ThingSpeak = {}));
 /**
- * @license AngularJS v1.6.6
+ * @license AngularJS v1.6.7
  * (c) 2010-2017 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -1023,7 +999,7 @@ var ThingSpeak;
                 }
                 return match;
             });
-            message += '\nhttp://errors.angularjs.org/1.6.6/' +
+            message += '\nhttp://errors.angularjs.org/1.6.7/' +
                 (module ? module + '/' : '') + code;
             for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
                 message += paramPrefix + 'p' + i + '=' + encodeURIComponent(templateArgs[i]);
@@ -1141,13 +1117,11 @@ var ThingSpeak;
      * @installation
      * @description
      *
-     * # ng (core module)
      * The ng module is loaded by default when an AngularJS application is started. The module itself
      * contains the essential components for an AngularJS application to function. The table below
      * lists a high level breakdown of each of the services/factories, filters, directives and testing
      * components available within this core module.
      *
-     * <div doc-module-components="ng"></div>
      */
     var REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
     // The name of a form control's ValidityState property.
@@ -1797,7 +1771,7 @@ var ThingSpeak;
               <button ng-click="update(user)">SAVE</button>
             </form>
             <pre>form = {{user | json}}</pre>
-            <pre>master = {{master | json}}</pre>
+            <pre>leader = {{leader | json}}</pre>
           </div>
         </file>
         <file name="script.js">
@@ -1805,16 +1779,16 @@ var ThingSpeak;
           angular.
             module('copyExample', []).
             controller('ExampleController', ['$scope', function($scope) {
-              $scope.master = {};
+              $scope.leader = {};
     
               $scope.reset = function() {
                 // Example with 1 argument
-                $scope.user = angular.copy($scope.master);
+                $scope.user = angular.copy($scope.leader);
               };
     
               $scope.update = function(user) {
                 // Example with 2 arguments
-                angular.copy(user, $scope.master);
+                angular.copy(user, $scope.leader);
               };
     
               $scope.reset();
@@ -2508,6 +2482,10 @@ var ThingSpeak;
      * document would not be compiled, the `AppController` would not be instantiated and the `{{ a+b }}`
      * would not be resolved to `3`.
      *
+     * @example
+     *
+     * ### Simple Usage
+     *
      * `ngApp` is the easiest, and most common way to bootstrap an application.
      *
      <example module="ngAppDemo" name="ng-app">
@@ -2523,6 +2501,10 @@ var ThingSpeak;
        });
        </file>
      </example>
+     *
+     * @example
+     *
+     * ### With `ngStrictDi`
      *
      * Using `ngStrictDi`, you would see something like this:
      *
@@ -3470,20 +3452,20 @@ var ThingSpeak;
      *
      * This object has the following properties:
      *
-     * - `full` â€“ `{string}` â€“ Full version string, such as "0.9.18".
-     * - `major` â€“ `{number}` â€“ Major version number, such as "0".
-     * - `minor` â€“ `{number}` â€“ Minor version number, such as "9".
-     * - `dot` â€“ `{number}` â€“ Dot version number, such as "18".
-     * - `codeName` â€“ `{string}` â€“ Code name of the release, such as "jiggling-armfat".
+     * - `full` – `{string}` – Full version string, such as "0.9.18".
+     * - `major` – `{number}` – Major version number, such as "0".
+     * - `minor` – `{number}` – Minor version number, such as "9".
+     * - `dot` – `{number}` – Dot version number, such as "18".
+     * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
      */
     var version = {
         // These placeholder strings will be replaced by grunt's `build` task.
         // They need to be double- or single-quoted.
-        full: '1.6.6',
+        full: '1.6.7',
         major: 1,
         minor: 6,
-        dot: 6,
-        codeName: 'interdimensional-cable'
+        dot: 7,
+        codeName: 'imperial-backstroke'
     };
     function publishExternalAPI(angular) {
         extend(angular, {
@@ -3625,7 +3607,7 @@ var ThingSpeak;
                 });
             }
         ])
-            .info({ angularVersion: '1.6.6' });
+            .info({ angularVersion: '1.6.7' });
     }
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
      *     Any commits to this file should be reviewed with security in mind.  *
@@ -3992,24 +3974,32 @@ var ThingSpeak;
     }
     function jqLiteRemoveClass(element, cssClasses) {
         if (cssClasses && element.setAttribute) {
+            var existingClasses = (' ' + (element.getAttribute('class') || '') + ' ')
+                .replace(/[\n\t]/g, ' ');
+            var newClasses = existingClasses;
             forEach(cssClasses.split(' '), function (cssClass) {
-                element.setAttribute('class', trim((' ' + (element.getAttribute('class') || '') + ' ')
-                    .replace(/[\n\t]/g, ' ')
-                    .replace(' ' + trim(cssClass) + ' ', ' ')));
+                cssClass = trim(cssClass);
+                newClasses = newClasses.replace(' ' + cssClass + ' ', ' ');
             });
+            if (newClasses !== existingClasses) {
+                element.setAttribute('class', trim(newClasses));
+            }
         }
     }
     function jqLiteAddClass(element, cssClasses) {
         if (cssClasses && element.setAttribute) {
             var existingClasses = (' ' + (element.getAttribute('class') || '') + ' ')
                 .replace(/[\n\t]/g, ' ');
+            var newClasses = existingClasses;
             forEach(cssClasses.split(' '), function (cssClass) {
                 cssClass = trim(cssClass);
-                if (existingClasses.indexOf(' ' + cssClass + ' ') === -1) {
-                    existingClasses += cssClass + ' ';
+                if (newClasses.indexOf(' ' + cssClass + ' ') === -1) {
+                    newClasses += cssClass + ' ';
                 }
             });
-            element.setAttribute('class', trim(existingClasses));
+            if (newClasses !== existingClasses) {
+                element.setAttribute('class', trim(newClasses));
+            }
         }
     }
     function jqLiteAddNodes(root, elements) {
@@ -4817,7 +4807,7 @@ var ThingSpeak;
      *   })).toBe($injector);
      * ```
      *
-     * # Injection Function Annotation
+     * ## Injection Function Annotation
      *
      * JavaScript does not have annotations, and annotations are needed for dependency injection. The
      * following are all valid ways of annotating function with injection arguments and are equivalent.
@@ -4835,7 +4825,7 @@ var ThingSpeak;
      *   $injector.invoke(['serviceA', function(serviceA){}]);
      * ```
      *
-     * ## Inference
+     * ### Inference
      *
      * In JavaScript calling `toString()` on a function returns the function definition. The definition
      * can then be parsed and the function arguments can be extracted. This method of discovering
@@ -4843,10 +4833,10 @@ var ThingSpeak;
      * *NOTE:* This does not work with minification, and obfuscation tools since these tools change the
      * argument names.
      *
-     * ## `$inject` Annotation
+     * ### `$inject` Annotation
      * By adding an `$inject` property onto a function the injection parameters can be specified.
      *
-     * ## Inline
+     * ### Inline
      * As an array of injection names, where the last item in the array is the function to call.
      */
     /**
@@ -4927,7 +4917,7 @@ var ThingSpeak;
      * function is invoked. There are three ways in which the function can be annotated with the needed
      * dependencies.
      *
-     * # Argument names
+     * #### Argument names
      *
      * The simplest form is to extract the dependencies from the arguments of the function. This is done
      * by converting the function into a string using `toString()` method and extracting the argument
@@ -4947,7 +4937,7 @@ var ThingSpeak;
      * This method does not work with code minification / obfuscation. For this reason the following
      * annotation strategies are supported.
      *
-     * # The `$inject` property
+     * #### The `$inject` property
      *
      * If a function has an `$inject` property and its value is an array of strings, then the strings
      * represent names of services to be injected into the function.
@@ -4963,7 +4953,7 @@ var ThingSpeak;
      *   expect(injector.annotate(MyController)).toEqual(['$scope', '$route']);
      * ```
      *
-     * # The array notation
+     * #### The array notation
      *
      * It is often desirable to inline Injected functions and that's when setting the `$inject` property
      * is very inconvenient. In these situations using the array notation to specify the dependencies in
@@ -4999,6 +4989,45 @@ var ThingSpeak;
      * @param {boolean=} [strictDi=false] Disallow argument name annotation inference.
      *
      * @returns {Array.<string>} The names of the services which the function requires.
+     */
+    /**
+     * @ngdoc method
+     * @name $injector#loadNewModules
+     *
+     * @description
+     *
+     * **This is a dangerous API, which you use at your own risk!**
+     *
+     * Add the specified modules to the current injector.
+     *
+     * This method will add each of the injectables to the injector and execute all of the config and run
+     * blocks for each module passed to the method.
+     *
+     * If a module has already been loaded into the injector then it will not be loaded again.
+     *
+     * * The application developer is responsible for loading the code containing the modules; and for
+     * ensuring that lazy scripts are not downloaded and executed more often that desired.
+     * * Previously compiled HTML will not be affected by newly loaded directives, filters and components.
+     * * Modules cannot be unloaded.
+     *
+     * You can use {@link $injector#modules `$injector.modules`} to check whether a module has been loaded
+     * into the injector, which may indicate whether the script has been executed already.
+     *
+     * @example
+     * Here is an example of loading a bundle of modules, with a utility method called `getScript`:
+     *
+     * ```javascript
+     * app.factory('loadModule', function($injector) {
+     *   return function loadModule(moduleName, bundleUrl) {
+     *     return getScript(bundleUrl).then(function() { $injector.loadNewModules([moduleName]); });
+     *   };
+     * })
+     * ```
+     *
+     * @param {Array<String|Function|Array>=} mods an array of modules to load into the application.
+     *     Each item in the array should be the name of a predefined module or a (DI annotated)
+     *     function that will be invoked by the injector as a `config` block.
+     *     See: {@link angular.module modules}
      */
     /**
      * @ngdoc service
@@ -5338,6 +5367,10 @@ var ThingSpeak;
         instanceInjector.strictDi = strictDi;
         forEach(runBlocks, function (fn) { if (fn)
             instanceInjector.invoke(fn); });
+        instanceInjector.loadNewModules = function (mods) {
+            forEach(loadModules(mods), function (fn) { if (fn)
+                instanceInjector.invoke(fn); });
+        };
         return instanceInjector;
         ////////////////////////////////////
         // $provider
@@ -7054,17 +7087,17 @@ var ThingSpeak;
      * @param {string} cacheId Name or id of the newly created cache.
      * @param {object=} options Options object that specifies the cache behavior. Properties:
      *
-     *   - `{number=}` `capacity` â€” turns the cache into LRU cache.
+     *   - `{number=}` `capacity` — turns the cache into LRU cache.
      *
      * @returns {object} Newly created cache object with the following set of methods:
      *
-     * - `{object}` `info()` â€” Returns id, size, and options of cache.
-     * - `{{*}}` `put({string} key, {*} value)` â€” Puts a new key-value pair into the cache and returns
+     * - `{object}` `info()` — Returns id, size, and options of cache.
+     * - `{{*}}` `put({string} key, {*} value)` — Puts a new key-value pair into the cache and returns
      *   it.
-     * - `{{*}}` `get({string} key)` â€” Returns cached value for `key` or undefined for cache miss.
-     * - `{void}` `remove({string} key)` â€” Removes a key-value pair from the cache.
-     * - `{void}` `removeAll()` â€” Removes all cached values.
-     * - `{void}` `destroy()` â€” Removes references to this cache from $cacheFactory.
+     * - `{{*}}` `get({string} key)` — Returns cached value for `key` or undefined for cache miss.
+     * - `{void}` `remove({string} key)` — Removes a key-value pair from the cache.
+     * - `{void}` `removeAll()` — Removes all cached values.
+     * - `{void}` `destroy()` — Removes references to this cache from $cacheFactory.
      *
      * @example
        <example module="cacheExampleApp" name="cache-factory">
@@ -7123,8 +7156,8 @@ var ThingSpeak;
                  *
                  * @description
                  * A cache object used to store and retrieve data, primarily used by
-                 * {@link $http $http} and the {@link ng.directive:script script} directive to cache
-                 * templates and other data.
+                 * {@link $templateRequest $templateRequest} and the {@link ng.directive:script script}
+                 * directive to cache templates and other data.
                  *
                  * ```js
                  *  angular.module('superCache')
@@ -7353,9 +7386,12 @@ var ThingSpeak;
      * @this
      *
      * @description
+     * `$templateCache` is a {@link $cacheFactory.Cache Cache object} created by the
+     * {@link ng.$cacheFactory $cacheFactory}.
+     *
      * The first time a template is used, it is loaded in the template cache for quick retrieval. You
-     * can load templates directly into the cache in a `script` tag, or by consuming the
-     * `$templateCache` service directly.
+     * can load templates directly into the cache in a `script` tag, by using {@link $templateRequest},
+     * or by consuming the `$templateCache` service directly.
      *
      * Adding via the `script` tag:
      *
@@ -7366,8 +7402,8 @@ var ThingSpeak;
      * ```
      *
      * **Note:** the `script` tag containing the template does not need to be included in the `head` of
-     * the document, but it must be a descendent of the {@link ng.$rootElement $rootElement} (IE,
-     * element with ng-app attribute), otherwise the template will be ignored.
+     * the document, but it must be a descendent of the {@link ng.$rootElement $rootElement} (e.g.
+     * element with {@link ngApp} attribute), otherwise the template will be ignored.
      *
      * Adding via the `$templateCache` service:
      *
@@ -7389,8 +7425,6 @@ var ThingSpeak;
      * ```js
      * $templateCache.get('templateId.html')
      * ```
-     *
-     * See {@link ng.$cacheFactory $cacheFactory}.
      *
      */
     function $TemplateCacheProvider() {
@@ -7901,8 +7935,11 @@ var ThingSpeak;
      * $sce#getTrustedResourceUrl $sce.getTrustedResourceUrl}.
      *
      *
-     * #### `replace` ([*DEPRECATED*!], will be removed in next major release - i.e. v2.0)
-     * specify what the template should replace. Defaults to `false`.
+     * #### `replace` (*DEPRECATED*)
+     *
+     * `replace` will be removed in next major release - i.e. v2.0).
+     *
+     * Specifies what the template should replace. Defaults to `false`.
      *
      * * `true` - the template will replace the directive's element.
      * * `false` - the template will replace the contents of the directive's element.
@@ -8514,13 +8551,13 @@ var ThingSpeak;
          *    {@link ng.$compile#directive-definition-object directive definition object}),
          *    with the following properties (all optional):
          *
-         *    - `controller` â€“ `{(string|function()=}` â€“ controller constructor function that should be
+         *    - `controller` – `{(string|function()=}` – controller constructor function that should be
          *      associated with newly created scope or the name of a {@link ng.$compile#-controller-
          *      registered controller} if passed as a string. An empty `noop` function by default.
-         *    - `controllerAs` â€“ `{string=}` â€“ identifier name for to reference the controller in the component's scope.
+         *    - `controllerAs` – `{string=}` – identifier name for to reference the controller in the component's scope.
          *      If present, the controller will be published to scope under the `controllerAs` name.
          *      If not present, this will default to be `$ctrl`.
-         *    - `template` â€“ `{string=|function()=}` â€“ html template as a string or a function that
+         *    - `template` – `{string=|function()=}` – html template as a string or a function that
          *      returns an html template as a string which should be used as the contents of this component.
          *      Empty string by default.
          *
@@ -8530,7 +8567,7 @@ var ThingSpeak;
          *      - `$element` - Current element
          *      - `$attrs` - Current attributes object for the element
          *
-         *    - `templateUrl` â€“ `{string=|function()=}` â€“ path or function that returns a path to an html
+         *    - `templateUrl` – `{string=|function()=}` – path or function that returns a path to an html
          *      template that should be used  as the contents of this component.
          *
          *      If `templateUrl` is a function, then it is {@link auto.$injector#invoke injected} with
@@ -8539,15 +8576,15 @@ var ThingSpeak;
          *      - `$element` - Current element
          *      - `$attrs` - Current attributes object for the element
          *
-         *    - `bindings` â€“ `{object=}` â€“ defines bindings between DOM attributes and component properties.
+         *    - `bindings` – `{object=}` – defines bindings between DOM attributes and component properties.
          *      Component properties are always bound to the component controller and not to the scope.
          *      See {@link ng.$compile#-bindtocontroller- `bindToController`}.
-         *    - `transclude` â€“ `{boolean=}` â€“ whether {@link $compile#transclusion content transclusion} is enabled.
+         *    - `transclude` – `{boolean=}` – whether {@link $compile#transclusion content transclusion} is enabled.
          *      Disabled by default.
          *    - `require` - `{Object<string, string>=}` - requires the controllers of other directives and binds them to
          *      this component's controller. The object keys specify the property names under which the required
          *      controllers (object values) will be bound. See {@link ng.$compile#-require- `require`}.
-         *    - `$...` â€“ additional properties to attach to the directive factory function and the controller
+         *    - `$...` – additional properties to attach to the directive factory function and the controller
          *      constructor function. (This is used by the component router to annotate)
          *
          * @returns {ng.$compileProvider} the compile provider itself, for chaining of function calls.
@@ -8717,7 +8754,12 @@ var ThingSpeak;
          * binding information and a reference to the current scope on to DOM elements.
          * If enabled, the compiler will add the following to DOM elements that have been bound to the scope
          * * `ng-binding` CSS class
+         * * `ng-scope` and `ng-isolated-scope` CSS classes
          * * `$binding` data property containing an array of the binding expressions
+         * * Data properties used by the {@link angular.element#methods `scope()`/`isolateScope()` methods} to return
+         *   the element's scope.
+         * * Placeholder comments will contain information about what directive and binding caused the placeholder.
+         *   E.g. `<!-- ngIf: shouldShow() -->`.
          *
          * You may want to disable this in production for a significant performance boost. See
          * {@link guide/production#disabling-debug-data Disabling Debug Data} for more.
@@ -10692,7 +10734,9 @@ var ThingSpeak;
     function directiveNormalize(name) {
         return name
             .replace(PREFIX_REGEXP, '')
-            .replace(SPECIAL_CHARS_REGEXP, fnCamelCaseReplace);
+            .replace(SPECIAL_CHARS_REGEXP, function (_, letter, offset) {
+            return offset ? letter.toUpperCase() : letter;
+        });
     }
     /**
      * @ngdoc type
@@ -11464,7 +11508,7 @@ var ThingSpeak;
                  *
                  *
                  * ## General usage
-                 * The `$http` service is a function which takes a single argument â€” a {@link $http#usage configuration object} â€”
+                 * The `$http` service is a function which takes a single argument — a {@link $http#usage configuration object} —
                  * that is used to generate an HTTP request and returns  a {@link ng.$q promise}.
                  *
                  * ```js
@@ -11483,13 +11527,13 @@ var ThingSpeak;
                  *
                  * The response object has these properties:
                  *
-                 *   - **data** â€“ `{string|Object}` â€“ The response body transformed with the transform
+                 *   - **data** – `{string|Object}` – The response body transformed with the transform
                  *     functions.
-                 *   - **status** â€“ `{number}` â€“ HTTP status code of the response.
-                 *   - **headers** â€“ `{function([headerName])}` â€“ Header getter function.
-                 *   - **config** â€“ `{Object}` â€“ The configuration object that was used to generate the request.
-                 *   - **statusText** â€“ `{string}` â€“ HTTP status text of the response.
-                 *   - **xhrStatus** â€“ `{string}` â€“ Status of the XMLHttpRequest (`complete`, `error`, `timeout` or `abort`).
+                 *   - **status** – `{number}` – HTTP status code of the response.
+                 *   - **headers** – `{function([headerName])}` – Header getter function.
+                 *   - **config** – `{Object}` – The configuration object that was used to generate the request.
+                 *   - **statusText** – `{string}` – HTTP status text of the response.
+                 *   - **xhrStatus** – `{string}` – Status of the XMLHttpRequest (`complete`, `error`, `timeout` or `abort`).
                  *
                  * A response status code between 200 and 299 is considered a success status and will result in
                  * the success callback being called. Any response status code outside of that range is
@@ -11832,13 +11876,13 @@ var ThingSpeak;
                  * @param {object} config Object describing the request to be made and how it should be
                  *    processed. The object has following properties:
                  *
-                 *    - **method** â€“ `{string}` â€“ HTTP method (e.g. 'GET', 'POST', etc)
-                 *    - **url** â€“ `{string|TrustedObject}` â€“ Absolute or relative URL of the resource that is being requested;
+                 *    - **method** – `{string}` – HTTP method (e.g. 'GET', 'POST', etc)
+                 *    - **url** – `{string|TrustedObject}` – Absolute or relative URL of the resource that is being requested;
                  *      or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-                 *    - **params** â€“ `{Object.<string|Object>}` â€“ Map of strings or objects which will be serialized
+                 *    - **params** – `{Object.<string|Object>}` – Map of strings or objects which will be serialized
                  *      with the `paramSerializer` and appended as GET parameters.
-                 *    - **data** â€“ `{string|Object}` â€“ Data to be sent as the request message data.
-                 *    - **headers** â€“ `{Object}` â€“ Map of strings or functions which return strings representing
+                 *    - **data** – `{string|Object}` – Data to be sent as the request message data.
+                 *    - **headers** – `{Object}` – Map of strings or functions which return strings representing
                  *      HTTP headers to send to the server. If the return value of a function is null, the
                  *      header will not be sent. Functions accept a config object as an argument.
                  *    - **eventHandlers** - `{Object}` - Event listeners to be bound to the XMLHttpRequest object.
@@ -11847,16 +11891,16 @@ var ThingSpeak;
                  *    - **uploadEventHandlers** - `{Object}` - Event listeners to be bound to the XMLHttpRequest upload
                  *      object. To bind events to the XMLHttpRequest object, use `eventHandlers`.
                  *      The handler will be called in the context of a `$apply` block.
-                 *    - **xsrfHeaderName** â€“ `{string}` â€“ Name of HTTP header to populate with the XSRF token.
-                 *    - **xsrfCookieName** â€“ `{string}` â€“ Name of cookie containing the XSRF token.
-                 *    - **transformRequest** â€“
-                 *      `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` â€“
+                 *    - **xsrfHeaderName** – `{string}` – Name of HTTP header to populate with the XSRF token.
+                 *    - **xsrfCookieName** – `{string}` – Name of cookie containing the XSRF token.
+                 *    - **transformRequest** –
+                 *      `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
                  *      transform function or an array of such functions. The transform function takes the http
                  *      request body and headers and returns its transformed (typically serialized) version.
                  *      See {@link ng.$http#overriding-the-default-transformations-per-request
                  *      Overriding the Default Transformations}
-                 *    - **transformResponse** â€“
-                 *      `{function(data, headersGetter, status)|Array.<function(data, headersGetter, status)>}` â€“
+                 *    - **transformResponse** –
+                 *      `{function(data, headersGetter, status)|Array.<function(data, headersGetter, status)>}` –
                  *      transform function or an array of such functions. The transform function takes the http
                  *      response body, headers and status and returns its transformed (typically deserialized) version.
                  *      See {@link ng.$http#overriding-the-default-transformations-per-request
@@ -11868,10 +11912,10 @@ var ThingSpeak;
                  *      by registering it as a {@link auto.$provide#service service}.
                  *      The default serializer is the {@link $httpParamSerializer $httpParamSerializer};
                  *      alternatively, you can use the {@link $httpParamSerializerJQLike $httpParamSerializerJQLike}
-                 *    - **cache** â€“ `{boolean|Object}` â€“ A boolean value or object created with
+                 *    - **cache** – `{boolean|Object}` – A boolean value or object created with
                  *      {@link ng.$cacheFactory `$cacheFactory`} to enable or disable caching of the HTTP response.
                  *      See {@link $http#caching $http Caching} for more information.
-                 *    - **timeout** â€“ `{number|Promise}` â€“ timeout in milliseconds, or {@link ng.$q promise}
+                 *    - **timeout** – `{number|Promise}` – timeout in milliseconds, or {@link ng.$q promise}
                  *      that should abort the request when resolved.
                  *    - **withCredentials** - `{boolean}` - whether to set the `withCredentials` flag on the
                  *      XHR object. See [requests with credentials](https://developer.mozilla.org/docs/Web/HTTP/Access_control_CORS#Requests_with_credentials)
@@ -12096,7 +12140,7 @@ var ThingSpeak;
                  *
                  * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
                  *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 /**
@@ -12108,7 +12152,7 @@ var ThingSpeak;
                  *
                  * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
                  *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 /**
@@ -12120,7 +12164,7 @@ var ThingSpeak;
                  *
                  * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
                  *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 /**
@@ -12135,6 +12179,10 @@ var ThingSpeak;
                  * You can trust a URL by adding it to the whitelist via
                  * {@link $sceDelegateProvider#resourceUrlWhitelist  `$sceDelegateProvider.resourceUrlWhitelist`} or
                  * by explicitly trusting the URL via {@link $sce#trustAsResourceUrl `$sce.trustAsResourceUrl(url)`}.
+                 *
+                 * You should avoid generating the URL for the JSONP request from user provided data.
+                 * Provide additional query parameters via `params` property of the `config` parameter, rather than
+                 * modifying the URL itself.
                  *
                  * JSONP requests must specify a callback to be used in the response from the server. This callback
                  * is passed as a query parameter in the request. You must specify the name of this parameter by
@@ -12157,7 +12205,7 @@ var ThingSpeak;
                  *
                  * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
                  *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 createShortMethods('get', 'delete', 'head', 'jsonp');
@@ -12170,7 +12218,7 @@ var ThingSpeak;
                  *
                  * @param {string} url Relative or absolute URL specifying the destination of the request
                  * @param {*} data Request content
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 /**
@@ -12182,7 +12230,7 @@ var ThingSpeak;
                  *
                  * @param {string} url Relative or absolute URL specifying the destination of the request
                  * @param {*} data Request content
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 /**
@@ -12194,7 +12242,7 @@ var ThingSpeak;
                  *
                  * @param {string} url Relative or absolute URL specifying the destination of the request
                  * @param {*} data Request content
-                 * @param {Object=} config Optional configuration object
+                 * @param {Object=} config Optional configuration object. See https://docs.angularjs.org/api/ng/service/$http#usage
                  * @returns {HttpPromise} Future object
                  */
                 createShortMethodsWithData('post', 'put', 'patch');
@@ -12376,18 +12424,25 @@ var ThingSpeak;
                     }
                     return url;
                 }
-                function sanitizeJsonpCallbackParam(url, key) {
-                    if (/[&?][^=]+=JSON_CALLBACK/.test(url)) {
-                        // Throw if the url already contains a reference to JSON_CALLBACK
-                        throw $httpMinErr('badjsonp', 'Illegal use of JSON_CALLBACK in url, "{0}"', url);
+                function sanitizeJsonpCallbackParam(url, cbKey) {
+                    var parts = url.split('?');
+                    if (parts.length > 2) {
+                        // Throw if the url contains more than one `?` query indicator
+                        throw $httpMinErr('badjsonp', 'Illegal use more than one "?", in url, "{1}"', url);
                     }
-                    var callbackParamRegex = new RegExp('[&?]' + key + '=');
-                    if (callbackParamRegex.test(url)) {
-                        // Throw if the callback param was already provided
-                        throw $httpMinErr('badjsonp', 'Illegal use of callback param, "{0}", in url, "{1}"', key, url);
-                    }
+                    var params = parseKeyValue(parts[1]);
+                    forEach(params, function (value, key) {
+                        if (value === 'JSON_CALLBACK') {
+                            // Throw if the url already contains a reference to JSON_CALLBACK
+                            throw $httpMinErr('badjsonp', 'Illegal use of JSON_CALLBACK in url, "{0}"', url);
+                        }
+                        if (key === cbKey) {
+                            // Throw if the callback param was already provided
+                            throw $httpMinErr('badjsonp', 'Illegal use of callback param, "{0}", in url, "{1}"', cbKey, url);
+                        }
+                    });
                     // Add in the JSON_CALLBACK callback param value
-                    url += ((url.indexOf('?') === -1) ? '?' : '&') + key + '=JSON_CALLBACK';
+                    url += ((url.indexOf('?') === -1) ? '?' : '&') + cbKey + '=JSON_CALLBACK';
                     return url;
                 }
             }];
@@ -13207,7 +13262,7 @@ var ThingSpeak;
      * $locale service provides localization rules for various Angular components. As of right now the
      * only public api is:
      *
-     * * `id` â€“ `{string}` â€“ locale id formatted as `languageId-countryId` (e.g. `en-us`)
+     * * `id` – `{string}` – locale id formatted as `languageId-countryId` (e.g. `en-us`)
      */
     var PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/, DEFAULT_PORTS = { 'http': 80, 'https': 443, 'ftp': 21 };
     var $locationMinErr = minErr('$location');
@@ -13220,7 +13275,19 @@ var ThingSpeak;
     function encodePath(path) {
         var segments = path.split('/'), i = segments.length;
         while (i--) {
-            segments[i] = encodeUriSegment(segments[i]);
+            // decode forward slashes to prevent them from being double encoded
+            segments[i] = encodeUriSegment(segments[i].replace(/%2F/g, '/'));
+        }
+        return segments.join('/');
+    }
+    function decodePath(path, html5Mode) {
+        var segments = path.split('/'), i = segments.length;
+        while (i--) {
+            segments[i] = decodeURIComponent(segments[i]);
+            if (html5Mode) {
+                // encode forward slashes to prevent them from being mistaken for path separators
+                segments[i] = segments[i].replace(/\//g, '%2F');
+            }
         }
         return segments.join('/');
     }
@@ -13231,7 +13298,7 @@ var ThingSpeak;
         locationObj.$$port = toInt(parsedUrl.port) || DEFAULT_PORTS[parsedUrl.protocol] || null;
     }
     var DOUBLE_SLASH_REGEX = /^\s*[\\/]{2,}/;
-    function parseAppUrl(url, locationObj) {
+    function parseAppUrl(url, locationObj, html5Mode) {
         if (DOUBLE_SLASH_REGEX.test(url)) {
             throw $locationMinErr('badpath', 'Invalid url "{0}".', url);
         }
@@ -13240,8 +13307,8 @@ var ThingSpeak;
             url = '/' + url;
         }
         var match = urlResolve(url);
-        locationObj.$$path = decodeURIComponent(prefixed && match.pathname.charAt(0) === '/' ?
-            match.pathname.substring(1) : match.pathname);
+        var path = prefixed && match.pathname.charAt(0) === '/' ? match.pathname.substring(1) : match.pathname;
+        locationObj.$$path = decodePath(path, html5Mode);
         locationObj.$$search = parseKeyValue(match.search);
         locationObj.$$hash = decodeURIComponent(match.hash);
         // make sure path starts with '/';
@@ -13301,7 +13368,7 @@ var ThingSpeak;
             if (!isString(pathUrl)) {
                 throw $locationMinErr('ipthprfx', 'Invalid url "{0}", missing path prefix "{1}".', url, appBaseNoFile);
             }
-            parseAppUrl(pathUrl, this);
+            parseAppUrl(pathUrl, this, true);
             if (!this.$$path) {
                 this.$$path = '/';
             }
@@ -13391,7 +13458,7 @@ var ThingSpeak;
                     }
                 }
             }
-            parseAppUrl(withoutHashUrl, this);
+            parseAppUrl(withoutHashUrl, this, false);
             this.$$path = removeWindowsDriveName(this.$$path, withoutHashUrl, appBase);
             this.$$compose();
             /*
@@ -13549,7 +13616,7 @@ var ThingSpeak;
             }
             var match = PATH_MATCH.exec(url);
             if (match[1] || url === '')
-                this.path(decodeURIComponent(match[1]));
+                this.path(decodeURI(match[1]));
             if (match[2] || match[1] || url === '')
                 this.search(match[3] || '');
             this.hash(match[5] || '');
@@ -13878,7 +13945,7 @@ var ThingSpeak;
          * @param {(boolean|Object)=} mode If boolean, sets `html5Mode.enabled` to value.
          *   If object, sets `enabled`, `requireBase` and `rewriteLinks` to respective values. Supported
          *   properties:
-         *   - **enabled** â€“ `{boolean}` â€“ (default: false) If true, will rely on `history.pushState` to
+         *   - **enabled** – `{boolean}` – (default: false) If true, will rely on `history.pushState` to
          *     change urls where supported. Will fall back to hash-prefixed paths in browsers that do not
          *     support `pushState`.
          *   - **requireBase** - `{boolean}` - (default: `true`) When html5Mode is enabled, specifies
@@ -15858,17 +15925,17 @@ var ThingSpeak;
      * @param {string} expression String expression to compile.
      * @returns {function(context, locals)} a function which represents the compiled expression:
      *
-     *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the strings
+     *    * `context` – `{object}` – an object against which any expressions embedded in the strings
      *      are evaluated against (typically a scope object).
-     *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values in
+     *    * `locals` – `{object=}` – local variables context object, useful for overriding values in
      *      `context`.
      *
      *    The returned function also has the following properties:
-     *      * `literal` â€“ `{boolean}` â€“ whether the expression's top-level node is a JavaScript
+     *      * `literal` – `{boolean}` – whether the expression's top-level node is a JavaScript
      *        literal.
-     *      * `constant` â€“ `{boolean}` â€“ whether the expression is made entirely of JavaScript
+     *      * `constant` – `{boolean}` – whether the expression is made entirely of JavaScript
      *        constant literals.
-     *      * `assign` â€“ `{?function(context, value)}` â€“ if the expression is assignable, this will be
+     *      * `assign` – `{?function(context, value)}` – if the expression is assignable, this will be
      *        set to a function to change its value on the given context.
      *
      */
@@ -16147,7 +16214,7 @@ var ThingSpeak;
      * $q can be used in two fashions --- one which is more similar to Kris Kowal's Q or jQuery's Deferred
      * implementations, and the other which resembles ES6 (ES2015) promises to some degree.
      *
-     * # $q constructor
+     * ## $q constructor
      *
      * The streamlined ES6 style promise is essentially just using $q as a constructor which takes a `resolver`
      * function as the first argument. This is similar to the native Promise implementation from ES6,
@@ -16235,7 +16302,7 @@ var ThingSpeak;
      * For more on this please see the [Q documentation](https://github.com/kriskowal/q) especially the
      * section on serial or parallel joining of promises.
      *
-     * # The Deferred API
+     * ## The Deferred API
      *
      * A new instance of deferred is constructed by calling `$q.defer()`.
      *
@@ -16245,19 +16312,19 @@ var ThingSpeak;
      *
      * **Methods**
      *
-     * - `resolve(value)` â€“ resolves the derived promise with the `value`. If the value is a rejection
+     * - `resolve(value)` – resolves the derived promise with the `value`. If the value is a rejection
      *   constructed via `$q.reject`, the promise will be rejected instead.
-     * - `reject(reason)` â€“ rejects the derived promise with the `reason`. This is equivalent to
+     * - `reject(reason)` – rejects the derived promise with the `reason`. This is equivalent to
      *   resolving it with a rejection constructed via `$q.reject`.
      * - `notify(value)` - provides updates on the status of the promise's execution. This may be called
      *   multiple times before the promise is either resolved or rejected.
      *
      * **Properties**
      *
-     * - promise â€“ `{Promise}` â€“ promise object associated with this deferred.
+     * - promise – `{Promise}` – promise object associated with this deferred.
      *
      *
-     * # The Promise API
+     * ## The Promise API
      *
      * A new promise instance is created when a deferred instance is created and can be retrieved by
      * calling `deferred.promise`.
@@ -16267,7 +16334,7 @@ var ThingSpeak;
      *
      * **Methods**
      *
-     * - `then(successCallback, [errorCallback], [notifyCallback])` â€“ regardless of when the promise was or
+     * - `then(successCallback, [errorCallback], [notifyCallback])` – regardless of when the promise was or
      *   will be resolved or rejected, `then` calls one of the success or error callbacks asynchronously
      *   as soon as the result is available. The callbacks are called with a single argument: the result
      *   or rejection reason. Additionally, the notify callback may be called zero or more times to
@@ -16281,15 +16348,15 @@ var ThingSpeak;
      *   resolved or rejected from the notifyCallback method. The errorCallback and notifyCallback
      *   arguments are optional.
      *
-     * - `catch(errorCallback)` â€“ shorthand for `promise.then(null, errorCallback)`
+     * - `catch(errorCallback)` – shorthand for `promise.then(null, errorCallback)`
      *
-     * - `finally(callback, notifyCallback)` â€“ allows you to observe either the fulfillment or rejection of a promise,
+     * - `finally(callback, notifyCallback)` – allows you to observe either the fulfillment or rejection of a promise,
      *   but to do so without modifying the final value. This is useful to release resources or do some
      *   clean-up that needs to be done whether the promise was rejected or resolved. See the [full
      *   specification](https://github.com/kriskowal/q/wiki/API-Reference#promisefinallycallback) for
      *   more information.
      *
-     * # Chaining promises
+     * ## Chaining promises
      *
      * Because calling the `then` method of a promise returns a new derived promise, it is easily
      * possible to create a chain of promises:
@@ -16309,7 +16376,7 @@ var ThingSpeak;
      * $http's response interceptors.
      *
      *
-     * # Differences between Kris Kowal's Q and $q
+     * ## Differences between Kris Kowal's Q and $q
      *
      *  There are two main differences:
      *
@@ -16319,7 +16386,7 @@ var ThingSpeak;
      * - Q has many more features than $q, but that comes at a cost of bytes. $q is tiny, but contains
      *   all the important functionality needed for common async tasks.
      *
-     * # Testing
+     * ## Testing
      *
      *  ```js
      *    it('should simulate promise', inject(function($q, $rootScope) {
@@ -16487,6 +16554,10 @@ var ThingSpeak;
                     }
                     catch (e) {
                         rejectPromise(promise, e);
+                        // This error is explicitly marked for being passed to the $exceptionHandler
+                        if (e && e.$$passToExceptionHandler === true) {
+                            exceptionHandler(e);
+                        }
                     }
                 }
             }
@@ -16935,7 +17006,7 @@ var ThingSpeak;
                  * an in-depth introduction and usage examples.
                  *
                  *
-                 * # Inheritance
+                 * ## Inheritance
                  * A scope can inherit from a parent scope, as in this example:
                  * ```js
                      var parent = $rootScope;
@@ -17104,7 +17175,7 @@ var ThingSpeak;
                      *
                      *
                      *
-                     * # Example
+                     * @example
                      * ```js
                          // let's assume that scope was dependency injected as the $rootScope
                          var scope = $rootScope;
@@ -17341,7 +17412,7 @@ var ThingSpeak;
                      *   adding, removing, and moving items belonging to an object or array.
                      *
                      *
-                     * # Example
+                     * @example
                      * ```js
                         $scope.names = ['igor', 'matias', 'misko', 'james'];
                         $scope.dataCount = 4;
@@ -17534,7 +17605,7 @@ var ThingSpeak;
                      *
                      * In unit tests, you may need to call `$digest()` to simulate the scope life cycle.
                      *
-                     * # Example
+                     * @example
                      * ```js
                          var scope = ...;
                          scope.name = 'misko';
@@ -17742,7 +17813,7 @@ var ThingSpeak;
                      * the expression are propagated (uncaught). This is useful when evaluating Angular
                      * expressions.
                      *
-                     * # Example
+                     * @example
                      * ```js
                          var scope = ng.$rootScope.Scope();
                          scope.a = 1;
@@ -17820,9 +17891,8 @@ var ThingSpeak;
                      * cycle of {@link ng.$exceptionHandler exception handling},
                      * {@link ng.$rootScope.Scope#$digest executing watches}.
                      *
-                     * ## Life cycle
+                     * **Life cycle: Pseudo-Code of `$apply()`**
                      *
-                     * # Pseudo-Code of `$apply()`
                      * ```js
                          function $apply(expr) {
                            try {
@@ -17949,7 +18019,10 @@ var ThingSpeak;
                         return function () {
                             var indexOfListener = namedListeners.indexOf(listener);
                             if (indexOfListener !== -1) {
-                                namedListeners[indexOfListener] = null;
+                                // Use delete in the hope of the browser deallocating the memory for the array entry,
+                                // while not shifting the array indexes of other listeners.
+                                // See issue https://github.com/angular/angular.js/issues/16135
+                                delete namedListeners[indexOfListener];
                                 decrementListenerCount(self, 1, name);
                             }
                         };
@@ -18007,8 +18080,7 @@ var ThingSpeak;
                             }
                             //if any listener on the current scope stops propagation, prevent bubbling
                             if (stopPropagation) {
-                                event.currentScope = null;
-                                return event;
+                                break;
                             }
                             //traverse upwards
                             scope = scope.$parent;
@@ -18155,7 +18227,7 @@ var ThingSpeak;
      * Private service to sanitize uris for links and images. Used by $compile and $sanitize.
      */
     function $$SanitizeUriProvider() {
-        var aHrefSanitizationWhitelist = /^\s*(https?|ftp|mailto|tel|file):/, imgSrcSanitizationWhitelist = /^\s*((https?|ftp|file|blob):|data:image\/)/;
+        var aHrefSanitizationWhitelist = /^\s*(https?|s?ftp|mailto|tel|file):/, imgSrcSanitizationWhitelist = /^\s*((https?|ftp|file|blob):|data:image\/)/;
         /**
          * @description
          * Retrieves or overrides the default regular expression that is used for whitelisting of safe
@@ -18206,7 +18278,7 @@ var ThingSpeak;
             return function sanitizeUri(uri, isImage) {
                 var regex = isImage ? imgSrcSanitizationWhitelist : aHrefSanitizationWhitelist;
                 var normalizedVal;
-                normalizedVal = urlResolve(uri).href;
+                normalizedVal = urlResolve(uri && uri.trim()).href;
                 if (normalizedVal !== '' && !normalizedVal.match(regex)) {
                     return 'unsafe:' + normalizedVal;
                 }
@@ -18637,13 +18709,13 @@ var ThingSpeak;
      *
      * `$sce` is a service that provides Strict Contextual Escaping services to AngularJS.
      *
-     * # Strict Contextual Escaping
+     * ## Strict Contextual Escaping
      *
      * Strict Contextual Escaping (SCE) is a mode in which AngularJS constrains bindings to only render
      * trusted values. Its goal is to assist in writing code in a way that (a) is secure by default, and
      * (b) makes auditing for security vulnerabilities such as XSS, clickjacking, etc. a lot easier.
      *
-     * ## Overview
+     * ### Overview
      *
      * To systematically block XSS security bugs, AngularJS treats all values as untrusted by default in
      * HTML or sensitive URL bindings. When binding untrusted values, AngularJS will automatically
@@ -18659,7 +18731,7 @@ var ThingSpeak;
      *
      * As of version 1.2, AngularJS ships with SCE enabled by default.
      *
-     * ## In practice
+     * ### In practice
      *
      * Here's an example of a binding in a privileged context:
      *
@@ -18696,7 +18768,7 @@ var ThingSpeak;
      * (and shorthand methods such as {@link ng.$sce#trustAsHtml $sce.trustAsHtml}, etc.) to
      * build the trusted versions of your values.
      *
-     * ## How does it work?
+     * ### How does it work?
      *
      * In privileged contexts, directives and code will bind to the result of {@link ng.$sce#getTrusted
      * $sce.getTrusted(context, value)} rather than to the value directly.  Think of this function as
@@ -18720,7 +18792,7 @@ var ThingSpeak;
      * }];
      * ```
      *
-     * ## Impact on loading templates
+     * ### Impact on loading templates
      *
      * This applies both to the {@link ng.directive:ngInclude `ng-include`} directive as well as
      * `templateUrl`'s specified by {@link guide/directive directives}.
@@ -18740,7 +18812,7 @@ var ThingSpeak;
      * won't work on all browsers.  Also, loading templates from `file://` URL does not work on some
      * browsers.
      *
-     * ## This feels like too much overhead
+     * ### This feels like too much overhead
      *
      * It's important to remember that SCE only applies to interpolation expressions.
      *
@@ -18764,7 +18836,7 @@ var ThingSpeak;
      * security onto an application later.
      *
      * <a name="contexts"></a>
-     * ## What trusted context types are supported?
+     * ### What trusted context types are supported?
      *
      * | Context             | Notes          |
      * |---------------------|----------------|
@@ -18780,7 +18852,7 @@ var ThingSpeak;
      * in AngularJS currently, so their corresponding `$sce.trustAs` functions aren't useful yet. This
      * might evolve.
      *
-     * ## Format of items in {@link ng.$sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist}/{@link ng.$sceDelegateProvider#resourceUrlBlacklist Blacklist} <a name="resourceUrlPatternItem"></a>
+     * ### Format of items in {@link ng.$sceDelegateProvider#resourceUrlWhitelist resourceUrlWhitelist}/{@link ng.$sceDelegateProvider#resourceUrlBlacklist Blacklist} <a name="resourceUrlPatternItem"></a>
      *
      *  Each element in these arrays must be one of the following:
      *
@@ -18827,7 +18899,7 @@ var ThingSpeak;
      *
      * Refer {@link ng.$sceDelegateProvider $sceDelegateProvider} for an example.
      *
-     * ## Show me an example using SCE.
+     * ### Show me an example using SCE.
      *
      * <example module="mySceApp" deps="angular-sanitize.js" name="sce-service">
      * <file name="index.html">
@@ -19020,9 +19092,9 @@ var ThingSpeak;
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 sce.parseAs = function sceParseAs(type, expr) {
@@ -19059,7 +19131,7 @@ var ThingSpeak;
                  * @name $sce#trustAsHtml
                  *
                  * @description
-                 * Shorthand method.  `$sce.trustAsHtml(value)` â†’
+                 * Shorthand method.  `$sce.trustAsHtml(value)` →
                  *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.HTML, value)`}
                  *
                  * @param {*} value The value to mark as trusted for `$sce.HTML` context.
@@ -19071,7 +19143,7 @@ var ThingSpeak;
                  * @name $sce#trustAsCss
                  *
                  * @description
-                 * Shorthand method.  `$sce.trustAsCss(value)` â†’
+                 * Shorthand method.  `$sce.trustAsCss(value)` →
                  *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.CSS, value)`}
                  *
                  * @param {*} value The value to mark as trusted for `$sce.CSS` context.
@@ -19084,7 +19156,7 @@ var ThingSpeak;
                  * @name $sce#trustAsUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.trustAsUrl(value)` â†’
+                 * Shorthand method.  `$sce.trustAsUrl(value)` →
                  *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.URL, value)`}
                  *
                  * @param {*} value The value to mark as trusted for `$sce.URL` context.
@@ -19097,7 +19169,7 @@ var ThingSpeak;
                  * @name $sce#trustAsResourceUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.trustAsResourceUrl(value)` â†’
+                 * Shorthand method.  `$sce.trustAsResourceUrl(value)` →
                  *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.RESOURCE_URL, value)`}
                  *
                  * @param {*} value The value to mark as trusted for `$sce.RESOURCE_URL` context.
@@ -19110,7 +19182,7 @@ var ThingSpeak;
                  * @name $sce#trustAsJs
                  *
                  * @description
-                 * Shorthand method.  `$sce.trustAsJs(value)` â†’
+                 * Shorthand method.  `$sce.trustAsJs(value)` →
                  *     {@link ng.$sceDelegate#trustAs `$sceDelegate.trustAs($sce.JS, value)`}
                  *
                  * @param {*} value The value to mark as trusted for `$sce.JS` context.
@@ -19141,7 +19213,7 @@ var ThingSpeak;
                  * @name $sce#getTrustedHtml
                  *
                  * @description
-                 * Shorthand method.  `$sce.getTrustedHtml(value)` â†’
+                 * Shorthand method.  `$sce.getTrustedHtml(value)` →
                  *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.HTML, value)`}
                  *
                  * @param {*} value The value to pass to `$sce.getTrusted`.
@@ -19152,7 +19224,7 @@ var ThingSpeak;
                  * @name $sce#getTrustedCss
                  *
                  * @description
-                 * Shorthand method.  `$sce.getTrustedCss(value)` â†’
+                 * Shorthand method.  `$sce.getTrustedCss(value)` →
                  *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.CSS, value)`}
                  *
                  * @param {*} value The value to pass to `$sce.getTrusted`.
@@ -19163,7 +19235,7 @@ var ThingSpeak;
                  * @name $sce#getTrustedUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.getTrustedUrl(value)` â†’
+                 * Shorthand method.  `$sce.getTrustedUrl(value)` →
                  *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.URL, value)`}
                  *
                  * @param {*} value The value to pass to `$sce.getTrusted`.
@@ -19174,7 +19246,7 @@ var ThingSpeak;
                  * @name $sce#getTrustedResourceUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.getTrustedResourceUrl(value)` â†’
+                 * Shorthand method.  `$sce.getTrustedResourceUrl(value)` →
                  *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.RESOURCE_URL, value)`}
                  *
                  * @param {*} value The value to pass to `$sceDelegate.getTrusted`.
@@ -19185,7 +19257,7 @@ var ThingSpeak;
                  * @name $sce#getTrustedJs
                  *
                  * @description
-                 * Shorthand method.  `$sce.getTrustedJs(value)` â†’
+                 * Shorthand method.  `$sce.getTrustedJs(value)` →
                  *     {@link ng.$sceDelegate#getTrusted `$sceDelegate.getTrusted($sce.JS, value)`}
                  *
                  * @param {*} value The value to pass to `$sce.getTrusted`.
@@ -19196,15 +19268,15 @@ var ThingSpeak;
                  * @name $sce#parseAsHtml
                  *
                  * @description
-                 * Shorthand method.  `$sce.parseAsHtml(expression string)` â†’
+                 * Shorthand method.  `$sce.parseAsHtml(expression string)` →
                  *     {@link ng.$sce#parseAs `$sce.parseAs($sce.HTML, value)`}
                  *
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 /**
@@ -19212,15 +19284,15 @@ var ThingSpeak;
                  * @name $sce#parseAsCss
                  *
                  * @description
-                 * Shorthand method.  `$sce.parseAsCss(value)` â†’
+                 * Shorthand method.  `$sce.parseAsCss(value)` →
                  *     {@link ng.$sce#parseAs `$sce.parseAs($sce.CSS, value)`}
                  *
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 /**
@@ -19228,15 +19300,15 @@ var ThingSpeak;
                  * @name $sce#parseAsUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.parseAsUrl(value)` â†’
+                 * Shorthand method.  `$sce.parseAsUrl(value)` →
                  *     {@link ng.$sce#parseAs `$sce.parseAs($sce.URL, value)`}
                  *
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 /**
@@ -19244,15 +19316,15 @@ var ThingSpeak;
                  * @name $sce#parseAsResourceUrl
                  *
                  * @description
-                 * Shorthand method.  `$sce.parseAsResourceUrl(value)` â†’
+                 * Shorthand method.  `$sce.parseAsResourceUrl(value)` →
                  *     {@link ng.$sce#parseAs `$sce.parseAs($sce.RESOURCE_URL, value)`}
                  *
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 /**
@@ -19260,15 +19332,15 @@ var ThingSpeak;
                  * @name $sce#parseAsJs
                  *
                  * @description
-                 * Shorthand method.  `$sce.parseAsJs(value)` â†’
+                 * Shorthand method.  `$sce.parseAsJs(value)` →
                  *     {@link ng.$sce#parseAs `$sce.parseAs($sce.JS, value)`}
                  *
                  * @param {string} expression String expression to compile.
                  * @return {function(context, locals)} A function which represents the compiled expression:
                  *
-                 *    * `context` â€“ `{object}` â€“ an object against which any expressions embedded in the
+                 *    * `context` – `{object}` – an object against which any expressions embedded in the
                  *      strings are evaluated against (typically a scope object).
-                 *    * `locals` â€“ `{object=}` â€“ local variables context object, useful for overriding values
+                 *    * `locals` – `{object=}` – local variables context object, useful for overriding values
                  *      in `context`.
                  */
                 // Shorthand delegations.
@@ -19402,6 +19474,12 @@ var ThingSpeak;
          *
          * If you want to pass custom options to the `$http` service, such as setting the Accept header you
          * can configure this via {@link $templateRequestProvider#httpOptions}.
+         *
+         * `$templateRequest` is used internally by {@link $compile}, {@link ngRoute.$route}, and directives such
+         * as {@link ngInclude} to download and cache templates.
+         *
+         * 3rd party modules should use `$templateRequest` if their services or directives are loading
+         * templates.
          *
          * @param {string|TrustedResourceUrl} tpl The HTTP request template URL
          * @param {boolean=} ignoreRequestError Whether or not to ignore the exception when the request fails or the template is empty
@@ -20342,7 +20420,7 @@ var ThingSpeak;
      * Formats a number as text.
      *
      * If the input is null or undefined, it will just be returned.
-     * If the input is infinite (Infinity or -Infinity), the Infinity symbol 'âˆž' or '-âˆž' is returned, respectively.
+     * If the input is infinite (Infinity or -Infinity), the Infinity symbol '∞' or '-∞' is returned, respectively.
      * If the input is not a number an empty string is returned.
      *
      *
@@ -21558,9 +21636,9 @@ var ThingSpeak;
            angular.module('orderByExample4', [])
              .controller('ExampleController', ['$scope', function($scope) {
                $scope.friends = [
-                 {name: 'John',   favoriteLetter: 'Ã„'},
-                 {name: 'Mary',   favoriteLetter: 'Ãœ'},
-                 {name: 'Mike',   favoriteLetter: 'Ã–'},
+                 {name: 'John',   favoriteLetter: 'Ä'},
+                 {name: 'Mary',   favoriteLetter: 'Ü'},
+                 {name: 'Mike',   favoriteLetter: 'Ö'},
                  {name: 'Adam',   favoriteLetter: 'H'},
                  {name: 'Julie',  favoriteLetter: 'Z'}
                ];
@@ -21989,14 +22067,14 @@ var ThingSpeak;
      * @example
         <example name="ng-checked">
           <file name="index.html">
-            <label>Check me to check both: <input type="checkbox" ng-model="master"></label><br/>
-            <input id="checkSlave" type="checkbox" ng-checked="master" aria-label="Slave input">
+            <label>Check me to check both: <input type="checkbox" ng-model="leader"></label><br/>
+            <input id="checkFollower" type="checkbox" ng-checked="leader" aria-label="Follower input">
           </file>
           <file name="protractor.js" type="protractor">
             it('should check both checkBoxes', function() {
-              expect(element(by.id('checkSlave')).getAttribute('checked')).toBeFalsy();
-              element(by.model('master')).click();
-              expect(element(by.id('checkSlave')).getAttribute('checked')).toBeTruthy();
+              expect(element(by.id('checkFollower')).getAttribute('checked')).toBeFalsy();
+              element(by.model('leader')).click();
+              expect(element(by.id('checkFollower')).getAttribute('checked')).toBeTruthy();
             });
           </file>
         </example>
@@ -22551,7 +22629,7 @@ var ThingSpeak;
     * If the `name` attribute is specified, the form controller is published onto the current scope under
     * this name.
     *
-    * # Alias: {@link ng.directive:ngForm `ngForm`}
+    * ## Alias: {@link ng.directive:ngForm `ngForm`}
     *
     * In Angular, forms can be nested. This means that the outer form is valid when all of the child
     * forms are valid as well. However, browsers do not allow nesting of `<form>` elements, so
@@ -22559,7 +22637,7 @@ var ThingSpeak;
     * `form` but can be nested. Nested forms can be useful, for example, if the validity of a sub-group
     * of controls needs to be determined.
     *
-    * # CSS classes
+    * ## CSS classes
     *  - `ng-valid` is set if the form is valid.
     *  - `ng-invalid` is set if the form is invalid.
     *  - `ng-pending` is set if the form is pending.
@@ -22570,7 +22648,7 @@ var ThingSpeak;
     * Keep in mind that ngAnimate can detect each of these classes when added and removed.
     *
     *
-    * # Submitting a form and preventing the default action
+    * ## Submitting a form and preventing the default action
     *
     * Since the role of forms in client-side Angular applications is different than in classical
     * roundtrip apps, it is desirable for the browser not to translate the form submission into a full
@@ -22603,8 +22681,7 @@ var ThingSpeak;
     * submitted. Note that `ngClick` events will occur before the model is updated. Use `ngSubmit`
     * to have access to the updated model.
     *
-    * ## Animation Hooks
-    *
+    * @animations
     * Animations in ngForm are triggered when any of the associated CSS classes are added and removed.
     * These classes are: `.ng-pristine`, `.ng-dirty`, `.ng-invalid` and `.ng-valid` as well as any
     * other validations that are performed within the form. Animations in ngForm are similar to how
@@ -23924,8 +24001,8 @@ var ThingSpeak;
          *                  Can be interpolated.
          * @param {string=} step Sets the `step` validation to ensure that the value entered matches the `step`
          *                  Can be interpolated.
-         * @param {string=} ngChange Angular expression to be executed when the ngModel value changes due
-         *                  to user interaction with the input element.
+         * @param {expression=} ngChange AngularJS expression to be executed when the ngModel value changes due
+         *                      to user interaction with the input element.
          * @param {expression=} ngChecked If the expression is truthy, then the `checked` attribute will be set on the
          *                      element. **Note** : `ngChecked` should not be used alongside `ngModel`.
          *                      Checkout {@link ng.directive:ngChecked ngChecked} for usage.
@@ -24803,6 +24880,8 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngValue
+     * @restrict A
+     * @priority 100
      *
      * @description
      * Binds the given expression to the value of the element.
@@ -24815,8 +24894,8 @@ var ThingSpeak;
      * It can also be used to achieve one-way binding of a given expression to an input element
      * such as an `input[text]` or a `textarea`, when that element does not use ngModel.
      *
-     * @element input
-     * @param {string=} ngValue angular expression, whose value will be bound to the `value` attribute
+     * @element ANY
+     * @param {string=} ngValue AngularJS expression, whose value will be bound to the `value` attribute
      * and `value` property of the element.
      *
      * @example
@@ -25092,6 +25171,7 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngChange
+     * @restrict A
      *
      * @description
      * Evaluate the given expression when the user changes the input.
@@ -25110,7 +25190,7 @@ var ThingSpeak;
      *
      * Note, this directive requires `ngModel` to be present.
      *
-     * @element input
+     * @element ANY
      * @param {expression} ngChange {@link guide/expression Expression} to evaluate upon change
      * in input value.
      *
@@ -25317,6 +25397,7 @@ var ThingSpeak;
      * @ngdoc directive
      * @name ngClass
      * @restrict AC
+     * @element ANY
      *
      * @description
      * The `ngClass` directive allows you to dynamically set CSS classes on an HTML element by databinding
@@ -25352,14 +25433,21 @@ var ThingSpeak;
      * | {@link ng.$animate#addClass addClass}       | just before the class is applied to the element   |
      * | {@link ng.$animate#removeClass removeClass} | just before the class is removed from the element |
      *
-     * @element ANY
+     * ### ngClass and pre-existing CSS3 Transitions/Animations
+       The ngClass directive still supports CSS3 Transitions/Animations even if they do not follow the ngAnimate CSS naming structure.
+       Upon animation ngAnimate will apply supplementary CSS classes to track the start and end of an animation, but this will not hinder
+       any pre-existing CSS transitions already on the element. To get an idea of what happens during a class-based animation, be sure
+       to view the step by step details of {@link $animate#addClass $animate.addClass} and
+       {@link $animate#removeClass $animate.removeClass}.
+     *
      * @param {expression} ngClass {@link guide/expression Expression} to eval. The result
      *   of the evaluation can be a string representing space delimited class
      *   names, an array, or a map of class names to boolean values. In the case of a map, the
      *   names of the properties whose values are truthy will be added as css classes to the
      *   element.
      *
-     * @example Example that demonstrates basic bindings via ngClass directive.
+     * @example
+     * ### Basic
        <example name="ng-class">
          <file name="index.html">
            <p ng-class="{strike: deleted, bold: important, 'has-error': error}">Map Syntax Example</p>
@@ -25449,7 +25537,8 @@ var ThingSpeak;
          </file>
        </example>
     
-       ## Animations
+       @example
+       ### Animations
     
        The example below demonstrates how to perform animations using ngClass.
     
@@ -25487,14 +25576,6 @@ var ThingSpeak;
            });
          </file>
        </example>
-    
-    
-       ## ngClass and pre-existing CSS3 Transitions/Animations
-       The ngClass directive still supports CSS3 Transitions/Animations even if they do not follow the ngAnimate CSS naming structure.
-       Upon animation ngAnimate will apply supplementary CSS classes to track the start and end of an animation, but this will not hinder
-       any pre-existing CSS transitions already on the element. To get an idea of what happens during a class-based animation, be sure
-       to view the step by step details of {@link $animate#addClass $animate.addClass} and
-       {@link $animate#removeClass $animate.removeClass}.
      */
     var ngClassDirective = classDirective('', true);
     /**
@@ -25659,10 +25740,10 @@ var ThingSpeak;
      *
      * MVC components in angular:
      *
-     * * Model â€” Models are the properties of a scope; scopes are attached to the DOM where scope properties
+     * * Model — Models are the properties of a scope; scopes are attached to the DOM where scope properties
      *   are accessed through bindings.
-     * * View â€” The template (HTML with data bindings) that is rendered into the View.
-     * * Controller â€” The `ngController` directive specifies a Controller class; the class contains business
+     * * View — The template (HTML with data bindings) that is rendered into the View.
+     * * Controller — The `ngController` directive specifies a Controller class; the class contains business
      *   logic behind the application to decorate the scope with functions and values
      *
      * Note that you can also attach controllers to the DOM by declaring it in a route definition
@@ -25963,6 +26044,7 @@ var ThingSpeak;
      * E.g.`<body ng-csp="no-inline-style;no-unsafe-eval">`
      *
      * @example
+     *
      * This example shows how to apply the `ngCsp` directive to the `html` tag.
        ```html
          <!doctype html>
@@ -25971,122 +26053,122 @@ var ThingSpeak;
          ...
          </html>
        ```
-      * @example
-          <!-- Note: the `.csp` suffix in the example name triggers CSP mode in our http server! -->
-          <example name="example.csp" module="cspExample" ng-csp="true">
-            <file name="index.html">
-              <div ng-controller="MainController as ctrl">
-                <div>
-                  <button ng-click="ctrl.inc()" id="inc">Increment</button>
-                  <span id="counter">
-                    {{ctrl.counter}}
-                  </span>
-                </div>
     
-                <div>
-                  <button ng-click="ctrl.evil()" id="evil">Evil</button>
-                  <span id="evilError">
-                    {{ctrl.evilError}}
-                  </span>
-                </div>
-              </div>
-            </file>
-            <file name="script.js">
-               angular.module('cspExample', [])
-                 .controller('MainController', function MainController() {
-                    this.counter = 0;
-                    this.inc = function() {
-                      this.counter++;
-                    };
-                    this.evil = function() {
-                      try {
-                        eval('1+2'); // eslint-disable-line no-eval
-                      } catch (e) {
-                        this.evilError = e.message;
-                      }
-                    };
-                  });
-            </file>
-            <file name="protractor.js" type="protractor">
-              var util, webdriver;
+      <!-- Note: the `.csp` suffix in the example name triggers CSP mode in our http server! -->
+      <example name="example.csp" module="cspExample" ng-csp="true">
+        <file name="index.html">
+          <div ng-controller="MainController as ctrl">
+            <div>
+              <button ng-click="ctrl.inc()" id="inc">Increment</button>
+              <span id="counter">
+                {{ctrl.counter}}
+              </span>
+            </div>
     
-              var incBtn = element(by.id('inc'));
-              var counter = element(by.id('counter'));
-              var evilBtn = element(by.id('evil'));
-              var evilError = element(by.id('evilError'));
-    
-              function getAndClearSevereErrors() {
-                return browser.manage().logs().get('browser').then(function(browserLog) {
-                  return browserLog.filter(function(logEntry) {
-                    return logEntry.level.value > webdriver.logging.Level.WARNING.value;
-                  });
-                });
-              }
-    
-              function clearErrors() {
-                getAndClearSevereErrors();
-              }
-    
-              function expectNoErrors() {
-                getAndClearSevereErrors().then(function(filteredLog) {
-                  expect(filteredLog.length).toEqual(0);
-                  if (filteredLog.length) {
-                    console.log('browser console errors: ' + util.inspect(filteredLog));
+            <div>
+              <button ng-click="ctrl.evil()" id="evil">Evil</button>
+              <span id="evilError">
+                {{ctrl.evilError}}
+              </span>
+            </div>
+          </div>
+        </file>
+        <file name="script.js">
+           angular.module('cspExample', [])
+             .controller('MainController', function MainController() {
+                this.counter = 0;
+                this.inc = function() {
+                  this.counter++;
+                };
+                this.evil = function() {
+                  try {
+                    eval('1+2'); // eslint-disable-line no-eval
+                  } catch (e) {
+                    this.evilError = e.message;
                   }
-                });
+                };
+              });
+        </file>
+        <file name="protractor.js" type="protractor">
+          var util, webdriver;
+    
+          var incBtn = element(by.id('inc'));
+          var counter = element(by.id('counter'));
+          var evilBtn = element(by.id('evil'));
+          var evilError = element(by.id('evilError'));
+    
+          function getAndClearSevereErrors() {
+            return browser.manage().logs().get('browser').then(function(browserLog) {
+              return browserLog.filter(function(logEntry) {
+                return logEntry.level.value > webdriver.logging.Level.WARNING.value;
+              });
+            });
+          }
+    
+          function clearErrors() {
+            getAndClearSevereErrors();
+          }
+    
+          function expectNoErrors() {
+            getAndClearSevereErrors().then(function(filteredLog) {
+              expect(filteredLog.length).toEqual(0);
+              if (filteredLog.length) {
+                console.log('browser console errors: ' + util.inspect(filteredLog));
               }
+            });
+          }
     
-              function expectError(regex) {
-                getAndClearSevereErrors().then(function(filteredLog) {
-                  var found = false;
-                  filteredLog.forEach(function(log) {
-                    if (log.message.match(regex)) {
-                      found = true;
-                    }
-                  });
-                  if (!found) {
-                    throw new Error('expected an error that matches ' + regex);
-                  }
-                });
+          function expectError(regex) {
+            getAndClearSevereErrors().then(function(filteredLog) {
+              var found = false;
+              filteredLog.forEach(function(log) {
+                if (log.message.match(regex)) {
+                  found = true;
+                }
+              });
+              if (!found) {
+                throw new Error('expected an error that matches ' + regex);
               }
+            });
+          }
     
-              beforeEach(function() {
-                util = require('util');
-                webdriver = require('selenium-webdriver');
-              });
+          beforeEach(function() {
+            util = require('util');
+            webdriver = require('selenium-webdriver');
+          });
     
-              // For now, we only test on Chrome,
-              // as Safari does not load the page with Protractor's injected scripts,
-              // and Firefox webdriver always disables content security policy (#6358)
-              if (browser.params.browser !== 'chrome') {
-                return;
-              }
+          // For now, we only test on Chrome,
+          // as Safari does not load the page with Protractor's injected scripts,
+          // and Firefox webdriver always disables content security policy (#6358)
+          if (browser.params.browser !== 'chrome') {
+            return;
+          }
     
-              it('should not report errors when the page is loaded', function() {
-                // clear errors so we are not dependent on previous tests
-                clearErrors();
-                // Need to reload the page as the page is already loaded when
-                // we come here
-                browser.driver.getCurrentUrl().then(function(url) {
-                  browser.get(url);
-                });
-                expectNoErrors();
-              });
+          it('should not report errors when the page is loaded', function() {
+            // clear errors so we are not dependent on previous tests
+            clearErrors();
+            // Need to reload the page as the page is already loaded when
+            // we come here
+            browser.driver.getCurrentUrl().then(function(url) {
+              browser.get(url);
+            });
+            expectNoErrors();
+          });
     
-              it('should evaluate expressions', function() {
-                expect(counter.getText()).toEqual('0');
-                incBtn.click();
-                expect(counter.getText()).toEqual('1');
-                expectNoErrors();
-              });
+          it('should evaluate expressions', function() {
+            expect(counter.getText()).toEqual('0');
+            incBtn.click();
+            expect(counter.getText()).toEqual('1');
+            expectNoErrors();
+          });
     
-              it('should throw and report an error when using "eval"', function() {
-                evilBtn.click();
-                expect(evilError.getText()).toMatch(/Content Security Policy/);
-                expectError(/Content Security Policy/);
-              });
-            </file>
-          </example>
+          it('should throw and report an error when using "eval"', function() {
+            evilBtn.click();
+            expect(evilError.getText()).toMatch(/Content Security Policy/);
+            expectError(/Content Security Policy/);
+          });
+        </file>
+      </example>
       */
     // `ngCsp` is not implemented as a proper directive any more, because we need it be processed while
     // we bootstrap the app (before `$parse` is instantiated). For this reason, we just have the `csp()`
@@ -26094,13 +26176,14 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngClick
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * The ngClick directive allows you to specify custom behavior when
      * an element is clicked.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngClick {@link guide/expression Expression} to evaluate upon
      * click. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26166,12 +26249,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngDblclick
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * The `ngDblclick` directive allows you to specify custom behavior on a dblclick event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngDblclick {@link guide/expression Expression} to evaluate upon
      * a dblclick. (The Event object is available as `$event`)
      *
@@ -26188,12 +26272,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMousedown
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * The ngMousedown directive allows you to specify custom behavior on mousedown event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMousedown {@link guide/expression Expression} to evaluate upon
      * mousedown. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26210,12 +26295,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMouseup
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on mouseup event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMouseup {@link guide/expression Expression} to evaluate upon
      * mouseup. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26232,12 +26318,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMouseover
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on mouseover event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMouseover {@link guide/expression Expression} to evaluate upon
      * mouseover. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26254,12 +26341,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMouseenter
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on mouseenter event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMouseenter {@link guide/expression Expression} to evaluate upon
      * mouseenter. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26276,12 +26364,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMouseleave
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on mouseleave event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMouseleave {@link guide/expression Expression} to evaluate upon
      * mouseleave. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26298,12 +26387,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMousemove
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on mousemove event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngMousemove {@link guide/expression Expression} to evaluate upon
      * mousemove. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26320,12 +26410,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngKeydown
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on keydown event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngKeydown {@link guide/expression Expression} to evaluate upon
      * keydown. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
      *
@@ -26340,12 +26431,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngKeyup
+     * @restrict A
+     * @element ANY
+     * @priority 0
      *
      * @description
      * Specify custom behavior on keyup event.
      *
-     * @element ANY
-     * @priority 0
      * @param {expression} ngKeyup {@link guide/expression Expression} to evaluate upon
      * keyup. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
      *
@@ -26365,11 +26457,12 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngKeypress
+     * @restrict A
+     * @element ANY
      *
      * @description
      * Specify custom behavior on keypress event.
      *
-     * @element ANY
      * @param {expression} ngKeypress {@link guide/expression Expression} to evaluate upon
      * keypress. ({@link guide/expression#-event- Event object is available as `$event`}
      * and can be interrogated for keyCode, altKey, etc.)
@@ -26385,6 +26478,9 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngSubmit
+     * @restrict A
+     * @element form
+     * @priority 0
      *
      * @description
      * Enables binding angular expressions to onsubmit events.
@@ -26400,8 +26496,6 @@ var ThingSpeak;
      * for a detailed discussion of when `ngSubmit` may be triggered.
      * </div>
      *
-     * @element form
-     * @priority 0
      * @param {expression} ngSubmit {@link guide/expression Expression} to eval.
      * ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26447,6 +26541,9 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngFocus
+     * @restrict A
+     * @element window, input, select, textarea, a
+     * @priority 0
      *
      * @description
      * Specify custom behavior on focus event.
@@ -26455,8 +26552,6 @@ var ThingSpeak;
      * AngularJS executes the expression using `scope.$evalAsync` if the event is fired
      * during an `$apply` to ensure a consistent state.
      *
-     * @element window, input, select, textarea, a
-     * @priority 0
      * @param {expression} ngFocus {@link guide/expression Expression} to evaluate upon
      * focus. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26466,6 +26561,9 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngBlur
+     * @restrict A
+     * @element window, input, select, textarea, a
+     * @priority 0
      *
      * @description
      * Specify custom behavior on blur event.
@@ -26478,8 +26576,6 @@ var ThingSpeak;
      * AngularJS executes the expression using `scope.$evalAsync` if the event is fired
      * during an `$apply` to ensure a consistent state.
      *
-     * @element window, input, select, textarea, a
-     * @priority 0
      * @param {expression} ngBlur {@link guide/expression Expression} to evaluate upon
      * blur. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26489,12 +26585,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngCopy
+     * @restrict A
+     * @element window, input, select, textarea, a
+     * @priority 0
      *
      * @description
      * Specify custom behavior on copy event.
      *
-     * @element window, input, select, textarea, a
-     * @priority 0
      * @param {expression} ngCopy {@link guide/expression Expression} to evaluate upon
      * copy. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26509,12 +26606,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngCut
+     * @restrict A
+     * @element window, input, select, textarea, a
+     * @priority 0
      *
      * @description
      * Specify custom behavior on cut event.
      *
-     * @element window, input, select, textarea, a
-     * @priority 0
      * @param {expression} ngCut {@link guide/expression Expression} to evaluate upon
      * cut. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26529,12 +26627,13 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngPaste
+     * @restrict A
+     * @element window, input, select, textarea, a
+     * @priority 0
      *
      * @description
      * Specify custom behavior on paste event.
      *
-     * @element window, input, select, textarea, a
-     * @priority 0
      * @param {expression} ngPaste {@link guide/expression Expression} to evaluate upon
      * paste. ({@link guide/expression#-event- Event object is available as `$event`})
      *
@@ -26676,6 +26775,8 @@ var ThingSpeak;
      * @ngdoc directive
      * @name ngInclude
      * @restrict ECA
+     * @scope
+     * @priority -400
      *
      * @description
      * Fetches, compiles and includes an external HTML fragment.
@@ -26702,10 +26803,7 @@ var ThingSpeak;
      *
      * The enter and leave animation occur concurrently.
      *
-     * @scope
-     * @priority 400
-     *
-     * @param {string} ngInclude|src angular expression evaluating to URL. If the source is a string constant,
+     * @param {string} ngInclude|src AngularJS expression evaluating to URL. If the source is a string constant,
      *                 make sure you wrap it in **single** quotes, e.g. `src="'myPartialTemplate.html'"`.
      * @param {string=} onload Expression to evaluate when a new partial is loaded.
      *                  <div class="alert alert-warning">
@@ -26963,6 +27061,10 @@ var ThingSpeak;
      * @ngdoc directive
      * @name ngInit
      * @restrict AC
+     * @priority 450
+     * @element ANY
+     *
+     * @param {expression} ngInit {@link guide/expression Expression} to eval.
      *
      * @description
      * The `ngInit` directive allows you to evaluate an expression in the
@@ -26970,10 +27072,16 @@ var ThingSpeak;
      *
      * <div class="alert alert-danger">
      * This directive can be abused to add unnecessary amounts of logic into your templates.
-     * There are only a few appropriate uses of `ngInit`, such as for aliasing special properties of
-     * {@link ng.directive:ngRepeat `ngRepeat`}, as seen in the demo below; and for injecting data via
-     * server side scripting. Besides these few cases, you should use {@link guide/controller controllers}
-     * rather than `ngInit` to initialize values on a scope.
+     * There are only a few appropriate uses of `ngInit`:
+     * <ul>
+     *   <li>aliasing special properties of {@link ng.directive:ngRepeat `ngRepeat`},
+     *     as seen in the demo below.</li>
+     *   <li>initializing data during development, or for examples, as seen throughout these docs.</li>
+     *   <li>injecting data via server side scripting.</li>
+     * </ul>
+     *
+     * Besides these few cases, you should use {@link guide/component Components} or
+     * {@link guide/controller Controllers} rather than `ngInit` to initialize values on a scope.
      * </div>
      *
      * <div class="alert alert-warning">
@@ -26983,11 +27091,6 @@ var ThingSpeak;
      * `<div ng-init="test1 = ($index | toString)"></div>`
      * </pre>
      * </div>
-     *
-     * @priority 450
-     *
-     * @element ANY
-     * @param {expression} ngInit {@link guide/expression Expression} to eval.
      *
      * @example
        <example module="initExample" name="ng-init">
@@ -27030,6 +27133,10 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngList
+     * @restrict A
+     * @priority 100
+     *
+     * @param {string=} ngList optional delimiter that should be used to split the value.
      *
      * @description
      * Text input that converts between a delimited string and an array of strings. The default
@@ -27045,7 +27152,8 @@ var ThingSpeak;
      *   when joining the list items back together) and whitespace around each list item is stripped
      *   before it is added to the model.
      *
-     * ### Example with Validation
+     * @example
+     * ### Validation
      *
      * <example name="ngList-directive" module="listExample">
      *   <file name="app.js">
@@ -27092,7 +27200,9 @@ var ThingSpeak;
      *   </file>
      * </example>
      *
-     * ### Example - splitting on newline
+     * @example
+     * ### Splitting on newline
+     *
      * <example name="ngList-directive-newlines">
      *   <file name="index.html">
      *    <textarea ng-model="list" ng-list="&#10;" ng-trim="false"></textarea>
@@ -27108,8 +27218,6 @@ var ThingSpeak;
      *   </file>
      * </example>
      *
-     * @element input
-     * @param {string=} ngList optional delimiter that should be used to split the value.
      */
     var ngListDirective = function () {
         return {
@@ -27163,7 +27271,6 @@ var ThingSpeak;
     /**
      * @ngdoc type
      * @name ngModel.NgModelController
-     *
      * @property {*} $viewValue The actual value from the control's view. For `input` elements, this is a
      * String. See {@link ngModel.NgModelController#$setViewValue} for information about when the $viewValue
      * is set.
@@ -27596,6 +27703,7 @@ var ThingSpeak;
          * input which may have such events pending. This is important in order to make sure that the
          * input field will be updated with the new model value and any pending operations are cancelled.
          *
+         * @example
          * <example name="ng-model-cancel-update" module="cancel-update-example">
          *   <file name="app.js">
          *     angular.module('cancel-update-example', [])
@@ -27977,6 +28085,146 @@ var ThingSpeak;
          */
         $overrideModelOptions: function (options) {
             this.$options = this.$options.createChild(options);
+        },
+        /**
+         * @ngdoc method
+         *
+         * @name  ngModel.NgModelController#$processModelValue
+      
+         * @description
+         *
+         * Runs the model -> view pipeline on the current
+         * {@link ngModel.NgModelController#$modelValue $modelValue}.
+         *
+         * The following actions are performed by this method:
+         *
+         * - the `$modelValue` is run through the {@link ngModel.NgModelController#$formatters $formatters}
+         * and the result is set to the {@link ngModel.NgModelController#$viewValue $viewValue}
+         * - the `ng-empty` or `ng-not-empty` class is set on the element
+         * - if the `$viewValue` has changed:
+         *   - {@link ngModel.NgModelController#$render $render} is called on the control
+         *   - the {@link ngModel.NgModelController#$validators $validators} are run and
+         *   the validation status is set.
+         *
+         * This method is called by ngModel internally when the bound scope value changes.
+         * Application developers usually do not have to call this function themselves.
+         *
+         * This function can be used when the `$viewValue` or the rendered DOM value are not correctly
+         * formatted and the `$modelValue` must be run through the `$formatters` again.
+         *
+         * @example
+         * Consider a text input with an autocomplete list (for fruit), where the items are
+         * objects with a name and an id.
+         * A user enters `ap` and then selects `Apricot` from the list.
+         * Based on this, the autocomplete widget will call `$setViewValue({name: 'Apricot', id: 443})`,
+         * but the rendered value will still be `ap`.
+         * The widget can then call `ctrl.$processModelValue()` to run the model -> view
+         * pipeline again, which formats the object to the string `Apricot`,
+         * then updates the `$viewValue`, and finally renders it in the DOM.
+         *
+         * <example module="inputExample" name="ng-model-process">
+           <file name="index.html">
+            <div ng-controller="inputController" style="display: flex;">
+              <div style="margin-right: 30px;">
+                Search Fruit:
+                <basic-autocomplete items="items" on-select="selectedFruit = item"></basic-autocomplete>
+              </div>
+              <div>
+                Model:<br>
+                <pre>{{selectedFruit | json}}</pre>
+              </div>
+            </div>
+           </file>
+           <file name="app.js">
+            angular.module('inputExample', [])
+              .controller('inputController', function($scope) {
+                $scope.items = [
+                  {name: 'Apricot', id: 443},
+                  {name: 'Clementine', id: 972},
+                  {name: 'Durian', id: 169},
+                  {name: 'Jackfruit', id: 982},
+                  {name: 'Strawberry', id: 863}
+                ];
+              })
+              .component('basicAutocomplete', {
+                bindings: {
+                  items: '<',
+                  onSelect: '&'
+                },
+                templateUrl: 'autocomplete.html',
+                controller: function($element, $scope) {
+                  var that = this;
+                  var ngModel;
+      
+                  that.$postLink = function() {
+                    ngModel = $element.find('input').controller('ngModel');
+      
+                    ngModel.$formatters.push(function(value) {
+                      return (value && value.name) || value;
+                    });
+      
+                    ngModel.$parsers.push(function(value) {
+                      var match = value;
+                      for (var i = 0; i < that.items.length; i++) {
+                        if (that.items[i].name === value) {
+                          match = that.items[i];
+                          break;
+                        }
+                      }
+      
+                      return match;
+                    });
+                  };
+      
+                  that.selectItem = function(item) {
+                    ngModel.$setViewValue(item);
+                    ngModel.$processModelValue();
+                    that.onSelect({item: item});
+                  };
+                }
+              });
+           </file>
+           <file name="autocomplete.html">
+             <div>
+               <input type="search" ng-model="$ctrl.searchTerm" />
+               <ul>
+                 <li ng-repeat="item in $ctrl.items | filter:$ctrl.searchTerm">
+                   <button ng-click="$ctrl.selectItem(item)">{{ item.name }}</button>
+                 </li>
+               </ul>
+             </div>
+           </file>
+         * </example>
+         *
+         */
+        $processModelValue: function () {
+            var viewValue = this.$$format();
+            if (this.$viewValue !== viewValue) {
+                this.$$updateEmptyClasses(viewValue);
+                this.$viewValue = this.$$lastCommittedViewValue = viewValue;
+                this.$render();
+                // It is possible that model and view value have been updated during render
+                this.$$runValidators(this.$modelValue, this.$viewValue, noop);
+            }
+        },
+        /**
+         * This method is called internally to run the $formatters on the $modelValue
+         */
+        $$format: function () {
+            var formatters = this.$formatters, idx = formatters.length;
+            var viewValue = this.$modelValue;
+            while (idx--) {
+                viewValue = formatters[idx](viewValue);
+            }
+            return viewValue;
+        },
+        /**
+         * This method is called internally when the bound scope value changes.
+         */
+        $$setModelValue: function (modelValue) {
+            this.$modelValue = this.$$rawModelValue = modelValue;
+            this.$$parserValid = undefined;
+            this.$processModelValue();
         }
     };
     function setupModelWatcher(ctrl) {
@@ -27991,25 +28239,13 @@ var ThingSpeak;
         ctrl.$$scope.$watch(function ngModelWatch(scope) {
             var modelValue = ctrl.$$ngModelGet(scope);
             // if scope model value and ngModel value are out of sync
-            // TODO(perf): why not move this to the action fn?
+            // This cannot be moved to the action function, because it would not catch the
+            // case where the model is changed in the ngChange function or the model setter
             if (modelValue !== ctrl.$modelValue &&
                 // checks for NaN is needed to allow setting the model to NaN when there's an asyncValidator
                 // eslint-disable-next-line no-self-compare
                 (ctrl.$modelValue === ctrl.$modelValue || modelValue === modelValue)) {
-                ctrl.$modelValue = ctrl.$$rawModelValue = modelValue;
-                ctrl.$$parserValid = undefined;
-                var formatters = ctrl.$formatters, idx = formatters.length;
-                var viewValue = modelValue;
-                while (idx--) {
-                    viewValue = formatters[idx](viewValue);
-                }
-                if (ctrl.$viewValue !== viewValue) {
-                    ctrl.$$updateEmptyClasses(viewValue);
-                    ctrl.$viewValue = ctrl.$$lastCommittedViewValue = viewValue;
-                    ctrl.$render();
-                    // It is possible that model and view value have been updated during render
-                    ctrl.$$runValidators(ctrl.$modelValue, ctrl.$viewValue, noop);
-                }
+                ctrl.$$setModelValue(modelValue);
             }
             return modelValue;
         });
@@ -28048,9 +28284,9 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngModel
-     *
-     * @element input
+     * @restrict A
      * @priority 1
+     * @param {expression} ngModel assignable {@link guide/expression Expression} to bind to.
      *
      * @description
      * The `ngModel` directive binds an `input`,`select`, `textarea` (or custom form control) to a
@@ -28092,7 +28328,7 @@ var ThingSpeak;
      *  - {@link ng.directive:select select}
      *  - {@link ng.directive:textarea textarea}
      *
-     * # Complex Models (objects or collections)
+     * ## Complex Models (objects or collections)
      *
      * By default, `ngModel` watches the model by reference, not value. This is important to know when
      * binding inputs to models that are objects (e.g. `Date`) or collections (e.g. arrays). If only properties of the
@@ -28108,7 +28344,7 @@ var ThingSpeak;
      * first level of the object (or only changing the properties of an item in the collection if it's an array) will still
      * not trigger a re-rendering of the model.
      *
-     * # CSS classes
+     * ## CSS classes
      * The following CSS classes are added and removed on the associated input/select/textarea element
      * depending on the validity of the model.
      *
@@ -28127,8 +28363,7 @@ var ThingSpeak;
      *
      * Keep in mind that ngAnimate can detect each of these classes when added and removed.
      *
-     * ## Animation Hooks
-     *
+     * @animations
      * Animations within models are triggered when any of the associated CSS classes are added and removed
      * on the input element which is attached to the model. These classes include: `.ng-pristine`, `.ng-dirty`,
      * `.ng-invalid` and `.ng-valid` as well as any other validations that are performed on the model itself.
@@ -28152,6 +28387,7 @@ var ThingSpeak;
      * </pre>
      *
      * @example
+     * ### Basic Usage
      * <example deps="angular-animate.js" animations="true" fixBase="true" module="inputExample" name="ng-model">
          <file name="index.html">
            <script>
@@ -28181,7 +28417,8 @@ var ThingSpeak;
          </file>
      * </example>
      *
-     * ## Binding to a getter/setter
+     * @example
+     * ### Binding to a getter/setter
      *
      * Sometimes it's helpful to bind `ngModel` to a getter/setter function.  A getter/setter is a
      * function that returns a representation of the model when called with zero arguments, and sets
@@ -28368,6 +28605,8 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngModelOptions
+     * @restrict A
+     * @priority 10
      *
      * @description
      * This directive allows you to modify the behaviour of {@link ngModel} directives within your
@@ -28641,6 +28880,7 @@ var ThingSpeak;
      * @name ngNonBindable
      * @restrict AC
      * @priority 1000
+     * @element ANY
      *
      * @description
      * The `ngNonBindable` directive tells Angular not to compile or bind the contents of the current
@@ -28648,25 +28888,22 @@ var ThingSpeak;
      * bindings but which should be ignored by Angular. This could be the case if you have a site that
      * displays snippets of code, for instance.
      *
-     * @element ANY
-     *
      * @example
      * In this example there are two locations where a simple interpolation binding (`{{}}`) is present,
      * but the one wrapped in `ngNonBindable` is left alone.
      *
-     * @example
-        <example name="ng-non-bindable">
-          <file name="index.html">
-            <div>Normal: {{1 + 2}}</div>
-            <div ng-non-bindable>Ignored: {{1 + 2}}</div>
-          </file>
-          <file name="protractor.js" type="protractor">
-           it('should check ng-non-bindable', function() {
-             expect(element(by.binding('1 + 2')).getText()).toContain('3');
-             expect(element.all(by.css('div')).last().getText()).toMatch(/1 \+ 2/);
-           });
-          </file>
-        </example>
+      <example name="ng-non-bindable">
+        <file name="index.html">
+          <div>Normal: {{1 + 2}}</div>
+          <div ng-non-bindable>Ignored: {{1 + 2}}</div>
+        </file>
+        <file name="protractor.js" type="protractor">
+         it('should check ng-non-bindable', function() {
+           expect(element(by.binding('1 + 2')).getText()).toContain('3');
+           expect(element.all(by.css('div')).last().getText()).toMatch(/1 \+ 2/);
+         });
+        </file>
+      </example>
      */
     var ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });
     /* exported ngOptionsDirective */
@@ -29304,7 +29541,7 @@ var ThingSpeak;
      * [plural categories](http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html)
      * and the strings to be displayed.
      *
-     * # Plural categories and explicit number rules
+     * ## Plural categories and explicit number rules
      * There are two
      * [plural categories](http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html)
      * in Angular's default en-US locale: "one" and "other".
@@ -29314,7 +29551,7 @@ var ThingSpeak;
      * explicit number rule for "3" matches the number 3. There are examples of plural categories
      * and explicit number rules throughout the rest of this documentation.
      *
-     * # Configuring ngPluralize
+     * ## Configuring ngPluralize
      * You configure ngPluralize by providing 2 attributes: `count` and `when`.
      * You can also provide an optional attribute, `offset`.
      *
@@ -29348,7 +29585,7 @@ var ThingSpeak;
      * If no rule is defined for a category, then an empty string is displayed and a warning is generated.
      * Note that some locales define more categories than `one` and `other`. For example, fr-fr defines `few` and `many`.
      *
-     * # Configuring ngPluralize with offset
+     * ## Configuring ngPluralize with offset
      * The `offset` attribute allows further customization of pluralized text, which can result in
      * a better user experience. For example, instead of the message "4 people are viewing this document",
      * you might display "John, Kate and 2 others are viewing this document".
@@ -29543,7 +29780,7 @@ var ThingSpeak;
      * </div>
      *
      *
-     * # Iterating over object properties
+     * ## Iterating over object properties
      *
      * It is possible to get `ngRepeat` to iterate over the properties of an object using the following
      * syntax:
@@ -29573,7 +29810,7 @@ var ThingSpeak;
      * or implement a `$watch` on the object yourself.
      *
      *
-     * # Tracking and Duplicates
+     * ## Tracking and Duplicates
      *
      * `ngRepeat` uses {@link $rootScope.Scope#$watchCollection $watchCollection} to detect changes in
      * the collection. When a change happens, `ngRepeat` then makes the corresponding changes to the DOM:
@@ -29653,7 +29890,7 @@ var ThingSpeak;
      * ```
      *
      *
-     * # Special repeat start and end points
+     * ## Special repeat start and end points
      * To repeat a series of elements instead of just one parent element, ngRepeat (as well as other ng directives) supports extending
      * the range of the repeater by defining explicit start and end points by using **ng-repeat-start** and **ng-repeat-end** respectively.
      * The **ng-repeat-start** directive works the same as **ng-repeat**, but will repeat all the HTML code (including the tag it's defined on)
@@ -29712,17 +29949,17 @@ var ThingSpeak;
      * @param {repeat_expression} ngRepeat The expression indicating how to enumerate a collection. These
      *   formats are currently supported:
      *
-     *   * `variable in expression` â€“ where variable is the user defined loop variable and `expression`
+     *   * `variable in expression` – where variable is the user defined loop variable and `expression`
      *     is a scope expression giving the collection to enumerate.
      *
      *     For example: `album in artist.albums`.
      *
-     *   * `(key, value) in expression` â€“ where `key` and `value` can be any user defined identifiers,
+     *   * `(key, value) in expression` – where `key` and `value` can be any user defined identifiers,
      *     and `expression` is the scope expression giving the collection to enumerate.
      *
      *     For example: `(name, age) in {'adam':10, 'amalie':12}`.
      *
-     *   * `variable in expression track by tracking_expression` â€“ You can also provide an optional tracking expression
+     *   * `variable in expression track by tracking_expression` – You can also provide an optional tracking expression
      *     which can be used to associate the objects in the collection with the DOM elements. If no tracking expression
      *     is specified, ng-repeat associates elements by identity. It is an error to have
      *     more than one tracking expression value resolve to the same key. (This would mean that two distinct objects are
@@ -29747,7 +29984,7 @@ var ThingSpeak;
      *     For example: `item in items | filter:searchText track by item.id` is a pattern that might be used to apply a filter
      *     to items in conjunction with a tracking expression.
      *
-     *   * `variable in expression as alias_expression` â€“ You can also provide an optional alias expression which will then store the
+     *   * `variable in expression as alias_expression` – You can also provide an optional alias expression which will then store the
      *     intermediate results of the repeater after the filters have been applied. Typically this is used to render a special message
      *     when a filter is active on the repeater, but the filtered result set is empty.
      *
@@ -29762,7 +29999,7 @@ var ThingSpeak;
      * @example
      * This example uses `ngRepeat` to display a list of people. A filter is used to restrict the displayed
      * results by name or by age. New (entering) and removed (leaving) items are animated.
-      <example module="ngRepeat" name="ngRepeat" deps="angular-animate.js" animations="true" name="ng-repeat">
+      <example module="ngRepeat" name="ngRepeat" deps="angular-animate.js" animations="true">
         <file name="index.html">
           <div ng-controller="repeatController">
             I have {{friends.length}} friends. They are:
@@ -30107,7 +30344,11 @@ var ThingSpeak;
      * By default you don't need to override anything in CSS and the animations will work around the
      * display style.
      *
-     * ## A note about animations with `ngShow`
+     * @animations
+     * | Animation                                           | Occurs                                                                                                        |
+     * |-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+     * | {@link $animate#addClass addClass} `.ng-hide`       | After the `ngShow` expression evaluates to a non truthy value and just before the contents are set to hidden. |
+     * | {@link $animate#removeClass removeClass} `.ng-hide` | After the `ngShow` expression evaluates to a truthy value and just before contents are set to visible.        |
      *
      * Animations in `ngShow`/`ngHide` work with the show and hide events that are triggered when the
      * directive expression is true and false. This system works like the animation system present with
@@ -30128,12 +30369,6 @@ var ThingSpeak;
      *
      * Keep in mind that, as of AngularJS version 1.3, there is no need to change the display property
      * to block during animation states - ngAnimate will automatically handle the style toggling for you.
-     *
-     * @animations
-     * | Animation                                           | Occurs                                                                                                        |
-     * |-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-     * | {@link $animate#addClass addClass} `.ng-hide`       | After the `ngShow` expression evaluates to a non truthy value and just before the contents are set to hidden. |
-     * | {@link $animate#removeClass removeClass} `.ng-hide` | After the `ngShow` expression evaluates to a truthy value and just before contents are set to visible.        |
      *
      * @element ANY
      * @param {expression} ngShow If the {@link guide/expression expression} is truthy/falsy then the
@@ -30307,7 +30542,11 @@ var ThingSpeak;
      * By default you don't need to override in CSS anything and the animations will work around the
      * display style.
      *
-     * ## A note about animations with `ngHide`
+     * @animations
+     * | Animation                                           | Occurs                                                                                                     |
+     * |-----------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+     * | {@link $animate#addClass addClass} `.ng-hide`       | After the `ngHide` expression evaluates to a truthy value and just before the contents are set to hidden.  |
+     * | {@link $animate#removeClass removeClass} `.ng-hide` | After the `ngHide` expression evaluates to a non truthy value and just before contents are set to visible. |
      *
      * Animations in `ngShow`/`ngHide` work with the show and hide events that are triggered when the
      * directive expression is true and false. This system works like the animation system present with
@@ -30328,13 +30567,6 @@ var ThingSpeak;
      *
      * Keep in mind that, as of AngularJS version 1.3, there is no need to change the display property
      * to block during animation states - ngAnimate will automatically handle the style toggling for you.
-     *
-     * @animations
-     * | Animation                                           | Occurs                                                                                                     |
-     * |-----------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-     * | {@link $animate#addClass addClass} `.ng-hide`       | After the `ngHide` expression evaluates to a truthy value and just before the contents are set to hidden.  |
-     * | {@link $animate#removeClass removeClass} `.ng-hide` | After the `ngHide` expression evaluates to a non truthy value and just before contents are set to visible. |
-     *
      *
      * @element ANY
      * @param {expression} ngHide If the {@link guide/expression expression} is truthy/falsy then the
@@ -31012,7 +31244,8 @@ var ThingSpeak;
      *       <option value="option-1">Option 1</option>
      *       <option value="option-2">Option 2</option>
      *     </select><br>
-     *     <span ng-if="myForm.testSelect.$error.unknownValue">Error: The current model doesn't match any option</span>
+     *     <span class="error" ng-if="myForm.testSelect.$error.unknownValue">
+     *       Error: The current model doesn't match any option</span><br>
      *
      *     <button ng-click="forceUnknownOption()">Force unknown option</button><br>
      *   </form>
@@ -31061,11 +31294,11 @@ var ThingSpeak;
      * <div ng-controller="ExampleController">
      *   <form name="myForm">
      *     <label for="testSelect"> Select: </label><br>
-     *     <select name="testSelect" ng-model="selected" unknown-value-required>
+     *     <select name="testSelect" ng-model="selected" required unknown-value-required>
      *       <option value="option-1">Option 1</option>
      *       <option value="option-2">Option 2</option>
      *     </select><br>
-     *     <span ng-if="myForm.testSelect.$error.required">Error: Please select a value</span><br>
+     *     <span class="error" ng-if="myForm.testSelect.$error.required">Error: Please select a value</span><br>
      *
      *     <button ng-click="forceUnknownOption()">Force unknown option</button><br>
      *   </form>
@@ -31100,6 +31333,22 @@ var ThingSpeak;
      *       }
      *     };
      *   });
+     * </file>
+     * <file name="protractor.js" type="protractor">
+     *  it('should show the error message when the unknown option is selected', function() {
+    
+          var error = element(by.className('error'));
+    
+          expect(error.getText()).toBe('Error: Please select a value');
+    
+          element(by.cssContainingText('option', 'Option 1')).click();
+    
+          expect(error.isPresent()).toBe(false);
+    
+          element(by.tagName('button')).click();
+    
+          expect(error.getText()).toBe('Error: Please select a value');
+        });
      * </file>
      *</example>
      *
@@ -31529,6 +31778,7 @@ var ThingSpeak;
      * </file>
      *</example>
      *
+     * @example
      * ### Using `ngRepeat` to generate `select` options
      * <example name="select-ngrepeat" module="ngrepeatSelect">
      * <file name="index.html">
@@ -31558,6 +31808,7 @@ var ThingSpeak;
      * </file>
      *</example>
      *
+     * @example
      * ### Using `ngValue` to bind the model to an array of objects
      * <example name="select-ngvalue" module="ngvalueSelect">
      * <file name="index.html">
@@ -31590,6 +31841,7 @@ var ThingSpeak;
      * </file>
      *</example>
      *
+     * @example
      * ### Using `select` with `ngOptions` and setting a default value
      * See the {@link ngOptions ngOptions documentation} for more `ngOptions` usage examples.
      *
@@ -31621,7 +31873,7 @@ var ThingSpeak;
      * </file>
      *</example>
      *
-     *
+     * @example
      * ### Binding `select` to a non-string value via `ngModel` parsing / formatting
      *
      * <example name="select-with-non-string-options" module="nonStringSelect">
@@ -31799,6 +32051,10 @@ var ThingSpeak;
      * @name ngRequired
      * @restrict A
      *
+     * @param {expression} ngRequired AngularJS expression. If it evaluates to `true`, it sets the
+     *                                `required` attribute to the element and adds the `required`
+     *                                {@link ngModel.NgModelController#$validators `validator`}.
+     *
      * @description
      *
      * ngRequired adds the required {@link ngModel.NgModelController#$validators `validator`} to {@link ngModel `ngModel`}.
@@ -31873,6 +32129,11 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngPattern
+     * @restrict A
+     *
+     * @param {expression|RegExp} ngPattern AngularJS expression that must evaluate to a `RegExp` or a `String`
+     *                                      parsable into a `RegExp`, or a `RegExp` literal. See above for
+     *                                      more details.
      *
      * @description
      *
@@ -31880,11 +32141,12 @@ var ThingSpeak;
      * It is most often used for text-based {@link input `input`} controls, but can also be applied to custom text-based controls.
      *
      * The validator sets the `pattern` error key if the {@link ngModel.NgModelController#$viewValue `ngModel.$viewValue`}
-     * does not match a RegExp which is obtained by evaluating the Angular expression given in the
-     * `ngPattern` attribute value:
-     * * If the expression evaluates to a RegExp object, then this is used directly.
-     * * If the expression evaluates to a string, then it will be converted to a RegExp after wrapping it
-     * in `^` and `$` characters. For instance, `"abc"` will be converted to `new RegExp('^abc$')`.
+     * does not match a RegExp which is obtained from the `ngPattern` attribute value:
+     * - the value is an AngularJS expression:
+     *   - If the expression evaluates to a RegExp object, then this is used directly.
+     *   - If the expression evaluates to a string, then it will be converted to a RegExp after wrapping it
+     *     in `^` and `$` characters. For instance, `"abc"` will be converted to `new RegExp('^abc$')`.
+     * - If the value is a RegExp literal, e.g. `ngPattern="/^\d+$/"`, it is used directly.
      *
      * <div class="alert alert-info">
      * **Note:** Avoid using the `g` flag on the RegExp, as it will cause each successive search to
@@ -31973,6 +32235,11 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMaxlength
+     * @restrict A
+     *
+     * @param {expression} ngMaxlength AngularJS expression that must evaluate to a `Number` or `String`
+     *                                 parsable into a `Number`. Used as value for the `maxlength`
+     *                                 {@link ngModel.NgModelController#$validators validator}.
      *
      * @description
      *
@@ -32058,6 +32325,11 @@ var ThingSpeak;
     /**
      * @ngdoc directive
      * @name ngMinlength
+     * @restrict A
+     *
+     * @param {expression} ngMinlength AngularJS expression that must evaluate to a `Number` or `String`
+     *                                 parsable into a `Number`. Used as value for the `minlength`
+     *                                 {@link ngModel.NgModelController#$validators validator}.
      *
      * @description
      *

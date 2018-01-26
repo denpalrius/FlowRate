@@ -1,6 +1,6 @@
 ﻿module ThingSpeak.Services {
     export class ThingSpeakService {
-        constructor(private httpService: Services.HttpService) {
+        constructor(private HttpService: Services.HttpService) {
             var that: ThingSpeakService = this;
         }
 
@@ -8,7 +8,7 @@
             var that: ThingSpeakService = this;
 
             var deferred = $.Deferred();
-            that.httpService.get(Configs.AppConfig.ApiUrl)
+            that.HttpService.get(Configs.AppConfig.ApiUrl)
                 .done((response: Models.IHttpResponse) => {
                     var maraRiverFlowRate = response.data;
                     deferred.resolve(maraRiverFlowRate);

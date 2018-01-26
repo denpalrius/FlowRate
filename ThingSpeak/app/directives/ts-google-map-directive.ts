@@ -151,7 +151,7 @@
         return deferred;
     }
 
-    function init(scope: IScope, $timeout: ng.ITimeoutService, http?: Services.HttpService) {
+    function init(scope: IScope, $timeout: ng.ITimeoutService) {
         scope.types = "['establishment']";
         scope.infoWindow = new google.maps.InfoWindow;
         scope.geocoder = new google.maps.Geocoder;
@@ -263,7 +263,7 @@
         });
     }
 
-    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService, http: Services.HttpService): ng.IDirective {
+    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService): ng.IDirective {
         let ddo: ng.IDirective = {
             restrict: 'AE',
             scope: {
@@ -277,7 +277,7 @@
             templateUrl: '/app/views/templates/ts-google-map-template.html',
             link: function (scope: IScope, $elm: Object, attr) {
 
-                init(scope, $timeout, http);
+                init(scope, $timeout);
 
                 $timeout(5).then(() => {
                     //Change this once you Move Input to Directive
