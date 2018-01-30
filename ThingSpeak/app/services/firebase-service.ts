@@ -9,7 +9,7 @@ interface IFireBase {
 module ThingSpeak.Services {
     export class FirebaseService {
 
-        constructor() {
+        constructor(private $firebaseObject: any) {
             var that: FirebaseService = this;
 
             that.init()
