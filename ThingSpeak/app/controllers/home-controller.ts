@@ -175,7 +175,15 @@
         private doFirebaseStuff() {
             var that: HomeController = this;
 
-            //that.FirebaseService.readFromFirebase();
+            var newUser: ThingSpeak.ViewModels.User = {
+                id: Helpers.AppHelpers.generateGUID(),
+                name:"Mzitoh Yule",
+                phone: "0711028292",
+                email: "mzitoh@me.com",
+                role: ViewModels.userRole.admin
+            }
+
+            that.FirebaseService.write("users", newUser, newUser.name);
 
         }
     }

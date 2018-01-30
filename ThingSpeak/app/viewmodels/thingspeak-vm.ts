@@ -26,5 +26,27 @@
         channel?: Channel;
         feeds?: Feed[];
     }
+    
+    export enum userRole {
+        admin = 1,
+        standard = 2
+    }
 
+    export interface User {
+        id?: string;
+        name?: string;
+        email?: string;
+        phone?: string;
+        role?: userRole;
+    }
+
+    export interface Sensor {
+        id?: string;
+        locationAddress?: string;
+        lat?: number;
+        lon?: number;
+        installedOn: string;
+        installedBy: string;
+
+    }
 }

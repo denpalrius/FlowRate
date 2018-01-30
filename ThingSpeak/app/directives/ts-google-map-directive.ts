@@ -98,14 +98,14 @@
         // click map listener  
         scope.map.addListener('click', (e) => {
             var clickLocation: google.maps.LatLng = e.latLng;
-            console.log("e: ", e);
+            //console.log("e: ", e);
 
             scope.marker.setPosition(clickLocation);
             getUserAddress(clickLocation, null)
                 .done((geoCodeResult: google.maps.GeocoderResult) => {
                     $timeout(0).then(() => {
                         scope.currentLocation = geoCodeResult.formatted_address;
-                        console.log("Reverse output", scope.currentLocation);
+                        console.log("Reverse output: ", scope.currentLocation);
                     });
                 })
                 .fail((error) => {
@@ -117,7 +117,7 @@
             // click autocomplete listener
             scope.googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
                 var place = scope.googleMapAutoComplete.getPlace();
-                console.warn("Event : ", e);
+                //console.warn("Event : ", e);
 
                 $timeout(0).then(() => {
                     console.log("Place : ", [place, scope]);
@@ -283,7 +283,7 @@
                     //Change this once you Move Input to Directive
                     if (scope.isShowSearchBar) {
                         scope.googleMapAutoComplete = attachSearchBar();
-                        console.warn("scope.googleMapAutoComplete: ", scope.googleMapAutoComplete);
+                        //console.warn("scope.googleMapAutoComplete: ", scope.googleMapAutoComplete);
                         scope.getUserLocationClick = () => {
                             getUserLocationFn(navigator)
                                 .done((pos) => {

@@ -20,7 +20,7 @@
             // services
             ngFlowRate.service("HttpService", ["$http", Services.HttpService]);
             ngFlowRate.service("ThingSpeakService", ["HttpService", Services.ThingSpeakService]);
-            ngFlowRate.service("FirebaseService", ["$firebaseObject", Services.FirebaseService]);
+            ngFlowRate.service("FirebaseService", [Services.FirebaseService]);
 
             // controllers
             ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
