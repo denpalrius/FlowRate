@@ -88,14 +88,20 @@
     box-shadow: 0px 0px 3px 0px rgba(240, 232, 232, 0.59);
 }
 
-
-.ce-basic-agenda-import {
-    width: 100%;
-    text-align: left;
+.tab-label{
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
-.ce-interactive-agenda-import {
-    width: 100%;
+.tab-label > i, .tab-label > span {
+    vertical-align:middle;
+}
+.tab-label > i {
+    margin:0px 3px;
+}
+
+md-tab-body{
+    padding:5px;
 }
 
 .no-left-padding {

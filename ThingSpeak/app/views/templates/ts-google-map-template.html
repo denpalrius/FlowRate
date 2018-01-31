@@ -2,13 +2,16 @@
 
 <md-content class="left-pane">
     <md-input-container class="md-icon-float  md-block" style="padding:10px">
-        <md-button class="md-icon-button md-accent" aria-label="My Location">
+        <input ng-model="currentLocation" type="text" id="googleMapSearchBox" aria-label="Search Sensors">
+
+        <md-button sref class="md-icon-button md-accent" aria-label="My Location">
             <i class="material-icons">menu</i>
         </md-button>
-        <input ng-model="currentLocation" type="text" id="googleMapSearchBox" aria-label="Search Sensors">
         <md-button ng-click="getUserLocationClick()" class="md-icon-button md-accent" aria-label="My Location">
             <i class="material-icons">my_location</i>
         </md-button>
+        <a href="/admin" class="md-icon-button md-accent" aria-label="Admin"><i class="material-icons">settings</i></a>
+
     </md-input-container>
 
     <md-list flex>

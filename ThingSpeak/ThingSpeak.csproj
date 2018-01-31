@@ -26,6 +26,7 @@
     <Content Include="app\css\app.css" />
     <TypeScriptCompile Include="app\configs\theme-config.ts" />
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
+    <Content Include="app\images\ic_my_location_black_24px.svg" />
     <Content Include="app\images\sensor-round.png" />
     <Content Include="app\images\sensor-searching.png" />
     <Content Include="app\images\thingspeak.png" />
@@ -36,6 +37,9 @@
     <Content Include="app\views\about.html" />
     <Content Include="app\views\home.html" />
     <Content Include="app\views\flow-rate.html" />
+    <Content Include="app\views\templates\reports-template.html" />
+    <Content Include="app\views\templates\users-template.html" />
+    <Content Include="app\views\templates\sensors-template.html" />
     <Content Include="app\views\templates\modal-template.html" />
     <Content Include="app\views\templates\ts-google-map-template.html" />
     <Content Include="Content\angular-material.css" />
@@ -149,6 +153,7 @@
     <TypeScriptCompile Include="Scripts\typings\angular-spinner\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-router.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angular-ui\angular-ui-sortable.d.ts" />
+    <None Include="Scripts\typings\angularfire\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-component-router.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />

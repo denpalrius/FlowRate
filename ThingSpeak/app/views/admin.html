@@ -1,8 +1,40 @@
-﻿
+﻿<div class="container">
+    <md-content>
+        <md-tabs md-border-bottom md-autoselect md-swipe-content>
+            <md-tab>
+                <md-tab-label>
+                    <div class="tab-label">
+                        <i class="material-icons">insert_chart</i>
+                        <span>Reports</span>
+                    </div>
+                </md-tab-label>
+                <md-tab-body>
+                    <div class="md-padding" ng-include="'/app/views/templates/reports-template.html'"></div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab>
+                <md-tab-label>
+                    <div class="tab-label">
+                        <i class="material-icons">wifi</i>
+                        <span>Sensors</span>
+                    </div>
+                </md-tab-label>
+                <md-tab-body>
+                    <div class="md-padding" ng-include="'/app/views/templates/sensors-template.html'"></div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab>
+                <md-tab-label>
+                    <div class="tab-label">
+                        <i class="material-icons">person</i>
+                        <span>Users</span>
+                    </div>
+                </md-tab-label>
+                <md-tab-body>
+                    <div class="md-padding" ng-include="'/app/views/templates/users-template.html'"></div>
+                </md-tab-body>
+            </md-tab>
 
-<h1>Should you be here?</h1>
-
-
-<!--<ds-sorting-algorithms>
-
-</ds-sorting-algorithms>-->
+        </md-tabs>
+    </md-content>
+</div>

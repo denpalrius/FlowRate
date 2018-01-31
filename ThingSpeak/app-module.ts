@@ -23,9 +23,9 @@
             ngFlowRate.service("FirebaseService", ["$firebaseObject", Services.FirebaseService]);
 
             // controllers
-            ngFlowRate.controller("AdminController", ["$scope", Controllers.AdminController]);
+            ngFlowRate.controller("AdminController", ["$scope", "FirebaseService", Controllers.AdminController]);
             ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", "FirebaseService", Controllers.HomeController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService","$timeout", Controllers.FlowRateController]);
+            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
 
             // bootstrap the app when everything has been loaded
