@@ -9,6 +9,7 @@
         infoWindow: google.maps.InfoWindow;
         geocoder: google.maps.Geocoder;
         getUserLocationClick: Function;
+        displaySensorClick: Function;
         currentLocation?: string;
         isShowSearchBar?: boolean;
         googleMapAutoComplete?: google.maps.places.Autocomplete;

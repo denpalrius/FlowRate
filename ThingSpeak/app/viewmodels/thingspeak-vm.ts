@@ -1,6 +1,6 @@
 ﻿module ThingSpeak.ViewModels {
 
-    export interface Channel {
+    export interface iChannel {
         id?: number;
         name?: string;
         description?: string;
@@ -16,37 +16,37 @@
         last_entry_id?: number;
     }
 
-    export interface Feed {
+    export interface iFeed {
         created_at?: Date;
         entry_id?: number;
         field1?: string;
     }
 
-    export interface MaraRiverFlow {
-        channel?: Channel;
-        feeds?: Feed[];
+    export interface iMaraRiverFlow {
+        channel?: iChannel;
+        feeds?: iFeed[];
     }
     
-    export enum userRole {
+    export enum iuserRole {
         admin = 1,
         standard = 2
     }
 
-    export interface User {
+    export interface iUser {
         id?: string;
         name?: string;
         email?: string;
         phone?: string;
-        role?: userRole;
+        photoURL?: string;
+        role?: iuserRole;
     }
 
-    export interface Sensor {
+    export interface iSensor {
         id?: string;
-        locationAddress?: string;
+        physicalAddress?: string;
         lat?: number;
         lon?: number;
-        installedOn: string;
-        installedBy: string;
-
+        installedOn?: string;
+        installedBy?: string;
     }
 }

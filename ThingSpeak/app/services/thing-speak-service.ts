@@ -4,7 +4,7 @@
             var that: ThingSpeakService = this;
         }
 
-        public getThingSpeakData(): JQueryDeferred<ViewModels.MaraRiverFlow> {
+        public getThingSpeakData(): JQueryDeferred<ViewModels.iMaraRiverFlow> {
             var that: ThingSpeakService = this;
 
             var deferred = $.Deferred();

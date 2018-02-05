@@ -104,6 +104,10 @@ md-tab-body{
     padding:5px;
 }
 
+.login-button {
+    padding: 0px;
+}
+
 .no-left-padding {
     padding-left: 0px;
 }

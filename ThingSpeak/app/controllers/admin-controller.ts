@@ -2,8 +2,8 @@
     "use strict";
 
     interface ICurrentScope {
-        sensors?: ViewModels.Sensor[];
-        newSensor?: ViewModels.Sensor;
+        sensors?: ViewModels.iSensor[];
+        newSensor?: ViewModels.iSensor;
         currentNavItem?: string;
         status?: string;
         

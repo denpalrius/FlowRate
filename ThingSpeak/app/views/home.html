@@ -4,10 +4,33 @@
 </div>-->
 
 <div>
-    <ts-google-map current-location="homeScope.userAddress" is-show-search-bar="true" />
+    <!--<ts-google-map sensors=""
+                    current-location="homeScope.userAddress"
+                   is-show-search-bar="true" />-->
 </div>
 
 <!--Bottom Bar-->
 <!--<div class="fixed-bar bottom-bar">
 
 </div>-->
+
+
+
+<md-content class="left-pane">
+
+
+    <md-list flex>
+        <md-subheader class="md-no-sticky">Sensors at this location ({{homeScope.sensors.length}})</md-subheader>
+        <md-list-item ng-repeat="sensor in homeScope.sensors" class="md-3-line" ng-click="null">
+            <img src="/app/images/sensor-round.png" class="md-avatar" alt="item.who" />
+            <div class="md-list-item-text" layout="column">
+                <h3>{{sensor.physicalAddress}}</h3>
+                <h4>{{sensor.installedBy}}</h4>
+                <p>{{sensor.installedOn}}</p>
+            </div>
+            <md-divider></md-divider>
+        </md-list-item>
+
+    </md-list>
+
+</md-content>

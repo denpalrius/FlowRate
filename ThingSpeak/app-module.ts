@@ -4,7 +4,7 @@
     export class AppModule {
         constructor() {
             // module
-            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "firebase"]);
+            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngCookies", "firebase"]);
 
             // configs
             ngFlowRate.config([Configs.AppConfig]);
@@ -20,13 +20,14 @@
             // services
             ngFlowRate.service("HttpService", ["$http", Services.HttpService]);
             ngFlowRate.service("ThingSpeakService", ["HttpService", Services.ThingSpeakService]);
-            ngFlowRate.service("FirebaseService", ["$firebaseObject", Services.FirebaseService]);
+            ngFlowRate.service("FirebaseService", ["$cookies",Services.FirebaseService]);
 
             // controllers
+            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", Controllers.LoginController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", "$cookies", "FirebaseService", Controllers.HomeController]);
             ngFlowRate.controller("AdminController", ["$scope", "FirebaseService", Controllers.AdminController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", "FirebaseService", Controllers.HomeController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
-            ngFlowRate.controller("AboutController", ["$scope", Controllers.AboutController]);
+            ngFlowRate.controller("AboutController", ["$scope", Controllers.LoginController]);
 
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(() => {

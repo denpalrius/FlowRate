@@ -2,16 +2,16 @@
     "use strict";
 
     interface ICurrentScope {
-        maraRiverFlowRate?: ViewModels.MaraRiverFlow;
-        channel?: ViewModels.Channel;
-        feeds?: ViewModels.Feed[];
-        reorderFeeds?: ViewModels.Feed[];
-        sensors?: ViewModels.Channel[];
+        maraRiverFlowRate?: ViewModels.iMaraRiverFlow;
+        channel?: ViewModels.iChannel;
+        feeds?: ViewModels.iFeed[];
+        reorderFeeds?: ViewModels.iFeed[];
+        sensors?: ViewModels.iChannel[];
 
         pageLoadingFinished?: boolean;
 
         isReorderFormVisible?: boolean;
-        selectedFeed?: ViewModels.Feed;
+        selectedFeed?: ViewModels.iFeed;
         $window?: Window;
         $stickies?: any;
     }
@@ -65,7 +65,7 @@
             //console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
 
             that.ThingSpeakService.getThingSpeakData()
-                .done((response: ViewModels.MaraRiverFlow) => {
+                .done((response: ViewModels.iMaraRiverFlow) => {
                     that.$timeout(0).then(() => {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
 
@@ -91,7 +91,7 @@
                 });
         }
 
-        public getData(): JQueryDeferred<ViewModels.MaraRiverFlow> {
+        public getData(): JQueryDeferred<ViewModels.iMaraRiverFlow> {
             var that: FlowRateController = this;
             that.$scope.flowRateScope.pageLoadingFinished = false;
             console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
@@ -129,7 +129,7 @@
             return deferred;
         }
 
-        private selectFeed(feed: ViewModels.Feed) {
+        private selectFeed(feed: ViewModels.iFeed) {
             var that: FlowRateController = this;
             that.$scope.flowRateScope.selectedFeed = feed;
 

@@ -12,5 +12,15 @@
             storageBucket: "thingspeak-1501090556379.appspot.com",
             messagingSenderId: "311714038874"
         };
+
+        public static firebaseRefs= {
+            sensors: "sensors",
+            users: "users"
+        };
+
+        public static cookies = {
+            userToken: "USERTOKEN",
+            UserProfile: "USERPROFILE"
+        };
     }
 }

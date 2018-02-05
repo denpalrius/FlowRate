@@ -2,6 +2,11 @@
     export class RouteConfig {
         constructor($routeProvider: ng.route.IRouteProvider, $locationProvider: ng.ILocationProvider) {
             $routeProvider
+                .when("/login", {
+                    templateUrl: '/app/views/login.html',
+                    controllerAs: 'LoginCtrl',
+                    controller: 'LoginController',
+                })
                 .when("/home", {
                     templateUrl: '/app/views/home.html',
                     controllerAs: 'HomeCtrl',
