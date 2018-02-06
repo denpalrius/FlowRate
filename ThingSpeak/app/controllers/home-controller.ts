@@ -21,6 +21,7 @@
         constructor(
             private $scope: IHomeScope,
             private $rootScope: ng.IRootScopeService,
+            private $timeout: ng.ITimeoutService,
             private $location: ng.ILocationService,
             private $cookies: ng.cookies.ICookiesService,
             private FirebaseService: Services.FirebaseService) {
@@ -172,7 +173,7 @@
             ];
 
             that.getSensors();
-
+            that.getSensorDetails("0005AMB");
         }
 
         private getSensors() {
@@ -180,16 +181,22 @@
 
             that.FirebaseService.readList("sensors")
                 .done((sensors: ViewModels.iSensor[]) => {
-                    that.$scope.homeScope.sensors = sensors;
-                    console.log("All sensors :", that.$scope.homeScope.sensors);
+                    that.$scope.$apply(function () {
+                        that.$scope.homeScope.sensors = sensors;
+                    });
+
                 }).fail((error: any) => {
                     console.log("Error:", error);
                 });
+        }
 
-            that.FirebaseService.read("sensors", "0501KSB")
+
+        private getSensorDetails(sensorId: any) {
+            var that: HomeController = this;
+
+            that.FirebaseService.read("sensors", sensorId)
                 .done((sensor: any) => {
                     that.$scope.homeScope.selectedSensor = sensor;
-                    console.log("Sensors details:", that.$scope.homeScope.selectedSensor);
                 }).fail((error: any) => {
                     console.log("Error:", error);
                 });

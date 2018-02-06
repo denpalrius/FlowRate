@@ -46,6 +46,7 @@
         physicalAddress?: string;
         lat?: number;
         lon?: number;
+        status?: boolean;
         installedOn?: string;
         installedBy?: string;
     }

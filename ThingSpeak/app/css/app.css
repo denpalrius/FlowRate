@@ -79,29 +79,32 @@
 
 .left-pane {
     position: fixed;
-    background-color: rgba(255, 255, 255, 0.95);
+    /*background-color: rgba(255, 255, 255, 0.95);*/
+    background-color: transparent;
     left: 0;
     top: 0;
     height: 100%;
-    width: 20%;
+    padding: 0px;
+    margin: 0px;
     box-sizing: border-box;
     box-shadow: 0px 0px 3px 0px rgba(240, 232, 232, 0.59);
 }
 
-.tab-label{
+.tab-label {
     margin-left: 20px;
     margin-right: 20px;
 }
 
-.tab-label > i, .tab-label > span {
-    vertical-align:middle;
-}
-.tab-label > i {
-    margin:0px 3px;
-}
+    .tab-label > i, .tab-label > span {
+        vertical-align: middle;
+    }
 
-md-tab-body{
-    padding:5px;
+    .tab-label > i {
+        margin: 0px 3px;
+    }
+
+md-tab-body {
+    padding: 5px;
 }
 
 .login-button {
@@ -211,4 +214,47 @@ label {
 
 .form-control {
     font-size: 13px;
+}
+
+.address-box-container {
+    display: inline-table !important;
+    width: 100%;
+}
+
+.address-box {
+    padding-left: 10px;
+    width: calc(100% - 57px);
+    display: inline-table !important;
+    vertical-align: middle;
+}
+
+.current-location-button {
+    display: inline-table !important;
+    vertical-align: middle;
+}
+
+.search-container {
+    margin: 10px;
+    background-color: white;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.sensors-holder {
+    margin-top: 110px;
+    margin-bottom: 120px;
+    margin-left: 26px;
+    margin-right: 26px;
+    background-color: white;
+    height: calc(100% - 118px);
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.back-click {
+    width: calc(100% - 70px);
+    top: 2px;
+    cursor: pointer;
+}
+
+.back-click:visited, .back-click:active{
+    border:transparent;
 }

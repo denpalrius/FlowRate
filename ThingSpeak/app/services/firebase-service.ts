@@ -157,16 +157,19 @@ module ThingSpeak.Services {
             return deferred;
         }
 
-        public readList(ObjectRef: string, objId?: string): JQueryDeferred<any> {
+        public readList(ObjectRef: string): JQueryDeferred<any> {
             var that: FirebaseService = this;
             var deferred = $.Deferred();
 
-            var refPath = objId ? "/" + ObjectRef + "/" + objId : "/" + ObjectRef
-            var ref = firebase.database().ref(refPath);
+            var ref = firebase.database().ref("/" + ObjectRef);
 
             ref.on("value",
                 (snapshot: any) => {
-                    deferred.resolve(that.snapshotToArray(snapshot));
+                    var array: any = [];
+                    snapshot.forEach(function (childSnapshot: any) {
+                        array.push(childSnapshot.val());
+                    });
+                    deferred.resolve(array);
                 },
                 (error: any) => {
                     deferred.reject(error.code);

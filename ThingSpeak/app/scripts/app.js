@@ -252,9 +252,10 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var HomeController = (function () {
-            function HomeController($scope, $rootScope, $location, $cookies, FirebaseService) {
+            function HomeController($scope, $rootScope, $timeout, $location, $cookies, FirebaseService) {
                 this.$scope = $scope;
                 this.$rootScope = $rootScope;
+                this.$timeout = $timeout;
                 this.$location = $location;
                 this.$cookies = $cookies;
                 this.FirebaseService = FirebaseService;
@@ -402,20 +403,24 @@ var ThingSpeak;
                     }
                 ];
                 that.getSensors();
+                that.getSensorDetails("0005AMB");
             };
             HomeController.prototype.getSensors = function () {
                 var that = this;
                 that.FirebaseService.readList("sensors")
                     .done(function (sensors) {
-                    that.$scope.homeScope.sensors = sensors;
-                    console.log("All sensors :", that.$scope.homeScope.sensors);
+                    that.$scope.$apply(function () {
+                        that.$scope.homeScope.sensors = sensors;
+                    });
                 }).fail(function (error) {
                     console.log("Error:", error);
                 });
-                that.FirebaseService.read("sensors", "0501KSB")
+            };
+            HomeController.prototype.getSensorDetails = function (sensorId) {
+                var that = this;
+                that.FirebaseService.read("sensors", sensorId)
                     .done(function (sensor) {
                     that.$scope.homeScope.selectedSensor = sensor;
-                    console.log("Sensors details:", that.$scope.homeScope.selectedSensor);
                 }).fail(function (error) {
                     console.log("Error:", error);
                 });
@@ -913,6 +918,9 @@ var ThingSpeak;
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
             scope.geocoder = new google.maps.Geocoder;
+            scope.showSensorsDetails = false;
+            scope.sensors = [];
+            scope.selectedSensor = {};
             var mapStyles = [
                 {
                     "featureType": "administrative",
@@ -995,9 +1003,6 @@ var ThingSpeak;
             ];
             var mapOptions = {
                 zoomControl: true,
-                mapTypeControl: true,
-                //maxZoom: 15,
-                //minZoom: 4,
                 panControl: false,
                 draggable: true,
                 zoomControlOptions: {
@@ -1022,8 +1027,12 @@ var ThingSpeak;
                 restrict: 'AE',
                 scope: {
                     currentLocation: '=currentLocation',
+                    sensors: '=sensors',
                     getUserLocationClick: '&getUserLocationClick',
-                    isShowSearchBar: '=isShowSearchBar'
+                    displaySensorClick: '&displaySensorClick',
+                    isShowSearchBar: '=isShowSearchBar',
+                    showSensorDetails: '=?showSensorDetails',
+                    selectedSensor: '=?selectedSensor'
                     //    "@"   (Text binding / one - way binding )
                     //    "="   (Direct model binding / two - way binding )
                     //    "&"   (Behaviour binding / Method binding  )
@@ -1032,6 +1041,16 @@ var ThingSpeak;
                 link: function (scope, $elm, attr) {
                     init(scope, $timeout);
                     $timeout(5).then(function () {
+                        scope.displaySensorClick = function (sensor) {
+                            if (sensor) {
+                                scope.showSensorDetails = true;
+                                scope.selectedSensor = sensor;
+                            }
+                            else {
+                                scope.showSensorDetails = false;
+                                scope.selectedSensor = {};
+                            }
+                        };
                         //Change this once you Move Input to Directive
                         if (scope.isShowSearchBar) {
                             scope.googleMapAutoComplete = attachSearchBar();
@@ -1303,13 +1322,16 @@ var ThingSpeak;
                 });
                 return deferred;
             };
-            FirebaseService.prototype.readList = function (ObjectRef, objId) {
+            FirebaseService.prototype.readList = function (ObjectRef) {
                 var that = this;
                 var deferred = $.Deferred();
-                var refPath = objId ? "/" + ObjectRef + "/" + objId : "/" + ObjectRef;
-                var ref = firebase.database().ref(refPath);
+                var ref = firebase.database().ref("/" + ObjectRef);
                 ref.on("value", function (snapshot) {
-                    deferred.resolve(that.snapshotToArray(snapshot));
+                    var array = [];
+                    snapshot.forEach(function (childSnapshot) {
+                        array.push(childSnapshot.val());
+                    });
+                    deferred.resolve(array);
                 }, function (error) {
                     deferred.reject(error.code);
                 });
@@ -1434,7 +1456,7 @@ var ThingSpeak;
             ngFlowRate.service("FirebaseService", ["$cookies", ThingSpeak.Services.FirebaseService]);
             // controllers
             ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", ThingSpeak.Controllers.LoginController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$location", "$cookies", "FirebaseService", ThingSpeak.Controllers.HomeController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", ThingSpeak.Controllers.HomeController]);
             ngFlowRate.controller("AdminController", ["$scope", "FirebaseService", ThingSpeak.Controllers.AdminController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.LoginController]);

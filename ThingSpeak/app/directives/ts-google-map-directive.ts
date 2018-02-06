@@ -11,6 +11,9 @@
         getUserLocationClick: Function;
         displaySensorClick: Function;
         currentLocation?: string;
+        selectedSensor?: ViewModels.iSensor;
+        sensors?: ViewModels.iSensor[];
+        showSensorDetails: boolean;
         isShowSearchBar?: boolean;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
@@ -156,6 +159,9 @@
         scope.types = "['establishment']";
         scope.infoWindow = new google.maps.InfoWindow;
         scope.geocoder = new google.maps.Geocoder;
+        scope.showSensorsDetails = false;
+        scope.sensors = [];
+        scope.selectedSensor = {};
 
         var mapStyles = [
             {
@@ -240,9 +246,6 @@
 
         var mapOptions: google.maps.MapOptions = {
             zoomControl: true,
-            mapTypeControl: true,
-            //maxZoom: 15,
-            //minZoom: 4,
             panControl: false,
             draggable: true,
             zoomControlOptions: {
@@ -269,8 +272,12 @@
             restrict: 'AE',
             scope: {
                 currentLocation: '=currentLocation',
+                sensors: '=sensors',
                 getUserLocationClick: '&getUserLocationClick',
-                isShowSearchBar: '=isShowSearchBar'
+                displaySensorClick: '&displaySensorClick',
+                isShowSearchBar: '=isShowSearchBar',
+                showSensorDetails: '=?showSensorDetails',
+                selectedSensor: '=?selectedSensor'
                 //    "@"   (Text binding / one - way binding )
                 //    "="   (Direct model binding / two - way binding )
                 //    "&"   (Behaviour binding / Method binding  )
@@ -281,6 +288,17 @@
                 init(scope, $timeout);
 
                 $timeout(5).then(() => {
+                    scope.displaySensorClick = function (sensor: any) {
+                        if (sensor) {
+                            scope.showSensorDetails = true;
+                            scope.selectedSensor = sensor
+                        }
+                        else {
+                            scope.showSensorDetails = false;
+                            scope.selectedSensor = {}
+                        }
+                    } 
+
                     //Change this once you Move Input to Directive
                     if (scope.isShowSearchBar) {
                         scope.googleMapAutoComplete = attachSearchBar();
