@@ -2,7 +2,7 @@
     "use strict";
 
     interface ICurrentScope {
-        pageTitle?: string;
+        loggedInUser?: ViewModels.iUser;
         currentLocation?: any;
         userAddress?: string;
         mapCenter?: string;
@@ -33,7 +33,7 @@
             var that: HomeController = this;
 
             that.$scope.homeScope = {};
-            that.$scope.homeScope.pageTitle = "Thingspeak";
+            that.$scope.homeScope.loggedInUser = {};
             that.$scope.homeScope.googleMapsUrl = "";
             that.$scope.homeScope.sensors = [];
             that.$scope.homeScope.selectedSensor = {};
@@ -174,6 +174,19 @@
 
             that.getSensors();
             that.getSensorDetails("0005AMB");
+
+            that.loadUSerDetails();
+        }
+
+        private loadUSerDetails() {
+            var that: HomeController = this;
+            var userDetails = that.$cookies.getObject(Configs.AppConfig.cookies.UserProfile);
+            if (userDetails) {
+                that.$scope.homeScope.loggedInUser = userDetails;
+                console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
+            } else {
+                that.$location.path("login");
+            }
         }
 
         private getSensors() {

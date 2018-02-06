@@ -36,8 +36,10 @@ module ThingSpeak.Services {
             var that: FirebaseService = this;
             var deferred = $.Deferred();
 
-            firebase.auth().signInWithRedirect(that.provider);
-            firebase.auth().getRedirectResult()
+            //firebase.auth().signInWithRedirect(that.provider);
+            //firebase.auth().getRedirectResult().then(function (result: any) {
+
+            firebase.auth().signInWithPopup(that.provider)
                 .then(function (result: any) {
                     var token = result.credential.accessToken;
                     var user = result.user;
@@ -51,18 +53,16 @@ module ThingSpeak.Services {
                         role: ViewModels.iuserRole.standard
                     };
 
-                    //Add user to DB
-                    that.write(Configs.AppConfig.firebaseRefs.users, that.loggedInUser)
-                        .done(() => {
-                            //Save user details to cookie store
-                            that.$cookies.put(Configs.AppConfig.cookies.userToken, token);
-                            that.$cookies.putObject(Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
+                    that.$cookies.put(Configs.AppConfig.cookies.userToken, token);
+                    that.$cookies.putObject(Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
 
-                            deferred.resolve("User logged in successfuly");
+                    //Add user to Firebase DB
+                    that.write(Configs.AppConfig.firebaseRefs.users, that.loggedInUser)
+                        .done((response:any) => {
+                            console.log(response);
                         })
                         .fail((error: any) => {
                             console.log(error);
-                            deferred.reject(error);
                         });
 
                     deferred.resolve("User logged in successfuly");
@@ -137,7 +137,6 @@ module ThingSpeak.Services {
 
             return deferred;
         }
-
 
         public read(ObjectRef: string, objId?: string): JQueryDeferred<any> {
             var that: FirebaseService = this;

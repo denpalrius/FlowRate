@@ -14,6 +14,7 @@
         selectedSensor?: ViewModels.iSensor;
         sensors?: ViewModels.iSensor[];
         showSensorDetails: boolean;
+        photoUrl: string;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
 
@@ -106,11 +107,11 @@
                 .done((geoCodeResult: google.maps.GeocoderResult) => {
                     $timeout(0).then(() => {
                         scope.currentLocation = geoCodeResult.formatted_address;
-                        console.log("Reverse output: ", scope.currentLocation);
+                        //console.log("Reverse output: ", scope.currentLocation);
                     });
                 })
                 .fail((error) => {
-                    //TODO: handle error
+                    console.log("Failed to load user")
                 });
         });
 
@@ -141,6 +142,7 @@
                     scope.currentLocation = geoCodeResult.formatted_address;
                     scope.marker.setPosition(coords);
                     scope.map.setCenter(coords);
+
                     //console.log("Reverse output Address", scope.currentLocation);
                 });
             })
@@ -171,8 +173,9 @@
         scope.infoWindow = new google.maps.InfoWindow;
         scope.geocoder = new google.maps.Geocoder;
         scope.showSensorsDetails = false;
-        scope.sensors = [];
-        scope.selectedSensor = {};
+        //scope.sensors = [];
+        //scope.selectedSensor = {};
+        //scope.photoUrl = "";
 
         var mapStyles = [
             {
@@ -286,9 +289,9 @@
                 sensors: '=sensors',
                 getUserLocationClick: '&getUserLocationClick',
                 displaySensorClick: '&displaySensorClick',
-                isShowSearchBar: '=isShowSearchBar',
                 showSensorDetails: '=?showSensorDetails',
-                selectedSensor: '=?selectedSensor'
+                selectedSensor: '=?selectedSensor',
+                photoUrl: '=?photoUrl'
                 //    "@"   (Text binding / one - way binding )
                 //    "="   (Direct model binding / two - way binding )
                 //    "&"   (Behaviour binding / Method binding  )
@@ -313,17 +316,15 @@
                         }
                     }
 
-                    //Set up autocomplete text box
+                    //Initialize autocomplete text box
                     scope.googleMapAutoComplete = attachSearchBar();
 
                     scope.getUserLocationClick = () => {
                         getUserLocationFn(navigator)
                             .done((pos) => {
-                                scope.marker.setPosition(pos);
-                                scope.map.setCenter(pos);
+                                setDataOnMap(pos, scope, $timeout);
                             })
                             .fail((error) => {
-                                //set a manual location
                                 scope.userLocation = null;
                             });
                     };

@@ -255,6 +255,23 @@ label {
     cursor: pointer;
 }
 
-.back-click:visited, .back-click:active{
-    border:transparent;
+    .back-click:visited, .back-click:active {
+        border: transparent;
+    }
+
+.sensor-panel-top {
+    display: inline-table;
+    padding-left: 12px;
+    width: 100%;
+    padding-right: 4px;
+    padding-top: 8px;
+}
+
+.profile-picture {
+    margin-right: 6px;
+    height: 45px;
+    padding: 3px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }

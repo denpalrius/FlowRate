@@ -27,7 +27,7 @@
         private SignIn() {
             var that: LoginController = this;
 
-            that.FirebaseService.googleSignin_new()
+            that.FirebaseService.googleSignin()
                 .done((response: any) => {
                     that.$location.path("home");
                 }).fail((error: any) => {

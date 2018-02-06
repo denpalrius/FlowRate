@@ -265,7 +265,7 @@ var ThingSpeak;
             HomeController.prototype.init = function () {
                 var that = this;
                 that.$scope.homeScope = {};
-                that.$scope.homeScope.pageTitle = "Thingspeak";
+                that.$scope.homeScope.loggedInUser = {};
                 that.$scope.homeScope.googleMapsUrl = "";
                 that.$scope.homeScope.sensors = [];
                 that.$scope.homeScope.selectedSensor = {};
@@ -404,6 +404,18 @@ var ThingSpeak;
                 ];
                 that.getSensors();
                 that.getSensorDetails("0005AMB");
+                that.loadUSerDetails();
+            };
+            HomeController.prototype.loadUSerDetails = function () {
+                var that = this;
+                var userDetails = that.$cookies.getObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile);
+                if (userDetails) {
+                    that.$scope.homeScope.loggedInUser = userDetails;
+                    console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
+                }
+                else {
+                    that.$location.path("login");
+                }
             };
             HomeController.prototype.getSensors = function () {
                 var that = this;
@@ -768,7 +780,7 @@ var ThingSpeak;
             };
             LoginController.prototype.SignIn = function () {
                 var that = this;
-                that.FirebaseService.googleSignin_new()
+                that.FirebaseService.googleSignin()
                     .done(function (response) {
                     that.$location.path("home");
                 }).fail(function (error) {
@@ -874,11 +886,11 @@ var ThingSpeak;
                     .done(function (geoCodeResult) {
                     $timeout(0).then(function () {
                         scope.currentLocation = geoCodeResult.formatted_address;
-                        console.log("Reverse output: ", scope.currentLocation);
+                        //console.log("Reverse output: ", scope.currentLocation);
                     });
                 })
                     .fail(function (error) {
-                    //TODO: handle error
+                    console.log("Failed to load user");
                 });
             });
             // click autocomplete listener
@@ -930,8 +942,9 @@ var ThingSpeak;
             scope.infoWindow = new google.maps.InfoWindow;
             scope.geocoder = new google.maps.Geocoder;
             scope.showSensorsDetails = false;
-            scope.sensors = [];
-            scope.selectedSensor = {};
+            //scope.sensors = [];
+            //scope.selectedSensor = {};
+            //scope.photoUrl = "";
             var mapStyles = [
                 {
                     "featureType": "administrative",
@@ -1041,9 +1054,9 @@ var ThingSpeak;
                     sensors: '=sensors',
                     getUserLocationClick: '&getUserLocationClick',
                     displaySensorClick: '&displaySensorClick',
-                    isShowSearchBar: '=isShowSearchBar',
                     showSensorDetails: '=?showSensorDetails',
-                    selectedSensor: '=?selectedSensor'
+                    selectedSensor: '=?selectedSensor',
+                    photoUrl: '=?photoUrl'
                     //    "@"   (Text binding / one - way binding )
                     //    "="   (Direct model binding / two - way binding )
                     //    "&"   (Behaviour binding / Method binding  )
@@ -1064,16 +1077,14 @@ var ThingSpeak;
                                 scope.selectedSensor = {};
                             }
                         };
-                        //Set up autocomplete text box
+                        //Initialize autocomplete text box
                         scope.googleMapAutoComplete = attachSearchBar();
                         scope.getUserLocationClick = function () {
                             getUserLocationFn(navigator)
                                 .done(function (pos) {
-                                scope.marker.setPosition(pos);
-                                scope.map.setCenter(pos);
+                                setDataOnMap(pos, scope, $timeout);
                             })
                                 .fail(function (error) {
-                                //set a manual location
                                 scope.userLocation = null;
                             });
                         };
@@ -1190,8 +1201,9 @@ var ThingSpeak;
             FirebaseService.prototype.googleSignin = function () {
                 var that = this;
                 var deferred = $.Deferred();
-                firebase.auth().signInWithRedirect(that.provider);
-                firebase.auth().getRedirectResult()
+                //firebase.auth().signInWithRedirect(that.provider);
+                //firebase.auth().getRedirectResult().then(function (result: any) {
+                firebase.auth().signInWithPopup(that.provider)
                     .then(function (result) {
                     var token = result.credential.accessToken;
                     var user = result.user;
@@ -1203,17 +1215,15 @@ var ThingSpeak;
                         photoURL: user.photoURL,
                         role: ThingSpeak.ViewModels.iuserRole.standard
                     };
-                    //Add user to DB
+                    that.$cookies.put(ThingSpeak.Configs.AppConfig.cookies.userToken, token);
+                    that.$cookies.putObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
+                    //Add user to Firebase DB
                     that.write(ThingSpeak.Configs.AppConfig.firebaseRefs.users, that.loggedInUser)
-                        .done(function () {
-                        //Save user details to cookie store
-                        that.$cookies.put(ThingSpeak.Configs.AppConfig.cookies.userToken, token);
-                        that.$cookies.putObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
-                        deferred.resolve("User logged in successfuly");
+                        .done(function (response) {
+                        console.log(response);
                     })
                         .fail(function (error) {
                         console.log(error);
-                        deferred.reject(error);
                     });
                     deferred.resolve("User logged in successfuly");
                 })
