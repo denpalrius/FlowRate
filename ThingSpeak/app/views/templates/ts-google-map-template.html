@@ -1,7 +1,27 @@
 ﻿<div class="mapcanvas" id="locationMap" style="z-index:0"></div>
 
 <div class="left-pane col-lg-3 col-md-5 col-sm-12" style="background-color:red">
-    <div class="">
+    <div class="search-container">
+        <div class="sensor-panel-top">
+            <label style="padding-left:14px; padding-top: 16px;color:#e64a19">Search location</label>
+            <img ui-sref="admin" src="{{photoUrl}}" class="md-avatar pull-right profile-picture" alt="Profile Photo" aria-label="Menu" />
+        </div>
+
+        <div class="sensor-panel-top">
+            <div class="address-box">
+                <md-input-container class="md-icon-float md-block" style="margin:0px">
+                    <input ng-model="currentLocation" type="text" id="googleMapSearchBox" aria-label="Search Sensors">
+                </md-input-container>
+            </div>
+
+            <md-button ng-click="getUserLocationClick()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
+                <md-tooltip>My location</md-tooltip>
+                <i class="material-icons">my_location</i>
+            </md-button>
+        </div>
+    </div>
+
+  
         <div ng-if="!showSensorDetails" class="sensors-holder">
             <md-subheader class="">Sensors at this location ({{sensors.length}})</md-subheader>
             <md-list flex style="height: calc(100% - 46px); overflow: auto;">
@@ -61,25 +81,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
-        <div class="search-container">
-            <div class="sensor-panel-top">
-                <label style="padding-left:14px; padding-top: 16px;color:#e64a19">Search location</label>
-                <img ui-sref="admin" src="{{photoUrl}}" class="md-avatar pull-right profile-picture" alt="Profile Photo" aria-label="Menu" />
-            </div>
 
-            <div class="sensor-panel-top">
-                <div class="address-box">
-                    <md-input-container class="md-icon-float md-block" style="margin:0px">
-                        <input ng-model="currentLocation" type="text" id="googleMapSearchBox" aria-label="Search Sensors">
-                    </md-input-container>
-                </div>
-
-                <md-button ng-click="getUserLocationClick()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
-                    <md-tooltip>My location</md-tooltip>
-                    <i class="material-icons">my_location</i>
-                </md-button>
-            </div>
-    </div>
 </div>

@@ -183,7 +183,7 @@
             var userDetails = that.$cookies.getObject(Configs.AppConfig.cookies.UserProfile);
             if (userDetails) {
                 that.$scope.homeScope.loggedInUser = userDetails;
-                console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
+                //console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
             } else {
                 that.$location.path("login");
             }

@@ -81,10 +81,11 @@
     position: fixed;
     /*background-color: rgba(255, 255, 255, 0.95);*/
     background-color: transparent;
+    background-color: red;
     left: 0;
     top: 0;
     height: 100%;
-    padding: 0px;
+    padding: 10px;
     margin: 0px;
     box-sizing: border-box;
     box-shadow: 0px 0px 3px 0px rgba(240, 232, 232, 0.59);
@@ -234,18 +235,15 @@ label {
 }
 
 .search-container {
-    margin: 10px;
+    margin-bottom: 10px;
     background-color: white;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
 .sensors-holder {
-    margin-top: 115px;
-    margin-bottom: 120px;
-    margin-left: 26px;
-    margin-right: 26px;
     background-color: white;
-    height: calc(100% - 118px);
+    overflow:auto;
+    height: calc(100% - 128px);
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
