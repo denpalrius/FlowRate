@@ -1,6 +1,6 @@
 ﻿<div>
     <ts-google-map sensors="homeScope.sensors"
-                   photo-url="homeScope.loggedInUser.photoURL"
-                   current-location="homeScope.userAddress"
-                   is-show-search-bar="true" />
+                   display-sensor-list-click ="HomeCtrl.populateSensors(homeScope.sensors)"
+                   logged-in-user="homeScope.loggedInUser"
+                   current-location="homeScope.userAddress"/>
 </div>

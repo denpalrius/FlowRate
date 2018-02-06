@@ -172,18 +172,15 @@
                 }
             ];
 
-            that.getSensors();
-            that.getSensorDetails("0005AMB");
-
-            that.loadUSerDetails();
+            that.checkUSer();
         }
 
-        private loadUSerDetails() {
+        private checkUSer() {
             var that: HomeController = this;
-            var userDetails = that.$cookies.getObject(Configs.AppConfig.cookies.UserProfile);
-            if (userDetails) {
-                that.$scope.homeScope.loggedInUser = userDetails;
-                //console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
+            var isUser = that.$cookies.getObject(Configs.AppConfig.cookies.UserProfile);
+            if (isUser) {
+                that.$scope.homeScope.loggedInUser = isUser;
+                that.getSensors();
             } else {
                 that.$location.path("login");
             }

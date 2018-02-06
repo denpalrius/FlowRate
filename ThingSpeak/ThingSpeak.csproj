@@ -28,7 +28,9 @@
     <TypeScriptCompile Include="app\controllers\login-controller.ts" />
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
     <Content Include="app\images\btn_google_signin_dark_normal_web.png" />
+    <Content Include="app\images\ic_account_circle_black_24dp_2x.png" />
     <Content Include="app\images\ic_my_location_black_24px.svg" />
+    <Content Include="app\images\sensor-marker.svg" />
     <Content Include="app\images\sensor-off.png" />
     <Content Include="app\images\sensor-on.png" />
     <Content Include="app\images\sensor-searching.png" />
@@ -42,6 +44,7 @@
     <Content Include="app\views\login.html" />
     <Content Include="app\views\home.html" />
     <Content Include="app\views\flow-rate.html" />
+    <Content Include="app\views\templates\info-window-template.html" />
     <Content Include="app\views\templates\reports-template.html" />
     <Content Include="app\views\templates\users-template.html" />
     <Content Include="app\views\templates\sensors-template.html" />

@@ -1,10 +1,48 @@
 ﻿<div class="mapcanvas" id="locationMap" style="z-index:0"></div>
 
-<div class="left-pane col-lg-3 col-md-5 col-sm-12" style="background-color:red">
+<div class="left-pane col-lg-3 col-md-5 col-sm-12">
     <div class="search-container">
         <div class="sensor-panel-top">
             <label style="padding-left:14px; padding-top: 16px;color:#e64a19">Search location</label>
-            <img ui-sref="admin" src="{{photoUrl}}" class="md-avatar pull-right profile-picture" alt="Profile Photo" aria-label="Menu" />
+            <div uib-dropdown dropdown-append-to-body class="md-avatar pull-right">
+                <img uib-dropdown-toggle ui-sref="/admin" src="{{loggedInUser.photoURL}}" class="md-avatar profile-picture" alt="" aria-label="Profile Picture" />
+                <div class="dropdown-menu" style="background-color:transparent; border:0px solid transparent; margin:0px; padding:0px" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+                    <md-card>
+                        <md-card-title>
+                            <md-card-title-media>
+                                <div class="md-media-md card-media">
+                                    <img src="{{loggedInUser.photoURL}}" class="md-avatar profile-picture" style="height:90px; cursor:auto; width:auto" alt="" />
+                                </div>
+                            </md-card-title-media>
+                            <md-card-title-text>
+                                <span class="md-headline">{{loggedInUser.name}}</span>
+                                <span class="md-subhead">{{loggedInUser.email}}</span>
+                                <md-button class="md-button-signout">
+                                    <i class="material-icons pop-button-content">eject</i>
+                                    <span class="pop-button-content">Sign out</span>
+                                </md-button>
+
+                            </md-card-title-text>
+
+                        </md-card-title>
+
+                        <md-divider></md-divider>
+
+                        <md-card-actions layout="row" layout-align="center">
+                            <a class="md-button md-button-pop" href="admin">
+                                <i class="material-icons pop-buttons">insert_chart</i>
+                                <br />
+                                <p>Dashboard</p>
+                            </a>
+                            <a class="md-button md-button-pop" href="admin">
+                                <i class="material-icons pop-button-content" style="margin-top: -13px;">settings</i>
+                                <br />
+                                <p>Settings</p>
+                            </a>
+                        </md-card-actions>
+                    </md-card>
+                </div>
+            </div>
         </div>
 
         <div class="sensor-panel-top">
@@ -21,66 +59,64 @@
         </div>
     </div>
 
-  
-        <div ng-if="!showSensorDetails" class="sensors-holder">
-            <md-subheader class="">Sensors at this location ({{sensors.length}})</md-subheader>
-            <md-list flex style="height: calc(100% - 46px); overflow: auto;">
-                <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in sensors" class="md-3-line" ng-click="displaySensorClick(sensor);">
-                    <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
-                    <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
-                    <div class="md-list-item-text" layout="column">
-                        <h3>{{sensor.physicalAddress}}</h3>
-                        <h4>{{sensor.installedBy}}</h4>
-                        <p>{{sensor.installedOn}}</p>
-                    </div>
-                    <md-divider></md-divider>
-                </md-list-item>
-            </md-list>
-        </div>
+    <div ng-if="!showSensorDetails" class="sensors-holder">
+        <md-subheader class="">Sensors at this location ({{sensors.length}})</md-subheader>
+        <md-list flex style="height: calc(100% - 46px); overflow: auto;">
+            <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in sensors" class="md-3-line" ng-click="displaySensorClick(sensor);">
+                <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
+                <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{sensor.physicalAddress}}</h3>
+                    <h4>{{sensor.installedBy}}</h4>
+                    <p>{{sensor.installedOn}}</p>
+                </div>
+                <md-divider></md-divider>
+            </md-list-item>
+        </md-list>
+    </div>
 
-        <div ng-if="showSensorDetails" class="sensors-holder">
-            <md-toolbar class="md-hue-2">
-                <div class="md-toolbar-tools">
-                    <md-button ng-click="displaySensorClick(false);" style="top:34px;" class="md-fab md-accent md-hue-2" aria-label="Back to sensors list">
-                        <md-tooltip>Back</md-tooltip>
-                        <i class="material-icons" style="vertical-align: middle; margin-bottom: 5px;">arrow_back</i>
-                    </md-button>
-                    <label class="md-title" style="color: white; margin-top:20px; margin-left:30px">Sensor Details</label>
-                </div>
-            </md-toolbar>
-            <br />
-            <div style="padding:20px; overflow: inherit; height: calc(100% - 89px);">
-                <div>
-                    <label class="md-body-1">Sensor ID: </label>
-                    <label class="md-body-2">{{selectedSensor.id}}</label>
-                    <br />
-                </div>
-                <div>
-                    <label class="md-body-1">Status</label>
-                    <label class="md-body-2">{{selectedSensor.status? "ON" : "OFF"}}</label>
-                    <i ng-if="selectedSensor.status" class="material-icons" style="color:green">check_circle</i>
-                    <i ng-if="!selectedSensor.status" class="material-icons" style="color:red">error</i>
-                    <br />
-                </div>
-                <div>
-                    <label class="md-body-1">Sensor location: </label>
-                    <label class="md-body-2">{{selectedSensor.physicalAddress}}</label>
-                    <br />
-                </div>
+    <div ng-if="showSensorDetails" class="sensors-holder">
+        <md-toolbar class="md-hue-2">
+            <div class="md-toolbar-tools">
+                <md-button ng-click="displaySensorClick(false);" style="top:34px;" class="md-fab md-accent md-hue-2" aria-label="Back to sensors list">
+                    <md-tooltip>Back</md-tooltip>
+                    <i class="material-icons" style="vertical-align: middle; margin-bottom: 5px;">arrow_back</i>
+                </md-button>
+                <label class="md-title" style="color: white; margin-top:20px; margin-left:30px">Sensor Details</label>
+            </div>
+        </md-toolbar>
+        <br />
+        <div style="padding:20px; overflow: inherit; height: calc(100% - 89px);">
+            <div>
+                <label class="md-body-1">Sensor ID: </label>
+                <label class="md-body-2">{{selectedSensor.id}}</label>
+                <br />
+            </div>
+            <div>
+                <label class="md-body-1">Status</label>
+                <label class="md-body-2">{{selectedSensor.status? "ON" : "OFF"}}</label>
+                <i ng-if="selectedSensor.status" class="material-icons" style="color:green">check_circle</i>
+                <i ng-if="!selectedSensor.status" class="material-icons" style="color:red">error</i>
+                <br />
+            </div>
+            <div>
+                <label class="md-body-1">Sensor location: </label>
+                <label class="md-body-2">{{selectedSensor.physicalAddress}}</label>
+                <br />
+            </div>
 
-                <div>
-                    <label class="md-body-1">Installed by: </label>
-                    <label class="md-body-2">{{selectedSensor.installedBy}}</label>
-                    <br />
-                </div>
+            <div>
+                <label class="md-body-1">Installed by: </label>
+                <label class="md-body-2">{{selectedSensor.installedBy}}</label>
+                <br />
+            </div>
 
-                <div>
-                    <label class="md-body-1">Installed On:</label>
-                    <label class="md-body-2">{{selectedSensor.installedOn}}</label>
-                    <br />
-                </div>
+            <div>
+                <label class="md-body-1">Installed On:</label>
+                <label class="md-body-2">{{selectedSensor.installedOn}}</label>
+                <br />
             </div>
         </div>
-
+    </div>
 
 </div>

@@ -81,7 +81,6 @@
     position: fixed;
     /*background-color: rgba(255, 255, 255, 0.95);*/
     background-color: transparent;
-    background-color: red;
     left: 0;
     top: 0;
     height: 100%;
@@ -242,7 +241,7 @@ label {
 
 .sensors-holder {
     background-color: white;
-    overflow:auto;
+    overflow: auto;
     height: calc(100% - 128px);
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
@@ -272,4 +271,28 @@ label {
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.md-button-signout {
+    display: inline-block;
+}
+
+    .md-button-signout:hover {
+        color: rgb(38,198,218);
+    }
+
+.md-button-pop {
+    height: 90px;
+    width: 120px;
+    padding: 15px;
+    display: inline-block;
+}
+
+    .md-button-pop:hover {
+        color: rgb(38,198,218);
+    }
+
+.pop-button-content {
+    display: inline-block;
+    vertical-align: middle;
 }

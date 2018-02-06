@@ -402,16 +402,14 @@ var ThingSpeak;
                         ]
                     }
                 ];
-                that.getSensors();
-                that.getSensorDetails("0005AMB");
-                that.loadUSerDetails();
+                that.checkUSer();
             };
-            HomeController.prototype.loadUSerDetails = function () {
+            HomeController.prototype.checkUSer = function () {
                 var that = this;
-                var userDetails = that.$cookies.getObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile);
-                if (userDetails) {
-                    that.$scope.homeScope.loggedInUser = userDetails;
-                    //console.log("loggedInUser: ", that.$scope.homeScope.loggedInUser);
+                var isUser = that.$cookies.getObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile);
+                if (isUser) {
+                    that.$scope.homeScope.loggedInUser = isUser;
+                    that.getSensors();
                 }
                 else {
                     that.$location.path("login");
@@ -901,13 +899,47 @@ var ThingSpeak;
                     scope.marker.setPosition(place.geometry.location);
                     scope.currentLocation = place.formatted_address;
                     scope.map.setCenter(place.geometry.location);
+                    //TODO: load nearby sensors
+                    scope.showSensorDetails = false;
                 });
             });
+        }
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1); // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c; // Distance in km
+            return d;
+        }
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+        function distance(lat1, lon1, lat2, lon2) {
+            var p = 0.017453292519943295; // Math.PI / 180
+            var c = Math.cos;
+            var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+                c(lat1 * p) * c(lat2 * p) *
+                    (1 - c((lon2 - lon1) * p)) / 2;
+            return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
         }
         function attachSearchBar() {
             //console.log("Input : ", $("#googleMapSearchBox"));
             var searchInput = $("#googleMapSearchBox")[0];
             return new google.maps.places.Autocomplete(searchInput);
+        }
+        function loadCurrentLocation(navigator, scope, $timeout) {
+            getUserLocationFn(navigator)
+                .done(function (pos) {
+                scope.userLocation = pos;
+                setDataOnMap(pos, scope, $timeout);
+            })
+                .fail(function (error) {
+                scope.userLocation = null;
+            });
         }
         function setDataOnMap(coords, scope, $timeout) {
             getUserAddress(coords, null)
@@ -916,6 +948,15 @@ var ThingSpeak;
                     scope.currentLocation = geoCodeResult.formatted_address;
                     scope.marker.setPosition(coords);
                     scope.map.setCenter(coords);
+                    // Add circle overlay and bind to marker
+                    //var circle = new google.maps.Circle({
+                    //    map: scope.map,
+                    //    radius: 500,
+                    //    fillColor: '#AA0000'
+                    //});
+                    //circle.bindTo('center', scope.marker, 'position');
+                    //scope.map.setZoom(9);
+                    displaySensorList(scope, $timeout);
                     //console.log("Reverse output Address", scope.currentLocation);
                 });
             })
@@ -923,6 +964,91 @@ var ThingSpeak;
                 //TODO: handle error
                 console.log("Failed to get address details, ", error);
             });
+        }
+        function displaySensor(sensor, scope, $timeout) {
+            if (sensor) {
+                scope.showSensorDetails = true;
+                scope.selectedSensor = sensor;
+                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
+                setDataOnMap(sensorCoordinates, scope, $timeout);
+            }
+            else {
+                scope.showSensorDetails = false;
+                scope.selectedSensor = {};
+            }
+        }
+        // Sets the map on all markers in the array.
+        function setMapOnAll(scope, map) {
+            for (var i = 0; i < scope.markers.length; i++) {
+                scope.markers[i].setMap(map);
+            }
+        }
+        // Removes the markers from the map, but keeps them in the array.
+        function clearMarkers(scope) {
+            setMapOnAll(scope, null);
+        }
+        // Shows any markers currently in the array.
+        function showMarkers(scope) {
+            setMapOnAll(scope, scope.map);
+        }
+        // Deletes all markers in the array by removing references to them.
+        function deleteMarkers(scope) {
+            clearMarkers(scope);
+            scope.markers = [];
+        }
+        function displaySensorList(scope, $timeout) {
+            $timeout(0).then(function () {
+                if (scope.sensors) {
+                    clearAllMarkers(scope);
+                    //Set map bounds
+                    var bounds = new google.maps.LatLngBounds();
+                    for (var i = 0; i < scope.sensors.length; i++) {
+                        var sensor = scope.sensors[i];
+                        var marker = new google.maps.Marker({
+                            map: scope.map,
+                            position: new google.maps.LatLng(sensor.lat, sensor.lon),
+                            title: sensor.physicalAddress,
+                            icon: '/app/images/sensor-marker.svg'
+                        });
+                        bounds.extend(marker.getPosition());
+                        //scope.map.fitBounds(bounds);
+                        var str = '<div style="box-shadow: 0px 0px 3px 0px rgba(240, 232, 232, 0.59); " > <div style="background- color:#00BCD4; width: 100 %; height: 80px; border: 0px solid transparent" > <h2>' + marker.getTitle() + '</h2></div > <div style="background- color:white; width: 100 %; height: 100px; border: 0px solid transparent; overflow: auto" > <p>' + marker.getLabel() + "aaaaa lot of other stuff " + '</p></div > </div>';
+                        var infowindow = new google.maps.InfoWindow({
+                            content: str
+                        });
+                        marker.addListener('click', function () {
+                            //infowindow.open(scope.map, marker);
+                            //$timeout(3).then(() => {
+                            //    if (marker.getAnimation() !== null) {
+                            //        marker.setAnimation(null);
+                            //    } else {
+                            //        marker.setAnimation(google.maps.Animation.BOUNCE);
+                            //    }
+                            //});
+                            displaySensor(sensor, scope, $timeout);
+                        });
+                        addMarkerWithTimeout(scope, marker, i * 20, $timeout);
+                    }
+                    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+                    var boundsListener = google.maps.event.addListener((scope.map), 'bounds_changed', function (event) {
+                        //scope.map.setZoom(10);
+                        console.log("Listener set and removed");
+                        google.maps.event.removeListener(boundsListener);
+                    });
+                }
+            });
+        }
+        function addMarkerWithTimeout(scope, marker, timeout, $timeout) {
+            window.setTimeout(function () {
+                marker.setAnimation(google.maps.Animation.DROP);
+                scope.markers.push(marker);
+            }, timeout);
+        }
+        function clearAllMarkers(scope) {
+            for (var i = 0; i < scope.markers.length; i++) {
+                scope.markers[i].setMap(null);
+            }
+            scope.markers = [];
         }
         function loadMapStyles(http) {
             var deferred = $.Deferred();
@@ -940,11 +1066,9 @@ var ThingSpeak;
         function init(scope, $timeout) {
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
+            scope.markers = [];
             scope.geocoder = new google.maps.Geocoder;
             scope.showSensorsDetails = false;
-            //scope.sensors = [];
-            //scope.selectedSensor = {};
-            //scope.photoUrl = "";
             var mapStyles = [
                 {
                     "featureType": "administrative",
@@ -1054,9 +1178,10 @@ var ThingSpeak;
                     sensors: '=sensors',
                     getUserLocationClick: '&getUserLocationClick',
                     displaySensorClick: '&displaySensorClick',
+                    displaySensorListClick: '&displaySensorListClick',
                     showSensorDetails: '=?showSensorDetails',
                     selectedSensor: '=?selectedSensor',
-                    photoUrl: '=?photoUrl'
+                    loggedInUser: '=?loggedInUser'
                     //    "@"   (Text binding / one - way binding )
                     //    "="   (Direct model binding / two - way binding )
                     //    "&"   (Behaviour binding / Method binding  )
@@ -1065,40 +1190,12 @@ var ThingSpeak;
                 link: function (scope, $elm, attr) {
                     init(scope, $timeout);
                     $timeout(5).then(function () {
-                        scope.displaySensorClick = function (sensor) {
-                            if (sensor) {
-                                scope.showSensorDetails = true;
-                                scope.selectedSensor = sensor;
-                                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
-                                setDataOnMap(sensorCoordinates, scope, $timeout);
-                            }
-                            else {
-                                scope.showSensorDetails = false;
-                                scope.selectedSensor = {};
-                            }
-                        };
-                        //Initialize autocomplete text box
                         scope.googleMapAutoComplete = attachSearchBar();
-                        scope.getUserLocationClick = function () {
-                            getUserLocationFn(navigator)
-                                .done(function (pos) {
-                                setDataOnMap(pos, scope, $timeout);
-                            })
-                                .fail(function (error) {
-                                scope.userLocation = null;
-                            });
-                        };
-                        getUserLocationFn(navigator)
-                            .done(function (latLong) {
-                            scope.userLocation = latLong;
-                            setDataOnMap(scope.userLocation, scope, $timeout);
-                        })
-                            .fail(function (error) {
-                            scope.userLocation = null;
-                            //init(scope, $timeout);
-                        }).always(function () {
-                            loadListeners(scope, $timeout);
-                        });
+                        scope.getUserLocationClick = function () { return loadCurrentLocation(navigator, scope, $timeout); };
+                        loadCurrentLocation(navigator, scope, $timeout);
+                        scope.displaySensorClick = function (sensor) { return displaySensor(sensor, scope, $timeout); };
+                        //scope.displaySensorListClick = (sensors: ViewModels.iSensor[]) => displaySensorList(sensors, scope, $timeout);
+                        loadListeners(scope, $timeout);
                     });
                 }
             };
@@ -1414,7 +1511,7 @@ var ThingSpeak;
     var AppModule = (function () {
         function AppModule() {
             // module
-            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngCookies", "firebase"]);
+            var ngFlowRate = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngTouch", "ngAnimate", "ui.bootstrap", "ngCookies", "firebase"]);
             // configs
             ngFlowRate.config([ThingSpeak.Configs.AppConfig]);
             ngFlowRate.config(["$routeProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);

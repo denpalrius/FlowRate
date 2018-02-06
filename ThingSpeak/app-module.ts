@@ -4,7 +4,7 @@
     export class AppModule {
         constructor() {
             // module
-            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngCookies", "firebase"]);
+            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngTouch", "ngAnimate","ui.bootstrap", "ngCookies", "firebase"]);
 
             // configs
             ngFlowRate.config([Configs.AppConfig]);
