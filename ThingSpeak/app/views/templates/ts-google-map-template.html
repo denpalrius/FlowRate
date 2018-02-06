@@ -1,11 +1,12 @@
 ﻿<div class="mapcanvas" id="locationMap" style="z-index:0"></div>
 
-<div class="left-pane col-lg-3 col-md-5 col-sm-6 pull-left">
+<div class="left-pane col-lg-3 col-md-5 col-sm-12 pull-left">
     <div ng-if="!showSensorDetails" class="sensors-holder">
         <md-subheader class="">Sensors at this location ({{sensors.length}})</md-subheader>
         <md-list flex style="height: calc(100% - 46px); overflow: auto;">
-            <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in sensors" class="md-3-line" ng-click="displaySensorClick(sensor);">
-                <img src="/app/images/sensor-round.png" class="md-avatar" alt="item.who" />
+            <md-list-item ng-init="sensor.status=false" ng-repeat="sensor in sensors" class="md-3-line" ng-click="displaySensorClick(sensor);">
+                <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
+                <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
                 <div class="md-list-item-text" layout="column">
                     <h3>{{sensor.physicalAddress}}</h3>
                     <h4>{{sensor.installedBy}}</h4>
@@ -62,7 +63,7 @@
 </div>
 
 
-<div class="col-lg-3 col-md-5 col-sm-6 pull-left">
+<div class="col-lg-3 col-md-5 col-sm-12 pull-left">
     <div class="search-container">
         <div class="address-box">
             <label style="margin-left:4px; margin-top: 8px;color:#e64a19">Search location</label>

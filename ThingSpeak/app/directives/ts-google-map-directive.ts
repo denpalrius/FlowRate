@@ -14,7 +14,6 @@
         selectedSensor?: ViewModels.iSensor;
         sensors?: ViewModels.iSensor[];
         showSensorDetails: boolean;
-        isShowSearchBar?: boolean;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
 
@@ -90,7 +89,7 @@
             .done((geoCodeResult: google.maps.GeocoderResult) => {
                 $timeout(0).then(() => {
                     scope.currentLocation = geoCodeResult.formatted_address;
-                    console.log("Reverse output Address", scope.currentLocation);
+                    //console.log("Reverse output Address", scope.currentLocation);
                 });
             })
             .fail((error) => {
@@ -102,8 +101,6 @@
         // click map listener  
         scope.map.addListener('click', (e) => {
             var clickLocation: google.maps.LatLng = e.latLng;
-            //console.log("e: ", e);
-
             scope.marker.setPosition(clickLocation);
             getUserAddress(clickLocation, null)
                 .done((geoCodeResult: google.maps.GeocoderResult) => {
@@ -117,27 +114,41 @@
                 });
         });
 
-        if (scope.isShowSearchBar) {
-            // click autocomplete listener
-            scope.googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
-                var place = scope.googleMapAutoComplete.getPlace();
-                //console.warn("Event : ", e);
+        // click autocomplete listener
+        scope.googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
+            var place = scope.googleMapAutoComplete.getPlace();
+            //console.warn("Event : ", e);
 
-                $timeout(0).then(() => {
-                    console.log("Place : ", [place, scope]);
-
-                    scope.marker.setPosition(place.geometry.location);
-                    scope.currentLocation = place.formatted_address;
-                    scope.map.setCenter(place.geometry.location);
-                });
+            $timeout(0).then(() => {
+                scope.marker.setPosition(place.geometry.location);
+                scope.currentLocation = place.formatted_address;
+                scope.map.setCenter(place.geometry.location);
             });
-        }
+        });
+
     }
 
     function attachSearchBar(): google.maps.places.Autocomplete {
         //console.log("Input : ", $("#googleMapSearchBox"));
         let searchInput = $("#googleMapSearchBox")[0] as HTMLInputElement;
         return new google.maps.places.Autocomplete(searchInput);
+    }
+
+    function setDataOnMap(coords: google.maps.LatLng, scope: IScope, $timeout: ng.ITimeoutService) {
+        getUserAddress(coords, null)
+            .done((geoCodeResult: google.maps.GeocoderResult) => {
+                $timeout(0).then(() => {
+                    scope.currentLocation = geoCodeResult.formatted_address;
+                    scope.marker.setPosition(coords);
+                    scope.map.setCenter(coords);
+                    //console.log("Reverse output Address", scope.currentLocation);
+                });
+            })
+            .fail((error) => {
+                //TODO: handle error
+                console.log("Failed to get address details, ", error);
+            });
+
     }
 
     function loadMapStyles(http: Services.HttpService): JQueryDeferred<google.maps.MapTypeStyle[]> {
@@ -291,94 +302,44 @@
                     scope.displaySensorClick = function (sensor: any) {
                         if (sensor) {
                             scope.showSensorDetails = true;
-                            scope.selectedSensor = sensor
+                            scope.selectedSensor = sensor;
+
+                            var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
+                            setDataOnMap(sensorCoordinates, scope, $timeout);
                         }
                         else {
                             scope.showSensorDetails = false;
                             scope.selectedSensor = {}
                         }
-                    } 
+                    }
 
-                    //Change this once you Move Input to Directive
-                    if (scope.isShowSearchBar) {
-                        scope.googleMapAutoComplete = attachSearchBar();
-                        //console.warn("scope.googleMapAutoComplete: ", scope.googleMapAutoComplete);
-                        scope.getUserLocationClick = () => {
-                            getUserLocationFn(navigator)
-                                .done((pos) => {
-                                    scope.marker.setPosition(pos);
-                                    scope.map.setCenter(pos);
+                    //Set up autocomplete text box
+                    scope.googleMapAutoComplete = attachSearchBar();
 
-                                })
-                                .fail((error) => {
-                                    //set a manual location
-                                    scope.userLocation = null;
-                                });
-                        };
-
+                    scope.getUserLocationClick = () => {
                         getUserLocationFn(navigator)
-                            .done((latLong: google.maps.LatLng) => {
-                                scope.userLocation = latLong;
-
-                                getUserAddress(scope.userLocation, null)
-                                    .done((geoCodeResult: google.maps.GeocoderResult) => {
-                                        $timeout(0).then(() => {
-                                            scope.currentLocation = geoCodeResult.formatted_address;
-                                            scope.marker.setPosition(scope.userLocation);
-                                            scope.map.setCenter(scope.userLocation);
-                                            //console.log("Reverse output Address", scope.currentLocation);
-                                        });
-                                    })
-                                    .fail((error) => {
-                                        //TODO: handle error
-                                    });
-
-                                // loadCurrentAddress(scope.userLocation, scope, $timeout);
-                                loadListeners(scope, $timeout);
+                            .done((pos) => {
+                                scope.marker.setPosition(pos);
+                                scope.map.setCenter(pos);
                             })
                             .fail((error) => {
+                                //set a manual location
                                 scope.userLocation = null;
-
-                                init(scope, $timeout);
-                                loadListeners(scope, $timeout);
-
-                                scope.getUserLocationClick = () => {
-                                    getUserLocationFn(navigator)
-                                        .done((pos) => {
-                                            scope.marker.setPosition(pos);
-                                            scope.map.setCenter(pos);
-                                        })
-                                        .then((pos) => {
-                                            // loadCurrentAddress(pos, scope, $timeout);
-                                        })
-                                        .fail((error) => {
-                                            //set a manual location
-                                            scope.userLocation = null;
-                                            loadListeners(scope, $timeout);
-                                        });
-                                };
                             });
-                    }
-                    else {
-                        // get addresss  
-                        getUserAddress(null, scope.currentLocation)
-                            .done((geoCodeResult: google.maps.GeocoderResult) => {
-                                init(scope, $timeout);//map fails to load without calling init()
-                                // loadListeners(scope, $timeout);
-                                $log.info("Meeting Location ", scope.currentLocation);
-                                $log.info("Geocode Result ", geoCodeResult.geometry.location);
-                                scope.marker.setPosition(geoCodeResult.geometry.location);
-                                scope.map.setCenter(geoCodeResult.geometry.location);
-                            })
-                            .fail((error) => {
-                                $log.error("Failed to get address : ", error);
-                                getUserLocationFn(navigator)
-                                    .done((latLong: google.maps.LatLng) => {
-                                        scope.map.setCenter(latLong);
-                                    });
-                                //loadListeners(scope, $timeout);
-                            });
-                    }
+                    };
+
+                    getUserLocationFn(navigator)
+                        .done((latLong: google.maps.LatLng) => {
+                            scope.userLocation = latLong;
+                            setDataOnMap(scope.userLocation, scope, $timeout);
+                        })
+                        .fail((error) => {
+                            scope.userLocation = null;
+                            //init(scope, $timeout);
+                        }).always(() => {
+                            loadListeners(scope, $timeout);
+
+                        });
 
                 });
             }

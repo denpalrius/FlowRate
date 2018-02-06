@@ -29,7 +29,8 @@
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
     <Content Include="app\images\btn_google_signin_dark_normal_web.png" />
     <Content Include="app\images\ic_my_location_black_24px.svg" />
-    <Content Include="app\images\sensor-round.png" />
+    <Content Include="app\images\sensor-off.png" />
+    <Content Include="app\images\sensor-on.png" />
     <Content Include="app\images\sensor-searching.png" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
