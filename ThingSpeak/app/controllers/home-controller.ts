@@ -185,6 +185,19 @@
                 that.$location.path("login");
             }
         }
+        private Signout() {
+            console.log("Signing out");
+
+            var that: HomeController = this;
+            that.FirebaseService.googleSignout()
+                .done((response: any) => {
+                    console.log(response);
+                }).fail((error: any) => {
+                    console.log(error);
+                }).always(() => {
+                    that.$location.path("login");
+                });
+        }
 
         private getSensors() {
             var that: HomeController = this;

@@ -1,6 +1,9 @@
-﻿<div>
+﻿
+<div>
     <ts-google-map sensors="homeScope.sensors"
-                   display-sensor-list-click ="HomeCtrl.populateSensors(homeScope.sensors)"
+                   display-sensor-list-click="HomeCtrl.populateSensors(homeScope.sensors)"
+                   sign-out-click="HomeCtrl.Signout()"
                    logged-in-user="homeScope.loggedInUser"
-                   current-location="homeScope.userAddress"/>
+                   current-location="homeScope.userAddress" />
 </div>
+

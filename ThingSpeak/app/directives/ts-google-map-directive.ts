@@ -9,6 +9,7 @@
         types: any;
         infoWindow: google.maps.InfoWindow;
         geocoder: google.maps.Geocoder;
+        signOutClick: Function;
         getUserLocationClick: Function;
         displaySensorClick: Function;
         displaySensorListClick: Function;
@@ -20,6 +21,10 @@
         googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
 
+    function signOut() {
+        console.log("Signing out");
+
+    }
     function handleLocationError(browserHasGeolocation: any, infoWindow: any, pos: any, map: any) {
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
@@ -128,8 +133,18 @@
                 scope.map.setCenter(place.geometry.location);
 
                 //TODO: load nearby sensors
-                scope.showSensorDetails = false;
 
+                if (scope.marker) {
+                    scope.showSensorDetails = false;
+                    if (scope.sensors && scope.sensors.length) {
+                        scope.sensors.forEach((sensor: ViewModels.iSensor) => {
+                            var sensorID = scope.marker.getLabel();
+                            if (sensorID && sensor.id == sensorID) {
+                                displaySensor(sensor, scope, $timeout);
+                            }
+                        });
+                    }
+                }
             });
         });
 
@@ -451,7 +466,8 @@
                 displaySensorListClick: '&displaySensorListClick',
                 showSensorDetails: '=?showSensorDetails',
                 selectedSensor: '=?selectedSensor',
-                loggedInUser: '=?loggedInUser'
+                loggedInUser: '=?loggedInUser',
+                signOutClick: '&signOutClick'
                 //    "@"   (Text binding / one - way binding )
                 //    "="   (Direct model binding / two - way binding )
                 //    "&"   (Behaviour binding / Method binding  )
@@ -462,6 +478,7 @@
                 init(scope, $timeout);
 
                 $timeout(5).then(() => {
+                    //scope.signOutClick = () => signOut();
                     scope.googleMapAutoComplete = attachSearchBar();
                     scope.getUserLocationClick = () => loadCurrentLocation(navigator, scope, $timeout);
                     loadCurrentLocation(navigator, scope, $timeout);
