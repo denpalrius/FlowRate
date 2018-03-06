@@ -154,6 +154,7 @@
     <TypeScriptCompile Include="app\models\mara-river-model.ts" />
     <TypeScriptCompile Include="app\models\http-model.ts" />
     <TypeScriptCompile Include="app\services\firebase-service.ts" />
+    <TypeScriptCompile Include="app\services\map-service.ts" />
     <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
     <TypeScriptCompile Include="app\viewmodels\thingspeak-vm.ts" />

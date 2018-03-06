@@ -154,35 +154,6 @@ md-tab-body {
     list-style: none;
 }
 
-.animate-repeat {
-    line-height: 35px;
-    list-style: none;
-    box-sizing: border-box;
-    padding-left: 20px;
-    padding-right: 10px;
-}
-
-    .animate-repeat.ng-move,
-    .animate-repeat.ng-enter,
-    .animate-repeat.ng-leave {
-        -webkit-transition: all linear 0.5s;
-        transition: all linear 0.5s;
-    }
-
-        .animate-repeat.ng-leave.ng-leave-active,
-        .animate-repeat.ng-move,
-        .animate-repeat.ng-enter {
-            opacity: 0;
-            max-height: 0;
-        }
-
-            .animate-repeat.ng-leave,
-            .animate-repeat.ng-move.ng-move-active,
-            .animate-repeat.ng-enter.ng-enter-active {
-                opacity: 1;
-                max-height: 40px;
-            }
-
 .radio-inline-sort {
     position: relative;
     display: inline-block;
@@ -267,6 +238,7 @@ label {
 .profile-picture {
     margin-right: 6px;
     height: 45px;
+    width: 45px;
     padding: 3px;
     border-radius: 50%;
     cursor: pointer;
@@ -297,3 +269,9 @@ label {
     display: inline-block;
     vertical-align: middle;
 }
+
+/*md-sidenav, md-sidenav.md-locked-open, md-sidenav.md-closed.md-locked-open-add-active {
+ min-width: 304px !important;
+ width: 90% !important;
+ max-width: 95% !important;
+}*/

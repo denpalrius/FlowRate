@@ -6,7 +6,7 @@
         newSensor?: ViewModels.iSensor;
         currentNavItem?: string;
         status?: string;
-        
+
     }
 
     interface IAdminScope extends ng.IScope {
@@ -30,10 +30,9 @@
             that.$scope.adminScope.status = "";
         }
 
-        private goto = function (tab: string) {
-            var that: AdminController = this;
+        private openMenu($mdMenu: any, ev: any) {
 
-            that.$scope.adminScope.status = "Goto " + tab;
-        };
+        }
+
     }
 }

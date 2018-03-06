@@ -16,8 +16,8 @@
         currentLocation?: string;
         selectedSensor?: ViewModels.iSensor;
         sensors?: ViewModels.iSensor[];
-        showSensorDetails: boolean;
-        loggedInUser: ViewModels.iUser;
+        showSensorDetails?: boolean;
+        loggedInUser?: ViewModels.iUser;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
 
@@ -106,7 +106,6 @@
     }
 
     function loadListeners(scope: IScope, $timeout: ng.ITimeoutService) {
-        // click map listener  
         scope.map.addListener('click', (e) => {
             var clickLocation: google.maps.LatLng = e.latLng;
             scope.marker.setPosition(clickLocation);
@@ -121,33 +120,6 @@
                     console.log("Failed to load user")
                 });
         });
-
-        // click autocomplete listener
-        scope.googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
-            var place = scope.googleMapAutoComplete.getPlace();
-            //console.warn("Event : ", e);
-
-            $timeout(0).then(() => {
-                scope.marker.setPosition(place.geometry.location);
-                scope.currentLocation = place.formatted_address;
-                scope.map.setCenter(place.geometry.location);
-
-                //TODO: load nearby sensors
-
-                if (scope.marker) {
-                    scope.showSensorDetails = false;
-                    if (scope.sensors && scope.sensors.length) {
-                        scope.sensors.forEach((sensor: ViewModels.iSensor) => {
-                            var sensorID = scope.marker.getLabel();
-                            if (sensorID && sensor.id == sensorID) {
-                                displaySensor(sensor, scope, $timeout);
-                            }
-                        });
-                    }
-                }
-            });
-        });
-
     }
 
     function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -479,7 +451,7 @@
 
                 $timeout(5).then(() => {
                     //scope.signOutClick = () => signOut();
-                    scope.googleMapAutoComplete = attachSearchBar();
+                    //scope.googleMapAutoComplete = attachSearchBar();
                     scope.getUserLocationClick = () => loadCurrentLocation(navigator, scope, $timeout);
                     loadCurrentLocation(navigator, scope, $timeout);
                     scope.displaySensorClick = (sensor: ViewModels.iSensor) => displaySensor(sensor, scope, $timeout);

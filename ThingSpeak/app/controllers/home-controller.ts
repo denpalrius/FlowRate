@@ -3,7 +3,7 @@
 
     interface ICurrentScope {
         loggedInUser?: ViewModels.iUser;
-        currentLocation?: any;
+        currentLocation?: string;
         userAddress?: string;
         mapCenter?: string;
         googleMapsUrl?: string;
@@ -11,6 +11,10 @@
         sensors?: ViewModels.iSensor[];
         selectedSensor?: ViewModels.iSensor;
         mapEnable?: boolean;
+        showSensorDetails?: boolean;
+        userLocation?: google.maps.LatLng;
+        googleMapAutoComplete?: google.maps.places.Autocomplete;
+
     }
 
     interface IHomeScope extends ng.IScope {
@@ -24,7 +28,9 @@
             private $timeout: ng.ITimeoutService,
             private $location: ng.ILocationService,
             private $cookies: ng.cookies.ICookiesService,
-            private FirebaseService: Services.FirebaseService) {
+            private FirebaseService: Services.FirebaseService,
+            private MapService: Services.MapService,
+            private $mdSidenav: any) {
             var that: HomeController = this;
             that.init();
         }
@@ -37,8 +43,9 @@
             that.$scope.homeScope.googleMapsUrl = "";
             that.$scope.homeScope.sensors = [];
             that.$scope.homeScope.selectedSensor = {};
-            that.$scope.homeScope.currentLocation = new Object();
+            that.$scope.homeScope.currentLocation = "";
             that.$scope.homeScope.userAddress = "";
+            that.$scope.homeScope.showSensorDetails = false;
 
             that.$scope.homeScope.customMapStyle = [
                 {
@@ -173,6 +180,25 @@
             ];
 
             that.checkUSer();
+
+            //that.intitializeGoogleMapsAutoComplete();
+
+            that.MapService.intitializeGoogleMapsAutoComplete();
+        }
+        
+        private loadCurrentLocation() {
+            var that: HomeController = this;
+            that.MapService.getUserLocation()
+                .done((pos: google.maps.LatLng) => {
+                    that.$scope.homeScope.userLocation = pos;
+
+                    console.log("userLocation", that.$scope.homeScope.userLocation);
+
+                    //setDataOnMap(pos, scope, $timeout);
+                })
+                .fail((error) => {
+                    that.$scope.homeScope.userLocation = null;
+                });
         }
 
         private checkUSer() {
@@ -185,6 +211,7 @@
                 that.$location.path("login");
             }
         }
+
         private Signout() {
             console.log("Signing out");
 
@@ -213,7 +240,6 @@
                 });
         }
 
-
         private getSensorDetails(sensorId: any) {
             var that: HomeController = this;
 
@@ -223,6 +249,22 @@
                 }).fail((error: any) => {
                     console.log("Error:", error);
                 });
+        }
+
+        private displaySensorDetails(sensor: ViewModels.iSensor, $timeout: ng.ITimeoutService) {
+            var that: HomeController = this;
+
+            if (sensor) {
+                that.$scope.homeScope.showSensorDetails = true;
+                that.$scope.homeScope.selectedSensor = sensor;
+
+                //var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
+                // that.$scope.homeScope.setDataOnMap(sensorCoordinates, scope, $timeout);
+            }
+            else {
+                that.$scope.homeScope.showSensorDetails = false;
+                that.$scope.homeScope.selectedSensor = {}
+            }
         }
 
         private uploadSensorData() {
@@ -546,6 +588,11 @@
             sensorArray.forEach((sensor: ViewModels.iSensor) => {
                 that.FirebaseService.write(Configs.AppConfig.firebaseRefs.sensors, sensor);
             });
+        }
+
+        private toggleSideNav(navID: string) {
+            var that: HomeController = this;
+            that.$mdSidenav(navID).toggle();
         }
     }
 }
