@@ -9,22 +9,11 @@
         types: any;
         infoWindow: google.maps.InfoWindow;
         geocoder: google.maps.Geocoder;
-        signOutClick: Function;
-        getUserLocationClick: Function;
-        displaySensorClick: Function;
         displaySensorListClick: Function;
         currentLocation?: string;
-        selectedSensor?: ViewModels.iSensor;
         sensors?: ViewModels.iSensor[];
-        showSensorDetails?: boolean;
-        loggedInUser?: ViewModels.iUser;
-        googleMapAutoComplete?: google.maps.places.Autocomplete;
     }
 
-    function signOut() {
-        console.log("Signing out");
-
-    }
     function handleLocationError(browserHasGeolocation: any, infoWindow: any, pos: any, map: any) {
         infoWindow.setPosition(pos);
         infoWindow.setContent(browserHasGeolocation ?
@@ -33,11 +22,11 @@
         infoWindow.open(map);
     }
 
-    function getUserLocationFn(_navigator: Navigator): JQueryDeferred<google.maps.LatLng> {
-        if (_navigator.geolocation) {
+    function getUserLocationFn(): JQueryDeferred<google.maps.LatLng> {
+        if (navigator.geolocation) {
             var deferred = $.Deferred();
 
-            _navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.getCurrentPosition(
                 (position) => {
                     deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                 },
@@ -114,6 +103,9 @@
                     $timeout(0).then(() => {
                         scope.currentLocation = geoCodeResult.formatted_address;
                         //console.log("Reverse output: ", scope.currentLocation);
+
+                        console.log("Location from controler in directive: ", scope.thisLocation);
+
                     });
                 })
                 .fail((error) => {
@@ -150,14 +142,9 @@
         return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
     }
 
-    function attachSearchBar(): google.maps.places.Autocomplete {
-        //console.log("Input : ", $("#googleMapSearchBox"));
-        let searchInput = $("#googleMapSearchBox")[0] as HTMLInputElement;
-        return new google.maps.places.Autocomplete(searchInput);
-    }
-
-    function loadCurrentLocation(navigator: Navigator, scope: IScope, $timeout: ng.ITimeoutService) {
-        getUserLocationFn(navigator)
+    function loadCurrentLocation(scope: IScope, $timeout: ng.ITimeoutService) {
+        //console.log("Setting current location..");
+        getUserLocationFn()
             .done((pos: google.maps.LatLng) => {
                 scope.userLocation = pos;
                 setDataOnMap(pos, scope, $timeout);
@@ -165,6 +152,23 @@
             .fail((error) => {
                 scope.userLocation = null;
             });
+    }
+
+    function changeMarkerLocation(coords: google.maps.LatLng, scope: IScope, $timeout: ng.ITimeoutService) {
+        getUserAddress(coords, null)
+            .done((geoCodeResult: google.maps.GeocoderResult) => {
+                $timeout(0).then(() => {
+                    scope.currentLocation = geoCodeResult.formatted_address;
+                    scope.marker.setPosition(coords);
+                    scope.map.setCenter(coords);
+                    //console.log("Reverse output Address", scope.currentLocation);
+                });
+            })
+            .fail((error) => {
+                //TODO: handle error
+                console.log("Failed to get address details, ", error);
+            });
+
     }
 
     function setDataOnMap(coords: google.maps.LatLng, scope: IScope, $timeout: ng.ITimeoutService) {
@@ -196,20 +200,6 @@
 
     }
 
-    function displaySensor(sensor: ViewModels.iSensor, scope: IScope, $timeout: ng.ITimeoutService) {
-        if (sensor) {
-            scope.showSensorDetails = true;
-            scope.selectedSensor = sensor;
-
-            var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
-            setDataOnMap(sensorCoordinates, scope, $timeout);
-        }
-        else {
-            scope.showSensorDetails = false;
-            scope.selectedSensor = {}
-        }
-    }
-
     // Sets the map on all markers in the array.
     function setMapOnAll(scope: IScope, map: any) {
         for (var i = 0; i < scope.markers.length; i++) {
@@ -232,6 +222,19 @@
     function deleteMarkers(scope: IScope) {
         clearMarkers(scope);
         scope.markers = [];
+    }
+    function displaySensor(sensor: ViewModels.iSensor, scope: IScope, $timeout: ng.ITimeoutService) {
+        if (sensor) {
+            scope.showSensorDetails = true;
+            scope.selectedSensor = sensor;
+
+            var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
+            setDataOnMap(sensorCoordinates, scope, $timeout);
+        }
+        else {
+            scope.showSensorDetails = false;
+            scope.selectedSensor = {}
+        }
     }
 
     function displaySensorList(scope: IScope, $timeout: ng.ITimeoutService) {
@@ -415,8 +418,8 @@
             scaleControl: true,
             rotateControl: true,
             center: scope.userLocation,
-            zoom: 17,
-            styles: mapStyles
+            zoom: 17
+            //styles: mapStyles
         }
 
         scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
@@ -427,36 +430,40 @@
         });
     }
 
-    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService): ng.IDirective {
+    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService, $rootScope: ng.IRootScopeService): ng.IDirective {
         let ddo: ng.IDirective = {
             restrict: 'AE',
             scope: {
-                currentLocation: '=currentLocation',
-                sensors: '=sensors',
-                getUserLocationClick: '&getUserLocationClick',
-                displaySensorClick: '&displaySensorClick',
-                displaySensorListClick: '&displaySensorListClick',
-                showSensorDetails: '=?showSensorDetails',
-                selectedSensor: '=?selectedSensor',
-                loggedInUser: '=?loggedInUser',
-                signOutClick: '&signOutClick'
+                currentLocation: '=?currentLocation',
+                sensors: '=?sensors',
                 //    "@"   (Text binding / one - way binding )
                 //    "="   (Direct model binding / two - way binding )
                 //    "&"   (Behaviour binding / Method binding  )
             },
-            templateUrl: '/app/views/templates/ts-google-map-template.html',
+            template: '<div class="mapcanvas" id="locationMap" style="z-index:0"></div>',
             link: function (scope: IScope, $elm: Object, attr) {
-
                 init(scope, $timeout);
 
-                $timeout(5).then(() => {
-                    //scope.signOutClick = () => signOut();
-                    //scope.googleMapAutoComplete = attachSearchBar();
-                    scope.getUserLocationClick = () => loadCurrentLocation(navigator, scope, $timeout);
-                    loadCurrentLocation(navigator, scope, $timeout);
-                    scope.displaySensorClick = (sensor: ViewModels.iSensor) => displaySensor(sensor, scope, $timeout);
-                    //scope.displaySensorListClick = (sensors: ViewModels.iSensor[]) => displaySensorList(sensors, scope, $timeout);
-                    loadListeners(scope, $timeout);
+                loadCurrentLocation(scope, $timeout);
+                loadListeners(scope, $timeout);
+
+                $rootScope.$on('auto-complete-location-changed', (event: any, place: google.maps.places.PlaceResult) => {
+                    changeMarkerLocation(place.geometry.location, scope, $timeout);
+                    //TODO: Load nearby sensors 
+                });
+
+                $rootScope.$on('set-current-location', (event: any) => {
+                    loadCurrentLocation(scope, $timeout);
+                    //TODO: Load nearby sensors 
+                });
+
+                $rootScope.$on('display-sensor-details', (event: any, sensor: ViewModels.iSensor) => {
+                    changeMarkerLocation(new google.maps.LatLng(sensor.lat, sensor.lon), scope, $timeout);
+
+                    //TODO: Customize selected sensor
+                    //1. Center map to selected sensor
+                    //2. Animate selected sensor
+                    //3. Change marker color to differentiate from the rest
                 });
             }
         };

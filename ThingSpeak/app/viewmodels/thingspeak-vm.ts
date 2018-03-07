@@ -1,28 +1,25 @@
 ﻿module ThingSpeak.ViewModels {
 
     export interface iChannel {
-        id?: number;
-        name?: string;
-        description?: string;
-        latitude?: string;
-        longitude?: string;
-        field1?: string;
-        field2?: string;
-        field3?: string;
-        field4?: string;
-        created_at?: Date;
-        updated_at?: Date;
-        elevation?: string;
-        last_entry_id?: number;
+        id: number;
+        name: string;
+        description: string;
+        latitude: string;
+        longitude: string;
+        field1: string;
+        field2: string;
+        created_at: string;
+        updated_at: string;
+        last_entry_id: number;
     }
 
     export interface iFeed {
-        created_at?: Date;
+        created_at?: string;
         entry_id?: number;
         field1?: string;
     }
 
-    export interface iMaraRiverFlow {
+    export interface iFlowRate {
         channel?: iChannel;
         feeds?: iFeed[];
     }
@@ -34,11 +31,14 @@
 
     export interface iUser {
         id?: string;
-        name?: string;
+        firstName?: string;
+        lastName?: string;
         email?: string;
         phone?: string;
         photoURL?: string;
+        provider?: any;
         role?: iuserRole;
+        createdAt?: any;
     }
 
     export interface iSensor {
@@ -49,5 +49,13 @@
         status?: boolean;
         installedOn?: string;
         installedBy?: string;
+    }
+
+    export interface Sensor {
+        id?: string;
+        physicalAddress?: string;
+        status?: boolean;
+        installedBy?: string;
+        channel?: iChannel;
     }
 }

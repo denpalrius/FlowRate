@@ -1,1 +1,101 @@
-﻿Users
+﻿<md-input-container class="container">
+    <h4>Add user</h4>
+
+    <form name="addUserForm" novalidate ng-submit="AdminCtrl.addUser(addUserForm.$valid)">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>First name</label>
+                <input type="text" name="firstName" ng-model="adminScope.newUser.firstName" required ng-minlength="1" ng-required="true">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Last name</label>
+                <input type="text" name="lastName" ng-model="adminScope.newUser.lastName" required ng-minlength="1" ng-required="true">
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Email</label>
+                <input type="email" name="email" ng-model="adminScope.newUser.email" required ng-required="true">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Phone</label>
+                <input type="tel" name="phone" ng-model="adminScope.newUser.phone" required ng-minlength="9" ng-required="true">
+            </md-input-container>
+        </div>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Select Role</label>
+            <md-select name="userRole"
+                       ng-model="adminScope.newUser.userRole"
+                       required
+                       ng-required="true">
+                <md-option ng-value="role.value" ng-repeat="role in adminScope.userRoles track by $index">
+                    <span>{{role.role}}</span>
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Password</label>
+                <input type="password" name="password" ng-model="adminScope.newUser.password" required ng-minlength="5" ng-required="true">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" ng-model="adminScope.newUser.confirmPassword" required ng-minlength="5" ng-required="true">
+            </md-input-container>
+        </div>
+
+        <br />
+        <md-button type="submit"
+                   class="md-raised md-primary btn-lg btn-submit">
+            Submit
+        </md-button>
+
+        <br />
+        <br />
+
+    </form>
+
+    <!--<div ng-if="adminScope.AllUsers.length">-->
+    <div>
+        <br />
+        <hr />
+        <h4 class="lineOnHeader">Manage users</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th> </th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tr ng-repeat="user in adminScope.AllUsers track by $index">
+                <td>{{$index+1}}</td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.userRole == 1? "Administrator" : "Standard user"}}</td>
+                <td>
+                    <md-button ng-click="AdminCtrl.deleteUser(user)" class="md-icon-button" aria-label="Sort by name" style="float:right; top:-12px">
+                        <md-tooltip>
+                            Delete user
+                        </md-tooltip>
+                        <i class="material-icons">delete</i>
+                    </md-button>
+                </td>
+                <td>
+                    <!--<md-button class="md-icon-button" aria-label="Sort by name" style="float:right; top:-12px">
+                        <md-tooltip>
+                            Change Password
+                        </md-tooltip>
+                        <i class="material-icons">vpn_key</i>
+                    </md-button>-->
+                </td>
+            </tr>
+        </table>
+    </div>
+    </div>

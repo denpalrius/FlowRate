@@ -4,6 +4,7 @@
     interface ICurrentScope {
         sensors?: ViewModels.iSensor[];
         newSensor?: ViewModels.iSensor;
+        newUser?: ViewModels.iUser;
         currentNavItem?: string;
         status?: string;
 
@@ -26,8 +27,16 @@
             var that: AdminController = this;
 
             that.$scope.adminScope = {};
-            that.$scope.adminScope.currentNavItem = "page1";
+            that.$scope.adminScope.newUser = {};
             that.$scope.adminScope.status = "";
+        }
+
+        private addUser(isValid: boolean) {
+            var that: AdminController = this;
+
+            if (isValid){
+                console.log("New user: ", that.$scope.adminScope.newUser);
+            }
         }
 
         private openMenu($mdMenu: any, ev: any) {

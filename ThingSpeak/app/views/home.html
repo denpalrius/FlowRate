@@ -1,8 +1,4 @@
-﻿<ts-google-map sensors="homeScope.sensors"
-               display-sensor-list-click="HomeCtrl.populateSensors(homeScope.sensors)"
-               sign-out-click="HomeCtrl.Signout()"
-               logged-in-user="homeScope.loggedInUser"
-               current-location="homeScope.userAddress" />
+﻿<ts-google-map sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()"/>
 
 <div class="left-pane col-lg-3 col-md-5 col-sm-12">
     <div class="search-container">
@@ -57,7 +53,7 @@
                 </md-input-container>
             </div>
 
-            <md-button ng-click="HomeCtrl.loadCurrentLocation()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
+            <md-button ng-click="HomeCtrl.setCurrentLocation()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
                 <md-tooltip>My location</md-tooltip>
                 <i class="material-icons">my_location</i>
             </md-button>
@@ -144,7 +140,7 @@
                     <md-menu-item>
                         <md-button ng-click="HomeCtrl.gotTo('admin')">
                             <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 3px auto 0;">insert_chart</i>
+                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">insert_chart</i>
                                 <p flex>Reports</p>
                             </div>
                         </md-button>
@@ -152,7 +148,7 @@
                     <md-menu-item>
                         <md-button ng-click="HomeCtrl.gotTo('sensors')">
                             <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 3px auto 0;">wifi</i>
+                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">wifi</i>
                                 <p flex>Sensors</p>
                             </div>
                         </md-button>
@@ -160,7 +156,7 @@
                     <md-menu-item>
                         <md-button ng-click="HomeCtrl.gotTo('users')">
                             <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 3px auto 0;">person</i>
+                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">person</i>
                                 <p flex>Users</p>
                             </div>
                         </md-button>

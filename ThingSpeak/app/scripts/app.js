@@ -78,15 +78,8 @@ var ThingSpeak;
         var ThemeConfig = (function () {
             function ThemeConfig($mdThemingProvider, $mdIconProvider) {
                 $mdThemingProvider.theme('default')
-                    .primaryPalette('cyan', {
-                    'default': '400',
-                    'hue-1': '100',
-                    'hue-2': '600',
-                    'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
-                })
-                    .accentPalette('deep-orange', {
-                    'default': '700' // use shade 200 for default, and keep all other shades the same
-                });
+                    .primaryPalette('cyan')
+                    .accentPalette('deep-orange');
                 // Enable browser color
                 $mdThemingProvider.enableBrowserColor({
                     theme: 'default',
@@ -132,8 +125,14 @@ var ThingSpeak;
             AdminController.prototype.init = function () {
                 var that = this;
                 that.$scope.adminScope = {};
-                that.$scope.adminScope.currentNavItem = "page1";
+                that.$scope.adminScope.newUser = {};
                 that.$scope.adminScope.status = "";
+            };
+            AdminController.prototype.addUser = function (isValid) {
+                var that = this;
+                if (isValid) {
+                    console.log("New user: ", that.$scope.adminScope.newUser);
+                }
             };
             AdminController.prototype.openMenu = function ($mdMenu, ev) {
             };
@@ -407,17 +406,9 @@ var ThingSpeak;
                 //that.intitializeGoogleMapsAutoComplete();
                 that.MapService.intitializeGoogleMapsAutoComplete();
             };
-            HomeController.prototype.loadCurrentLocation = function () {
+            HomeController.prototype.setCurrentLocation = function () {
                 var that = this;
-                that.MapService.getUserLocation()
-                    .done(function (pos) {
-                    that.$scope.homeScope.userLocation = pos;
-                    console.log("userLocation", that.$scope.homeScope.userLocation);
-                    //setDataOnMap(pos, scope, $timeout);
-                })
-                    .fail(function (error) {
-                    that.$scope.homeScope.userLocation = null;
-                });
+                that.$rootScope.$emit('set-current-location');
             };
             HomeController.prototype.checkUSer = function () {
                 var that = this;
@@ -462,13 +453,14 @@ var ThingSpeak;
                     console.log("Error:", error);
                 });
             };
-            HomeController.prototype.displaySensorDetails = function (sensor, $timeout) {
+            HomeController.prototype.displaySensorDetails = function (sensor) {
                 var that = this;
                 if (sensor) {
                     that.$scope.homeScope.showSensorDetails = true;
                     that.$scope.homeScope.selectedSensor = sensor;
-                    //var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
-                    // that.$scope.homeScope.setDataOnMap(sensorCoordinates, scope, $timeout);
+                    if (sensor.lat && sensor.lon) {
+                        that.$rootScope.$emit('display-sensor-details', sensor);
+                    }
                 }
                 else {
                     that.$scope.homeScope.showSensorDetails = false;
@@ -849,9 +841,6 @@ var ThingSpeak;
     var Directives;
     (function (Directives) {
         "use strict";
-        function signOut() {
-            console.log("Signing out");
-        }
         function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(browserHasGeolocation ?
@@ -859,10 +848,10 @@ var ThingSpeak;
                 'Error: Your browser doesn\'t support geolocation.');
             infoWindow.open(map);
         }
-        function getUserLocationFn(_navigator) {
-            if (_navigator.geolocation) {
+        function getUserLocationFn() {
+            if (navigator.geolocation) {
                 var deferred = $.Deferred();
-                _navigator.geolocation.getCurrentPosition(function (position) {
+                navigator.geolocation.getCurrentPosition(function (position) {
                     deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                 }, function (error) {
                     deferred.reject("User did not accept location permission");
@@ -931,6 +920,7 @@ var ThingSpeak;
                     $timeout(0).then(function () {
                         scope.currentLocation = geoCodeResult.formatted_address;
                         //console.log("Reverse output: ", scope.currentLocation);
+                        console.log("Location from controler in directive: ", scope.thisLocation);
                     });
                 })
                     .fail(function (error) {
@@ -960,19 +950,30 @@ var ThingSpeak;
                     (1 - c((lon2 - lon1) * p)) / 2;
             return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
         }
-        function attachSearchBar() {
-            //console.log("Input : ", $("#googleMapSearchBox"));
-            var searchInput = $("#googleMapSearchBox")[0];
-            return new google.maps.places.Autocomplete(searchInput);
-        }
-        function loadCurrentLocation(navigator, scope, $timeout) {
-            getUserLocationFn(navigator)
+        function loadCurrentLocation(scope, $timeout) {
+            //console.log("Setting current location..");
+            getUserLocationFn()
                 .done(function (pos) {
                 scope.userLocation = pos;
                 setDataOnMap(pos, scope, $timeout);
             })
                 .fail(function (error) {
                 scope.userLocation = null;
+            });
+        }
+        function changeMarkerLocation(coords, scope, $timeout) {
+            getUserAddress(coords, null)
+                .done(function (geoCodeResult) {
+                $timeout(0).then(function () {
+                    scope.currentLocation = geoCodeResult.formatted_address;
+                    scope.marker.setPosition(coords);
+                    scope.map.setCenter(coords);
+                    //console.log("Reverse output Address", scope.currentLocation);
+                });
+            })
+                .fail(function (error) {
+                //TODO: handle error
+                console.log("Failed to get address details, ", error);
             });
         }
         function setDataOnMap(coords, scope, $timeout) {
@@ -999,18 +1000,6 @@ var ThingSpeak;
                 console.log("Failed to get address details, ", error);
             });
         }
-        function displaySensor(sensor, scope, $timeout) {
-            if (sensor) {
-                scope.showSensorDetails = true;
-                scope.selectedSensor = sensor;
-                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
-                setDataOnMap(sensorCoordinates, scope, $timeout);
-            }
-            else {
-                scope.showSensorDetails = false;
-                scope.selectedSensor = {};
-            }
-        }
         // Sets the map on all markers in the array.
         function setMapOnAll(scope, map) {
             for (var i = 0; i < scope.markers.length; i++) {
@@ -1029,6 +1018,18 @@ var ThingSpeak;
         function deleteMarkers(scope) {
             clearMarkers(scope);
             scope.markers = [];
+        }
+        function displaySensor(sensor, scope, $timeout) {
+            if (sensor) {
+                scope.showSensorDetails = true;
+                scope.selectedSensor = sensor;
+                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
+                setDataOnMap(sensorCoordinates, scope, $timeout);
+            }
+            else {
+                scope.showSensorDetails = false;
+                scope.selectedSensor = {};
+            }
         }
         function displaySensorList(scope, $timeout) {
             $timeout(0).then(function () {
@@ -1194,8 +1195,8 @@ var ThingSpeak;
                 scaleControl: true,
                 rotateControl: true,
                 center: scope.userLocation,
-                zoom: 17,
-                styles: mapStyles
+                zoom: 17
+                //styles: mapStyles
             };
             scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
             scope.marker = new google.maps.Marker({
@@ -1204,34 +1205,32 @@ var ThingSpeak;
                 title: 'User Location'
             });
         }
-        function TsGoogleMap($timeout, $log) {
+        function TsGoogleMap($timeout, $log, $rootScope) {
             var ddo = {
                 restrict: 'AE',
                 scope: {
-                    currentLocation: '=currentLocation',
-                    sensors: '=sensors',
-                    getUserLocationClick: '&getUserLocationClick',
-                    displaySensorClick: '&displaySensorClick',
-                    displaySensorListClick: '&displaySensorListClick',
-                    showSensorDetails: '=?showSensorDetails',
-                    selectedSensor: '=?selectedSensor',
-                    loggedInUser: '=?loggedInUser',
-                    signOutClick: '&signOutClick'
-                    //    "@"   (Text binding / one - way binding )
-                    //    "="   (Direct model binding / two - way binding )
-                    //    "&"   (Behaviour binding / Method binding  )
+                    currentLocation: '=?currentLocation',
+                    sensors: '=?sensors',
                 },
-                templateUrl: '/app/views/templates/ts-google-map-template.html',
+                template: '<div class="mapcanvas" id="locationMap" style="z-index:0"></div>',
                 link: function (scope, $elm, attr) {
                     init(scope, $timeout);
-                    $timeout(5).then(function () {
-                        //scope.signOutClick = () => signOut();
-                        //scope.googleMapAutoComplete = attachSearchBar();
-                        scope.getUserLocationClick = function () { return loadCurrentLocation(navigator, scope, $timeout); };
-                        loadCurrentLocation(navigator, scope, $timeout);
-                        scope.displaySensorClick = function (sensor) { return displaySensor(sensor, scope, $timeout); };
-                        //scope.displaySensorListClick = (sensors: ViewModels.iSensor[]) => displaySensorList(sensors, scope, $timeout);
-                        loadListeners(scope, $timeout);
+                    loadCurrentLocation(scope, $timeout);
+                    loadListeners(scope, $timeout);
+                    $rootScope.$on('auto-complete-location-changed', function (event, place) {
+                        changeMarkerLocation(place.geometry.location, scope, $timeout);
+                        //TODO: Load nearby sensors 
+                    });
+                    $rootScope.$on('set-current-location', function (event) {
+                        loadCurrentLocation(scope, $timeout);
+                        //TODO: Load nearby sensors 
+                    });
+                    $rootScope.$on('display-sensor-details', function (event, sensor) {
+                        changeMarkerLocation(new google.maps.LatLng(sensor.lat, sensor.lon), scope, $timeout);
+                        //TODO: Customize selected sensor
+                        //1. Center map to selected sensor
+                        //2. Animate selected sensor
+                        //3. Change marker color to differentiate from the rest
                     });
                 }
             };
@@ -1507,7 +1506,8 @@ var ThingSpeak;
     var Services;
     (function (Services) {
         var MapService = (function () {
-            function MapService() {
+            function MapService($rootScope) {
+                this.$rootScope = $rootScope;
                 var that = this;
             }
             MapService.prototype.getUserLocation = function () {
@@ -1525,12 +1525,12 @@ var ThingSpeak;
                 return deferred;
             };
             MapService.prototype.intitializeGoogleMapsAutoComplete = function () {
+                var that = this;
                 var searchInput = $("#googleMapAutocompleteBox")[0];
                 var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
                 googleMapAutoComplete.addListener('place_changed', function (e) {
                     var place = googleMapAutoComplete.getPlace();
-                    console.log("googleMapAutoComplete place", place.formatted_address);
-                    //TODO: load nearby sensors
+                    that.$rootScope.$emit('auto-complete-location-changed', place);
                 });
             };
             return MapService;
@@ -1589,12 +1589,12 @@ var ThingSpeak;
             ngFlowRate.config(["$routeProvider", "$locationProvider", ThingSpeak.Configs.RouteConfig]);
             ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", ThingSpeak.Configs.ThemeConfig]);
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", ThingSpeak.Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", ThingSpeak.Directives.TsGoogleMap]);
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", ThingSpeak.Filters.TsRemoveStringFilter);
             // services
             ngFlowRate.service("HttpService", ["$http", ThingSpeak.Services.HttpService]);
-            ngFlowRate.service("MapService", [ThingSpeak.Services.MapService]);
+            ngFlowRate.service("MapService", ["$rootScope", ThingSpeak.Services.MapService]);
             ngFlowRate.service("ThingSpeakService", ["HttpService", ThingSpeak.Services.ThingSpeakService]);
             ngFlowRate.service("FirebaseService", ["$cookies", ThingSpeak.Services.FirebaseService]);
             // controllers

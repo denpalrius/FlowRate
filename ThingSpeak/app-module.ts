@@ -12,14 +12,14 @@
             ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", Configs.ThemeConfig]);
 
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", Directives.TsGoogleMap]);
 
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", Filters.TsRemoveStringFilter);
 
             // services
             ngFlowRate.service("HttpService", ["$http", Services.HttpService]);
-            ngFlowRate.service("MapService", [Services.MapService]);
+            ngFlowRate.service("MapService", ["$rootScope", Services.MapService]);
             ngFlowRate.service("ThingSpeakService", ["HttpService", Services.ThingSpeakService]);
             ngFlowRate.service("FirebaseService", ["$cookies",Services.FirebaseService]);
 

@@ -23,7 +23,7 @@
 
     export class HomeController {
         constructor(
-            private $scope: IHomeScope,
+            public $scope: IHomeScope,
             private $rootScope: ng.IRootScopeService,
             private $timeout: ng.ITimeoutService,
             private $location: ng.ILocationService,
@@ -185,20 +185,10 @@
 
             that.MapService.intitializeGoogleMapsAutoComplete();
         }
-        
-        private loadCurrentLocation() {
+
+        private setCurrentLocation() {
             var that: HomeController = this;
-            that.MapService.getUserLocation()
-                .done((pos: google.maps.LatLng) => {
-                    that.$scope.homeScope.userLocation = pos;
-
-                    console.log("userLocation", that.$scope.homeScope.userLocation);
-
-                    //setDataOnMap(pos, scope, $timeout);
-                })
-                .fail((error) => {
-                    that.$scope.homeScope.userLocation = null;
-                });
+            that.$rootScope.$emit('set-current-location');
         }
 
         private checkUSer() {
@@ -251,15 +241,15 @@
                 });
         }
 
-        private displaySensorDetails(sensor: ViewModels.iSensor, $timeout: ng.ITimeoutService) {
+        private displaySensorDetails(sensor: ViewModels.iSensor) {
             var that: HomeController = this;
 
             if (sensor) {
                 that.$scope.homeScope.showSensorDetails = true;
                 that.$scope.homeScope.selectedSensor = sensor;
-
-                //var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
-                // that.$scope.homeScope.setDataOnMap(sensorCoordinates, scope, $timeout);
+                if (sensor.lat && sensor.lon) {
+                    that.$rootScope.$emit('display-sensor-details', sensor);
+                }
             }
             else {
                 that.$scope.homeScope.showSensorDetails = false;

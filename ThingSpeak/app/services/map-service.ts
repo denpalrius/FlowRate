@@ -1,6 +1,6 @@
 ﻿module ThingSpeak.Services {
     export class MapService {
-        constructor() {
+        constructor(private $rootScope: ng.IRootScopeService) {
             var that: MapService = this;
         }
 
@@ -23,14 +23,14 @@
         }
 
         public intitializeGoogleMapsAutoComplete() {
+            var that: MapService = this;
+
             let searchInput = $("#googleMapAutocompleteBox")[0] as HTMLInputElement;
             var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+
             googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
                 var place = googleMapAutoComplete.getPlace();
-                console.log("googleMapAutoComplete place", place.formatted_address);
-
-                //TODO: load nearby sensors
-
+                that.$rootScope.$emit('auto-complete-location-changed', place);
             });
         }
     }
