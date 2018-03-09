@@ -24,9 +24,15 @@
         feeds?: iFeed[];
     }
     
-    export enum iuserRole {
+    export enum UserRole {
         admin = 1,
-        standard = 2
+        manager = 2,
+        standard = 3
+    }
+
+    export interface iUserRole {
+        role?: string;
+        value?: number;
     }
 
     export interface iUser {
@@ -37,7 +43,7 @@
         phone?: string;
         photoURL?: string;
         provider?: any;
-        role?: iuserRole;
+        role?: UserRole;
         createdAt?: any;
     }
 

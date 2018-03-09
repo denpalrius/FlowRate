@@ -270,6 +270,6 @@ label {
     vertical-align: middle;
 }
 
-.md-block flex-gt-sm{
-    padding-left: 5px;
+md-input-container .md-input{
+    color:hsla(0, 0%, 0%, 0.20);
 }

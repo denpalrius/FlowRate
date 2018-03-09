@@ -127,6 +127,11 @@ var ThingSpeak;
                 that.$scope.adminScope = {};
                 that.$scope.adminScope.newUser = {};
                 that.$scope.adminScope.status = "";
+                that.$scope.adminScope.userRoles = [
+                    { role: "Administrator", value: ThingSpeak.ViewModels.UserRole.admin },
+                    { role: "Manager", value: ThingSpeak.ViewModels.UserRole.manager },
+                    { role: "Standard User", value: ThingSpeak.ViewModels.UserRole.standard }
+                ];
             };
             AdminController.prototype.addUser = function (isValid) {
                 var that = this;
@@ -135,6 +140,11 @@ var ThingSpeak;
                 }
             };
             AdminController.prototype.openMenu = function ($mdMenu, ev) {
+            };
+            AdminController.prototype.doPasswordsMatch = function (password, confirmPassword) {
+                console.log("password: ", password);
+                console.log("confirmPassword: ", confirmPassword);
+                return password === confirmPassword;
             };
             return AdminController;
         }());
@@ -1345,7 +1355,7 @@ var ThingSpeak;
                         email: user.email,
                         phone: user.phoneNumber,
                         photoURL: user.photoURL,
-                        role: ThingSpeak.ViewModels.iuserRole.standard
+                        role: ThingSpeak.ViewModels.iUserRole.standard
                     };
                     that.$cookies.put(ThingSpeak.Configs.AppConfig.cookies.userToken, token);
                     that.$cookies.putObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
@@ -1570,11 +1580,12 @@ var ThingSpeak;
 (function (ThingSpeak) {
     var ViewModels;
     (function (ViewModels) {
-        var iuserRole;
-        (function (iuserRole) {
-            iuserRole[iuserRole["admin"] = 1] = "admin";
-            iuserRole[iuserRole["standard"] = 2] = "standard";
-        })(iuserRole = ViewModels.iuserRole || (ViewModels.iuserRole = {}));
+        var UserRole;
+        (function (UserRole) {
+            UserRole[UserRole["admin"] = 1] = "admin";
+            UserRole[UserRole["manager"] = 2] = "manager";
+            UserRole[UserRole["standard"] = 3] = "standard";
+        })(UserRole = ViewModels.UserRole || (ViewModels.UserRole = {}));
     })(ViewModels = ThingSpeak.ViewModels || (ThingSpeak.ViewModels = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;

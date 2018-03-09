@@ -27,6 +27,7 @@
     <Content Include="app\css\app.css" />
     <TypeScriptCompile Include="app\configs\theme-config.ts" />
     <TypeScriptCompile Include="app\controllers\login-controller.ts" />
+    <TypeScriptCompile Include="app\directives\compare-to-directive.ts" />
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
     <Content Include="app\images\btn_google_signin_dark_normal_web.png" />
     <Content Include="app\images\ic_account_circle_black_24dp_2x.png" />

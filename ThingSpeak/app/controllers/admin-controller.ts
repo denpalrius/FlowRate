@@ -7,7 +7,7 @@
         newUser?: ViewModels.iUser;
         currentNavItem?: string;
         status?: string;
-
+        userRoles?: ViewModels.iUserRole[];
     }
 
     interface IAdminScope extends ng.IScope {
@@ -29,6 +29,11 @@
             that.$scope.adminScope = {};
             that.$scope.adminScope.newUser = {};
             that.$scope.adminScope.status = "";
+            that.$scope.adminScope.userRoles = [
+                { role: "Administrator", value: ViewModels.UserRole.admin },
+                { role: "Manager", value: ViewModels.UserRole.manager },
+                { role: "Standard User", value: ViewModels.UserRole.standard }
+            ];
         }
 
         private addUser(isValid: boolean) {
@@ -43,5 +48,11 @@
 
         }
 
+        private doPasswordsMatch(password: any, confirmPassword: any) {
+            console.log("password: ", password);
+            console.log("confirmPassword: ", confirmPassword);
+
+            return password === confirmPassword;
+        }
     }
 }

@@ -50,7 +50,7 @@ module ThingSpeak.Services {
                         email: user.email,
                         phone: user.phoneNumber,
                         photoURL: user.photoURL,
-                        role: ViewModels.iuserRole.standard
+                        role: ViewModels.iUserRole.standard
                     };
 
                     that.$cookies.put(Configs.AppConfig.cookies.userToken, token);
