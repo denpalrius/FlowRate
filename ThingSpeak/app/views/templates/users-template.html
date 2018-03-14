@@ -1,4 +1,4 @@
-﻿<md-input-container class="container">
+﻿<div class="container">
     <h4>Add user</h4>
 
     <form name="addUserForm" novalidate ng-submit="AdminCtrl.addUser(addUserForm.$valid)">
@@ -33,6 +33,7 @@
                 </div>
             </md-input-container>
         </div>
+
         <md-input-container class="md-block" flex-gt-sm>
             <label>User Role</label>
             <md-select name="userRole"
@@ -48,6 +49,7 @@
                 </div>
             </div>
         </md-input-container>
+
         <div layout-gt-sm="row">
             <md-input-container class="md-block" flex-gt-sm>
                 <label>Password</label>
@@ -71,16 +73,10 @@
         <md-button type="submit" class="md-raised md-primary btn-lg btn-submit">
             Submit
         </md-button>
-
-        <br />
-        <br />
-
     </form>
 
     <!--<div ng-if="adminScope.AllUsers.length">-->
     <div>
-        <br />
-        <hr />
         <h4 class="lineOnHeader">Manage users</h4>
         <table class="table">
             <thead>
@@ -119,4 +115,4 @@
             </tr>
         </table>
     </div>
-    </div>
+</div>

@@ -44,10 +44,6 @@
             }
         }
 
-        private openMenu($mdMenu: any, ev: any) {
-
-        }
-
         private doPasswordsMatch(password: any, confirmPassword: any) {
             console.log("password: ", password);
             console.log("confirmPassword: ", confirmPassword);

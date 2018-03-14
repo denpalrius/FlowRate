@@ -46,11 +46,11 @@ module ThingSpeak.Services {
 
                     that.loggedInUser = {
                         id: user.uid,
-                        name: user.displayName,
+                        fullName: user.displayName,
                         email: user.email,
                         phone: user.phoneNumber,
                         photoURL: user.photoURL,
-                        role: ViewModels.iUserRole.standard
+                        role: ViewModels.UserRole.standard
                     };
 
                     that.$cookies.put(Configs.AppConfig.cookies.userToken, token);

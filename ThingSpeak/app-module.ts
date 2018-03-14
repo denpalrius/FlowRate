@@ -12,7 +12,7 @@
             ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", Configs.ThemeConfig]);
 
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", Directives.TsGoogleMap]);
+            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", "HttpService", Directives.TsGoogleMap]);
 
             //Filters
             ngFlowRate.filter("TsRemoveStringFilter", Filters.TsRemoveStringFilter);

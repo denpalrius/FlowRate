@@ -103,9 +103,6 @@
                     $timeout(0).then(() => {
                         scope.currentLocation = geoCodeResult.formatted_address;
                         //console.log("Reverse output: ", scope.currentLocation);
-
-                        console.log("Location from controler in directive: ", scope.thisLocation);
-
                     });
                 })
                 .fail((error) => {
@@ -223,19 +220,6 @@
         clearMarkers(scope);
         scope.markers = [];
     }
-    function displaySensor(sensor: ViewModels.iSensor, scope: IScope, $timeout: ng.ITimeoutService) {
-        if (sensor) {
-            scope.showSensorDetails = true;
-            scope.selectedSensor = sensor;
-
-            var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
-            setDataOnMap(sensorCoordinates, scope, $timeout);
-        }
-        else {
-            scope.showSensorDetails = false;
-            scope.selectedSensor = {}
-        }
-    }
 
     function displaySensorList(scope: IScope, $timeout: ng.ITimeoutService) {
         $timeout(0).then(() => {
@@ -273,7 +257,13 @@
                         //        marker.setAnimation(google.maps.Animation.BOUNCE);
                         //    }
                         //});
-                        displaySensor(sensor, scope, $timeout);
+
+                        //displaySensor(sensor, scope, $timeout);
+
+                        if (sensor) {
+                            var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon)
+                            setDataOnMap(sensorCoordinates, scope, $timeout);
+                        }
                     });
 
                     addMarkerWithTimeout(scope, marker, i * 20, $timeout);
@@ -306,27 +296,18 @@
 
     function loadMapStyles(http: Services.HttpService): JQueryDeferred<google.maps.MapTypeStyle[]> {
         var deferred = $.Deferred();
-
         http.get("app/scripts/map-style.json")
             .done((response: Models.IHttpResponse) => {
-                console.log("Loaded style: ", response.data);
                 deferred.resolve(response.data);
             })
             .fail((error: Models.IHttpResponse) => {
-                console.log("Failed to load custom map style");
                 deferred.reject(error);
             });
         return deferred;
     }
 
-    function init(scope: IScope, $timeout: ng.ITimeoutService) {
-        scope.types = "['establishment']";
-        scope.infoWindow = new google.maps.InfoWindow;
-        scope.markers = [];
-        scope.geocoder = new google.maps.Geocoder;
-        scope.showSensorsDetails = false;
-
-        var mapStyles = [
+    function setMapStyles() {
+        return [
             {
                 "featureType": "administrative",
                 "elementType": "labels.text.fill",
@@ -406,6 +387,13 @@
                 ]
             }
         ];
+    }
+
+    function init(scope: IScope, $timeout: ng.ITimeoutService, HttpService: Services.HttpService) {
+        scope.types = "['establishment']";
+        scope.infoWindow = new google.maps.InfoWindow;
+        scope.markers = [];
+        scope.geocoder = new google.maps.Geocoder;
 
         var mapOptions: google.maps.MapOptions = {
             zoomControl: true,
@@ -419,8 +407,9 @@
             rotateControl: true,
             center: scope.userLocation,
             zoom: 17
-            //styles: mapStyles
         }
+
+        mapOptions.styles = setMapStyles();
 
         scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
         scope.marker = new google.maps.Marker({
@@ -430,8 +419,8 @@
         });
     }
 
-    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService, $rootScope: ng.IRootScopeService): ng.IDirective {
-        let ddo: ng.IDirective = {
+    export function TsGoogleMap($timeout: ng.ITimeoutService, $log: ng.ILogService, $rootScope: ng.IRootScopeService, HttpService: Services.HttpService): ng.IDirective {
+        let mapDirective: ng.IDirective = {
             restrict: 'AE',
             scope: {
                 currentLocation: '=?currentLocation',
@@ -441,8 +430,8 @@
                 //    "&"   (Behaviour binding / Method binding  )
             },
             template: '<div class="mapcanvas" id="locationMap" style="z-index:0"></div>',
-            link: function (scope: IScope, $elm: Object, attr) {
-                init(scope, $timeout);
+            link: function (scope: IScope, $elm: any, attr: any) {
+                init(scope, $timeout, HttpService);
 
                 loadCurrentLocation(scope, $timeout);
                 loadListeners(scope, $timeout);
@@ -468,6 +457,6 @@
             }
         };
 
-        return ddo;
+        return mapDirective;
     }
 }

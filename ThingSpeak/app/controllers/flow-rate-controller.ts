@@ -2,7 +2,7 @@
     "use strict";
 
     interface ICurrentScope {
-        maraRiverFlowRate?: ViewModels.iMaraRiverFlow;
+        maraRiverFlowRate?: ViewModels.iFlowRate;
         channel?: ViewModels.iChannel;
         feeds?: ViewModels.iFeed[];
         reorderFeeds?: ViewModels.iFeed[];
@@ -65,7 +65,7 @@
             //console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
 
             that.ThingSpeakService.getThingSpeakData()
-                .done((response: ViewModels.iMaraRiverFlow) => {
+                .done((response: ViewModels.iFlowRate) => {
                     that.$timeout(0).then(() => {
                         that.$scope.flowRateScope.maraRiverFlowRate = response;
 
@@ -91,7 +91,7 @@
                 });
         }
 
-        public getData(): JQueryDeferred<ViewModels.iMaraRiverFlow> {
+        public getData(): JQueryDeferred<ViewModels.iFlowRate> {
             var that: FlowRateController = this;
             that.$scope.flowRateScope.pageLoadingFinished = false;
             console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);

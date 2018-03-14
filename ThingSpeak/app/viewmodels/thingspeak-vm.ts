@@ -1,16 +1,16 @@
 ﻿module ThingSpeak.ViewModels {
 
     export interface iChannel {
-        id: number;
-        name: string;
-        description: string;
-        latitude: string;
-        longitude: string;
-        field1: string;
-        field2: string;
-        created_at: string;
-        updated_at: string;
-        last_entry_id: number;
+        id?: number;
+        name?: string;
+        description?: string;
+        latitude?: string;
+        longitude?: string;
+        field1?: string;
+        field2?: string;
+        created_at?: string;
+        updated_at?: string;
+        last_entry_id?: number;
     }
 
     export interface iFeed {
@@ -37,8 +37,7 @@
 
     export interface iUser {
         id?: string;
-        firstName?: string;
-        lastName?: string;
+        fullName?: string;
         email?: string;
         phone?: string;
         photoURL?: string;
