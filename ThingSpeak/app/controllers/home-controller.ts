@@ -193,20 +193,27 @@
 
         private checkUSer() {
             var that: HomeController = this;
-            var isUser = that.$cookies.getObject(Configs.AppConfig.cookies.UserProfile);
-            if (isUser) {
-                that.$scope.homeScope.loggedInUser = isUser;
-                that.getSensors();
-            } else {
-                that.$location.path("login");
-            }
+            that.FirebaseService.checkSignedInUser()
+                .done((user: any) => {
+                    if (user) {
+                        that.$scope.homeScope.loggedInUser = user;
+
+                        console.log("User", that.$scope.homeScope.loggedInUser );
+
+                        that.getSensors();
+                    } else {
+                        that.$location.path("login");
+                    }
+                }).fail((error: any) => {
+                    console.log("There is  no logged in user");
+                });
         }
 
         private Signout() {
             console.log("Signing out");
 
             var that: HomeController = this;
-            that.FirebaseService.googleSignout()
+            that.FirebaseService.signOut()
                 .done((response: any) => {
                     console.log(response);
                 }).fail((error: any) => {

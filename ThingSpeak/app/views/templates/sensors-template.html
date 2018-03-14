@@ -1,92 +1,67 @@
-﻿    <form name="addSensorForm">
+﻿<div class="container">
+    <br />
+    <h4>Add Sensor</h4>
+    <br />
+    <form name="addSensorForm" novalidate ng-submit="AdminCtrl.addSensor(addSensorForm.$valid)">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Name</label>
+                <input type="text" name="name" ng-model="adminScope.newSensor.name" required minlength="1" maxlength="100">
+                <div ng-messages="addSensorForm.name.$error" role="alert">
+                    <div ng-message-exp="['required', 'minlength', 'maxlength']">
+                        You must enter a valid name
+                    </div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Physical Address</label>
+                <input type="text" name="physicalAddress" ng-model="adminScope.newSensor.physicalAddress">
+            </md-input-container>
+        </div>
 
-        <md-input-container class="md-block">
+        <md-input-container class="md-block" flex-gt-sm>
             <label>Description</label>
-            <input md-maxlength="30" required name="description" ng-model="sensor.description">
-            <div ng-messages="addSensorForm.description.$error">
-                <div ng-message="required">This is required.</div>
-                <div ng-message="md-maxlength">The description must be less than 30 characters long.</div>
+            <textarea name="description" rows="3" ng-model="adminScope.newSensor.description" required minlength="1" maxlength="100"></textarea>
+            <div ng-messages="addSensorForm.description.$error" role="alert">
+                <div ng-message-exp="['required', 'minlength', 'maxlength']">
+                    You must enter a valid description
+                </div>
             </div>
         </md-input-container>
 
-        <div layout="row">
-            <md-input-container flex="50">
-                <label>Client Name</label>
-                <input required name="clientName" ng-model="sensor.clientName">
-                <div ng-messages="addSensorForm.clientName.$error">
-                    <div ng-message="required">This is required.</div>
-                </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Latitude</label>
+                <input type="number" name="latitude" ng-model="adminScope.newSensor.latitude">
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Longitude</label>
+                <input type="number" name="longitude" ng-model="adminScope.newSensor.longitude">
+            </md-input-container>
+            <!--<md-input-container class="md-block" flex-gt-sm>
+                <label>Status</label>
+                <md-switch class="md-primary" name="special" ng-model="adminScope.newSensor.status">
+                    Sensor is on
+                </md-switch>
+            </md-input-container>-->
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Installed By</label>
+                <input type="text" name="installedBy" ng-model="adminScope.newSensor.installedBy">
             </md-input-container>
 
-            <md-input-container flex="50">
-                <label>Sensor Type</label>
-                <md-select name="type" ng-model="sensor.type" required>
-                    <md-option value="app">Application</md-option>
-                    <md-option value="web">Website</md-option>
-                </md-select>
+            <md-input-container>
+                <label>Installed On</label>
+                <md-datepicker ng-model="adminScope.newSensor.installedOn"></md-datepicker>
             </md-input-container>
         </div>
 
-        <md-input-container class="md-block">
-            <label>Client Email</label>
-            <input required type="email" name="clientEmail" ng-model="sensor.clientEmail" minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
-            <div ng-messages="addSensorForm.clientEmail.$error" role="alert">
-                <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
-                    Your email must be between 10 and 100 characters long and look like an e-mail address.
-                </div>
-            </div>
-        </md-input-container>
-
-        <md-input-container class="md-block">
-            <label>Hourly Rate (USD)</label>
-            <input required type="number" step="any" name="rate" ng-model="sensor.rate" min="800"
-                   max="4999" ng-pattern="/^1234$/" />
-
-            <div ng-messages="addSensorForm.rate.$error" multiple md-auto-hide="false">
-                <div ng-message="required">
-                    You've got to charge something! You can't just <b>give away</b> a Missile Defense
-                    System.
-                </div>
-
-                <div ng-message="min">
-                    You should charge at least $800 an hour. This job is a big deal... if you mess up,
-                    everyone dies!
-                </div>
-
-                <div ng-message="pattern">
-                    You should charge exactly $1,234.
-                </div>
-
-                <div ng-message="max">
-                    {{addSensorForm.rate.$viewValue | currency:"$":0}} an hour? That's a little ridiculous. I
-                    doubt even Bill Clinton could afford that.
-                </div>
-            </div>
-        </md-input-container>
-
-        <md-input-container class="md-block">
-            <md-checkbox name="tos" ng-model="sensor.tos" required>
-                I accept the terms of service.
-            </md-checkbox>
-            <div ng-messages="addSensorForm.tos.$error" multiple md-auto-hide="false">
-                <div ng-message="required">
-                    You must accept the terms of service before you can proceed.
-                </div>
-            </div>
-        </md-input-container>
-
-        <md-input-container class="md-block">
-            <md-switch class="md-primary" name="special" ng-model="sensor.special" required>
-                Enable special options.
-            </md-switch>
-            <div ng-messages="addSensorForm.special.$error" multiple>
-                <div ng-message="required">
-                    You must enable all special options before you can proceed.
-                </div>
-            </div>
-        </md-input-container>
-        <div>
-            <md-button type="submit">Submit</md-button>
-        </div>
-
+        <br />
+        <md-button type="submit" class="md-raised md-primary btn-lg btn-submit">
+            Add
+        </md-button>
     </form>
+</div>

@@ -21,7 +21,6 @@
 
         private init() {
             var that: LoginController = this;
-
         }
 
         private SignIn() {
@@ -37,7 +36,7 @@
 
         private Signout() {
             var that: LoginController = this;
-            that.FirebaseService.googleSignout()
+            that.FirebaseService.signOut()
                 .done((response: any) => {
                     console.log(response);
                 }).fail((error: any) => {

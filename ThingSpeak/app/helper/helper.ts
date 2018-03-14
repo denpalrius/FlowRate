@@ -30,5 +30,14 @@
                 return true;
             }
         }
+
+        public static showToast(message: string, truthy: boolean, $mdToast: any) {
+            $mdToast.show($mdToast.simple()
+                .textContent(message)
+                .position('top right')
+                .hideDelay(3000)
+                .toastClass(truthy ? 'success' : 'error')
+            );
+        }
     }
 }

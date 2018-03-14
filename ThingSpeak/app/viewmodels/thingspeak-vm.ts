@@ -1,7 +1,7 @@
 ﻿module ThingSpeak.ViewModels {
 
     export interface iChannel {
-        id?: number;
+        id?: string;
         name?: string;
         description?: string;
         latitude?: string;
@@ -40,17 +40,19 @@
         fullName?: string;
         email?: string;
         phone?: string;
-        photoURL?: string;
+        photoUrl?: string;
         provider?: any;
         role?: UserRole;
         createdAt?: any;
+        emailVerified?: boolean;
+        token?: any;
     }
 
-    export interface iSensor {
-        id?: string;
+    export interface newUser extends iUser {
+        password?: string;
+    }
+    export interface iSensor extends iChannel {
         physicalAddress?: string;
-        lat?: number;
-        lon?: number;
         status?: boolean;
         installedOn?: string;
         installedBy?: string;
