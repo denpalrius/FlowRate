@@ -6,6 +6,7 @@
         newSensor?: ViewModels.iSensor;
         newUser?: ViewModels.newUser;
         currentNavItem?: string;
+        selectedSensor?: ViewModels.iSensor;
         status?: string;
         view?: string;
         userRoles?: ViewModels.iUserRole[];
@@ -20,8 +21,7 @@
             private $scope: IAdminScope,
             private $location: ng.ILocationService,
             private FirebaseService: Services.FirebaseService,
-            private $mdToast: any,
-            private $mdSidenav: any) {
+            private $mdToast: any) {
 
             var that: AdminController = this;
             that.init();
@@ -32,14 +32,20 @@
 
             that.$scope.adminScope = {};
             that.$scope.adminScope.newUser = {};
+            that.$scope.adminScope.sensors = [];
             that.$scope.adminScope.newSensor = {};
+            that.$scope.adminScope.selectedSensor = {};
             that.$scope.adminScope.status = "";
-            that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
+            that.$scope.adminScope.view = "";
+            //that.$scope.adminScope.view = "dashboard";
+            that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
             that.$scope.adminScope.userRoles = [
                 { role: "Administrator", value: ViewModels.UserRole.admin },
                 { role: "Manager", value: ViewModels.UserRole.manager },
                 { role: "Standard User", value: ViewModels.UserRole.standard }
             ];
+
+            that.getSensors();
         }
 
         private goTo(route: string) {
@@ -51,22 +57,38 @@
         private navigate(view: string) {
             var that: AdminController = this;
 
-            '/app/views/templates/sensors-template.html'
+            console.log("view: ", view);
 
-            switch (view) {
-                case constant_expr1: {
-                    that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
-                    break;
-                }
-                case constant_expr2: {
-                    that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
-                    break;
-                }
-                default: {
-                    that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
-                    break;
-                }
-            } 
+            //switch (view) {
+            //    case 'home': {
+            //        that.$location.path('home');
+            //        break;
+            //    }
+            //    case 'dashboard': {
+            //        that.$scope.adminScope.view = "/app/views/templates/dashboard-template.html";
+            //        break;
+            //    }
+            //    case 'edit-sensors': {
+            //        that.$scope.adminScope.view = "'/app/views/templates/edit-sensors-template.html'";
+            //        break;
+            //    }
+            //    case 'add-sensors': {
+            //        that.$scope.adminScope.view = "'/app/views/templates/add-sensors-template.html'";
+            //        break;
+            //    }
+            //    case 'edit-users': {
+            //        that.$scope.adminScope.view = "'/app/views/templates/edit-users-template.html'";
+            //        break;
+            //    }
+            //    case 'add-users': {
+            //        that.$scope.adminScope.view = "'/app/views/templates/add-users-template.html'";
+            //        break;
+            //    }
+            //    default: {
+            //        that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
+            //        break;
+            //    }
+            //}
         }
 
         private addUser(isValid: boolean) {
@@ -95,8 +117,20 @@
                     } else {
                         that.$location.path("login");
                     }
-                }).fail((error: any) => {
+                })
+                .fail((error: any) => {
                     console.log("There is  no logged in user");
+                });
+        }
+
+        private getSensors() {
+            var that: AdminController = this;
+            that.FirebaseService.readList("sensors")
+                .done((sensors: ViewModels.iSensor[]) => {
+                    that.$scope.adminScope.sensors = sensors;
+                })
+                .fail((error: any) => {
+                    console.log("Error:", error);
                 });
         }
 
@@ -114,18 +148,16 @@
                 });
         }
 
-        private isAlphaNumeric(str:any) {
-            var code, i, len;
+        private displaySensorDetails(sensor: ViewModels.iSensor) {
+            var that: AdminController = this;
 
-            for (i = 0, len = str.length; i < len; i++) {
-                code = str.charCodeAt(i);
-                if (!(code > 47 && code < 58) && // numeric (0-9)
-                    !(code > 64 && code < 91) && // upper alpha (A-Z)
-                    !(code > 96 && code < 123)) { // lower alpha (a-z)
-                    return false;
-                }
+            if (sensor) {
+                that.$scope.adminScope.selectedSensor = sensor;
+
             }
-            return true;
+            else {
+                that.$scope.adminScope.selectedSensor = {}
+            }
         }
 
         private addSensor(isValid: boolean) {

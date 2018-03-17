@@ -1,0 +1,90 @@
+﻿<div class="edit-sensors-panel">
+    <h4 style="padding:4px; text-align:center">Edit Sensors</h4>
+    <hr />
+
+    <div layout="row">
+        <div flex>
+            <md-input-container class="md-block" style="margin:12px;">
+                <label>Search Sensor</label>
+                <input type="text">
+            </md-input-container>
+            {{adminScope.sensors}}
+            <md-list flex style="height: calc(100% - 46px); overflow: auto;">
+                <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in adminScope.sensors" class="md-3-line" ng-click="AdminCtrl.displaySensorDetails(sensor);">
+                    <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
+                    <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
+                    <div class="md-list-item-text" layout="column">
+                        <h3>{{sensor.physicalAddress}}</h3>
+                        <h4>{{sensor.installedBy}}</h4>
+                        <p>{{sensor.installedOn}}</p>
+                    </div>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-list>
+        </div>
+
+        <form flex name="editSensorForm" novalidate ng-submit="AdminCtrl.addSensor(editSensorForm.$valid)">
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Name</label>
+                    <input type="text" name="name" ng-model="adminScope.selectedSensor.name" required minlength="1" maxlength="100">
+                    <div ng-messages="editSensorForm.name.$error" role="alert">
+                        <div ng-message-exp="['required', 'minlength', 'maxlength']">
+                            You must enter a valid name
+                        </div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Physical Address</label>
+                    <input type="text" name="physicalAddress" ng-model="adminScope.selectedSensor.physicalAddress">
+                </md-input-container>
+            </div>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Description</label>
+                <textarea name="description" rows="3" ng-model="adminScope.selectedSensor.description" required minlength="1" maxlength="100"></textarea>
+                <div ng-messages="editSensorForm.description.$error" role="alert">
+                    <div ng-message-exp="['required', 'minlength', 'maxlength']">
+                        You must enter a valid description
+                    </div>
+                </div>
+            </md-input-container>
+
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Latitude</label>
+                    <input type="number" name="latitude" ng-model="adminScope.selectedSensor.latitude">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Longitude</label>
+                    <input type="number" name="longitude" ng-model="adminScope.selectedSensor.longitude">
+                </md-input-container>
+                <!--<md-input-container class="md-block" flex-gt-sm>
+                    <label>Status</label>
+                    <md-switch class="md-primary" name="special" ng-model="adminScope.selectedSensor.status">
+                        Sensor is on
+                    </md-switch>
+                </md-input-container>-->
+            </div>
+
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Installed By</label>
+                    <input type="text" name="installedBy" ng-model="adminScope.selectedSensor.installedBy">
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Installed On</label>
+                    <md-datepicker md-open-on-focus ng-model="adminScope.selectedSensor.installedOn"></md-datepicker>
+                </md-input-container>
+            </div>
+
+            <br />
+            <md-button type="submit" class="md-raised md-primary" style="color:white">
+                Save
+            </md-button>
+        </form>
+        <br>
+    </div>
+</div>

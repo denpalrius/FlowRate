@@ -46,20 +46,10 @@ var ThingSpeak;
                     controllerAs: 'HomeCtrl',
                     controller: 'HomeController',
                 })
-                    .when("/about", {
-                    templateUrl: '/app/views/about.html',
-                    controllerAs: 'AboutCtrl',
-                    controller: 'AboutController',
-                })
                     .when("/admin", {
                     templateUrl: '/app/views/admin.html',
                     controllerAs: 'AdminCtrl',
                     controller: 'AdminController',
-                })
-                    .when("/flowrate", {
-                    templateUrl: '/app/views/flow-rate.html',
-                    controllerAs: 'FlowRateCtrl',
-                    controller: 'FlowRateController',
                 })
                     .otherwise({
                     redirectTo: "/home",
@@ -116,12 +106,11 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var AdminController = (function () {
-            function AdminController($scope, $location, FirebaseService, $mdToast, $mdSidenav) {
+            function AdminController($scope, $location, FirebaseService, $mdToast) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.FirebaseService = FirebaseService;
                 this.$mdToast = $mdToast;
-                this.$mdSidenav = $mdSidenav;
                 var that = this;
                 that.init();
             }
@@ -129,21 +118,57 @@ var ThingSpeak;
                 var that = this;
                 that.$scope.adminScope = {};
                 that.$scope.adminScope.newUser = {};
+                that.$scope.adminScope.sensors = [];
                 that.$scope.adminScope.newSensor = {};
+                that.$scope.adminScope.selectedSensor = {};
                 that.$scope.adminScope.status = "";
+                that.$scope.adminScope.view = "";
+                //that.$scope.adminScope.view = "dashboard";
+                that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
                 that.$scope.adminScope.userRoles = [
                     { role: "Administrator", value: ThingSpeak.ViewModels.UserRole.admin },
                     { role: "Manager", value: ThingSpeak.ViewModels.UserRole.manager },
                     { role: "Standard User", value: ThingSpeak.ViewModels.UserRole.standard }
                 ];
+                that.getSensors();
             };
             AdminController.prototype.goTo = function (route) {
                 var that = this;
                 that.$location.path(route);
             };
-            AdminController.prototype.toggleSideNav = function (navID) {
+            AdminController.prototype.navigate = function (view) {
                 var that = this;
-                that.$mdSidenav(navID).toggle();
+                console.log("view: ", view);
+                //switch (view) {
+                //    case 'home': {
+                //        that.$location.path('home');
+                //        break;
+                //    }
+                //    case 'dashboard': {
+                //        that.$scope.adminScope.view = "/app/views/templates/dashboard-template.html";
+                //        break;
+                //    }
+                //    case 'edit-sensors': {
+                //        that.$scope.adminScope.view = "'/app/views/templates/edit-sensors-template.html'";
+                //        break;
+                //    }
+                //    case 'add-sensors': {
+                //        that.$scope.adminScope.view = "'/app/views/templates/add-sensors-template.html'";
+                //        break;
+                //    }
+                //    case 'edit-users': {
+                //        that.$scope.adminScope.view = "'/app/views/templates/edit-users-template.html'";
+                //        break;
+                //    }
+                //    case 'add-users': {
+                //        that.$scope.adminScope.view = "'/app/views/templates/add-users-template.html'";
+                //        break;
+                //    }
+                //    default: {
+                //        that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
+                //        break;
+                //    }
+                //}
             };
             AdminController.prototype.addUser = function (isValid) {
                 var that = this;
@@ -169,8 +194,19 @@ var ThingSpeak;
                     else {
                         that.$location.path("login");
                     }
-                }).fail(function (error) {
+                })
+                    .fail(function (error) {
                     console.log("There is  no logged in user");
+                });
+            };
+            AdminController.prototype.getSensors = function () {
+                var that = this;
+                that.FirebaseService.readList("sensors")
+                    .done(function (sensors) {
+                    that.$scope.adminScope.sensors = sensors;
+                })
+                    .fail(function (error) {
+                    console.log("Error:", error);
                 });
             };
             AdminController.prototype.signOut = function () {
@@ -185,17 +221,14 @@ var ThingSpeak;
                     that.$location.path("login");
                 });
             };
-            AdminController.prototype.isAlphaNumeric = function (str) {
-                var code, i, len;
-                for (i = 0, len = str.length; i < len; i++) {
-                    code = str.charCodeAt(i);
-                    if (!(code > 47 && code < 58) &&
-                        !(code > 64 && code < 91) &&
-                        !(code > 96 && code < 123)) {
-                        return false;
-                    }
+            AdminController.prototype.displaySensorDetails = function (sensor) {
+                var that = this;
+                if (sensor) {
+                    that.$scope.adminScope.selectedSensor = sensor;
                 }
-                return true;
+                else {
+                    that.$scope.adminScope.selectedSensor = {};
+                }
             };
             AdminController.prototype.addSensor = function (isValid) {
                 var that = this;
@@ -1399,8 +1432,9 @@ var ThingSpeak;
     var Services;
     (function (Services) {
         var ThingSpeakService = (function () {
-            function ThingSpeakService(HttpService) {
+            function ThingSpeakService(HttpService, FirebaseService) {
                 this.HttpService = HttpService;
+                this.FirebaseService = FirebaseService;
                 var that = this;
             }
             ThingSpeakService.prototype.getThingSpeakData = function () {
@@ -1413,6 +1447,28 @@ var ThingSpeak;
                 })
                     .fail(function (error) {
                     console.log("Failed to get the maraRiverFlowRate JSON data");
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            ThingSpeakService.prototype.getAllSensors = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                that.FirebaseService.readList("sensors")
+                    .done(function (sensors) {
+                    deferred.resolve(sensors);
+                }).fail(function (error) {
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            ThingSpeakService.prototype.getSensor = function (sensorId) {
+                var that = this;
+                var deferred = $.Deferred();
+                that.FirebaseService.read("sensors", sensorId)
+                    .done(function (sensor) {
+                    deferred.resolve(sensor);
+                }).fail(function (error) {
                     deferred.reject(error);
                 });
                 return deferred;
@@ -1452,12 +1508,12 @@ var ThingSpeak;
             // services
             ngFlowRate.service("HttpService", ["$http", ThingSpeak.Services.HttpService]);
             ngFlowRate.service("MapService", ["$rootScope", ThingSpeak.Services.MapService]);
-            ngFlowRate.service("ThingSpeakService", ["HttpService", ThingSpeak.Services.ThingSpeakService]);
+            ngFlowRate.service("ThingSpeakService", "FirebaseService", ["HttpService", ThingSpeak.Services.ThingSpeakService]);
             ngFlowRate.service("FirebaseService", ["$cookies", ThingSpeak.Services.FirebaseService]);
             // controllers
             ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", ThingSpeak.Controllers.LoginController]);
             ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", ThingSpeak.Controllers.HomeController]);
-            ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", "$mdSidenav", ThingSpeak.Controllers.AdminController]);
+            ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", ThingSpeak.Controllers.AdminController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.LoginController]);
             // bootstrap the app when everything has been loaded

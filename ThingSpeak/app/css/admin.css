@@ -79,6 +79,12 @@
     overflow: auto;
 }
 
-.sensors-panel {
+.add-sensors-panel {
     width: calc(100% - 1px);
+    padding: 12px 0px;
+}
+
+.edit-sensors-panel {
+    width: calc(100% - 1px);
+    padding: 12px;
 }

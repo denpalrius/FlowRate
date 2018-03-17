@@ -51,9 +51,10 @@
     <Content Include="app\views\home.html" />
     <Content Include="app\views\flow-rate.html" />
     <Content Include="app\views\templates\info-window-template.html" />
-    <Content Include="app\views\templates\reports-template.html" />
-    <Content Include="app\views\templates\users-template.html" />
-    <Content Include="app\views\templates\sensors-template.html" />
+    <Content Include="app\views\templates\edit-sensors-template.html" />
+    <Content Include="app\views\templates\add-user-template.html" />
+    <Content Include="app\views\templates\edit-users-template.html" />
+    <Content Include="app\views\templates\add-sensor-template.html" />
     <Content Include="app\views\templates\modal-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />

@@ -12,20 +12,10 @@
                     controllerAs: 'HomeCtrl',
                     controller: 'HomeController',
                 })
-                .when("/about", {
-                    templateUrl: '/app/views/about.html',
-                    controllerAs: 'AboutCtrl',
-                    controller: 'AboutController',
-                })
                 .when("/admin", {
                     templateUrl: '/app/views/admin.html',
                     controllerAs: 'AdminCtrl',
                     controller: 'AdminController',
-                })
-                .when("/flowrate", {
-                    templateUrl: '/app/views/flow-rate.html',
-                    controllerAs: 'FlowRateCtrl',
-                    controller: 'FlowRateController',
                 })
                 .otherwise({
                     redirectTo: "/home",
