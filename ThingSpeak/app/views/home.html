@@ -6,7 +6,7 @@
             <label style="padding-left:14px; padding-top: 16px;color:#e64a19; display:inline-block">Search location</label>
             <div class="pull-right" style="display:inline-block">
                 <!--ng-show="homeScope.loggedInUser.role==1"-->
-                <md-button ng-click="HomeCtrl.toggleSideNav('admin-side-nav')" class="md-mini md-icon-button" style="display:inline-block">
+                <md-button ng-click="HomeCtrl.goTo('admin')" class="md-mini md-icon-button" style="display:inline-block">
                     <i class="material-icons" style="color:darkgrey">settings</i>
                 </md-button>
                 <div ng-show="homeScope.loggedInUser.name" uib-dropdown dropdown-append-to-body class="md-avatar" style="display:inline-block">
@@ -121,49 +121,3 @@
     </div>
 
 </div>
-
-<md-sidenav class="md-sidenav-right md-whiteframe-4dp"
-            md-is-locked-open="false"
-            md-component-id="admin-side-nav" style="min-width: 304px !important; width: 80% !important; max-width: 95% !important;">
-    <md-toolbar class="md-theme-light">
-        <div class="md-toolbar-tools">
-            <md-button ng-click="HomeCtrl.toggleSideNav('admin-side-nav')" style="color:white" class="md-icon-button md-accent" aria-label="Close Admin Panel">
-                <md-tooltip>Close Admin Panel</md-tooltip>
-                <i class="material-icons">close</i>
-            </md-button>
-            <h3 style="color:white">Admin Panel</h3>
-            <md-menu style="float:right">
-                <md-button aria-label="Admin menu" class="md-icon-button" ng-click="$mdMenu.open()">
-                    <i md-menu-origin class="material-icons" style="color:white">more_vert</i>
-                </md-button>
-                <md-menu-content width="4" ng-click="$mdMenu.close()">
-                    <md-menu-item>
-                        <md-button ng-click="HomeCtrl.gotTo('admin')">
-                            <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">insert_chart</i>
-                                <p flex>Reports</p>
-                            </div>
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button ng-click="HomeCtrl.gotTo('sensors')">
-                            <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">wifi</i>
-                                <p flex>Sensors</p>
-                            </div>
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button ng-click="HomeCtrl.gotTo('users')">
-                            <div layout="row" flex>
-                                <i md-menu-align-target class="material-icons" style="margin: auto 20px auto 0;">person</i>
-                                <p flex>Users</p>
-                            </div>
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
-        </div>
-    </md-toolbar>
-    <div ng-include="'/app/views/admin.html'"></div>
-</md-sidenav>

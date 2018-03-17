@@ -1,4 +1,4 @@
-﻿<div class="container">
+﻿<div class="sensors-panel">
     <br />
     <h4>Add Sensor</h4>
     <br />
@@ -55,7 +55,7 @@
 
             <md-input-container>
                 <label>Installed On</label>
-                <md-datepicker ng-model="adminScope.newSensor.installedOn"></md-datepicker>
+                <md-datepicker md-open-on-focus ng-model="adminScope.newSensor.installedOn"></md-datepicker>
             </md-input-container>
         </div>
 
@@ -64,4 +64,5 @@
             Add
         </md-button>
     </form>
+    <br>
 </div>

@@ -7,6 +7,7 @@
         newUser?: ViewModels.newUser;
         currentNavItem?: string;
         status?: string;
+        view?: string;
         userRoles?: ViewModels.iUserRole[];
     }
 
@@ -19,7 +20,8 @@
             private $scope: IAdminScope,
             private $location: ng.ILocationService,
             private FirebaseService: Services.FirebaseService,
-            private $mdToast: any) {
+            private $mdToast: any,
+            private $mdSidenav: any) {
 
             var that: AdminController = this;
             that.init();
@@ -32,11 +34,39 @@
             that.$scope.adminScope.newUser = {};
             that.$scope.adminScope.newSensor = {};
             that.$scope.adminScope.status = "";
+            that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
             that.$scope.adminScope.userRoles = [
                 { role: "Administrator", value: ViewModels.UserRole.admin },
                 { role: "Manager", value: ViewModels.UserRole.manager },
                 { role: "Standard User", value: ViewModels.UserRole.standard }
             ];
+        }
+
+        private goTo(route: string) {
+            var that: AdminController = this;
+
+            that.$location.path(route);
+        }
+
+        private navigate(view: string) {
+            var that: AdminController = this;
+
+            '/app/views/templates/sensors-template.html'
+
+            switch (view) {
+                case constant_expr1: {
+                    that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
+                    break;
+                }
+                case constant_expr2: {
+                    that.$scope.adminScope.view = "'/app/views/templates/sensors-template.html'";
+                    break;
+                }
+                default: {
+                    that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
+                    break;
+                }
+            } 
         }
 
         private addUser(isValid: boolean) {

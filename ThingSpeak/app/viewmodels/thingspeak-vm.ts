@@ -54,8 +54,11 @@
     export interface iSensor extends iChannel {
         physicalAddress?: string;
         status?: boolean;
-        installedOn?: string;
+        installedOn?: Date;
         installedBy?: string;
+
+        lat?: number;
+        lon?: number;
     }
 
     export interface Sensor {

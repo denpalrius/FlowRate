@@ -25,8 +25,8 @@
 
             // controllers
             ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", Controllers.LoginController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", "$mdSidenav", Controllers.HomeController]);
-            ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.AdminController]);
+            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", Controllers.HomeController]);
+            ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", "$mdSidenav", Controllers.AdminController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
             ngFlowRate.controller("AboutController", ["$scope", Controllers.LoginController]);
 

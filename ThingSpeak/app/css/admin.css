@@ -1,0 +1,84 @@
+﻿.admin-nav-header {
+    height: 200px;
+    background-image: url(../images/news_specmay2016update.png);
+    background-color: rgb(38,198,218);
+    /*border-bottom: 1px solid rgb(38,198,218);*/
+    /*background-position: center;*/
+    background-size: cover;
+    fill-opacity: 0.6;
+    position: relative;
+    box-shadow: 0px 0px 8px 2px rgba(114, 121, 142, 0.5686274509803921);
+}
+
+.header-logo-title {
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    font-size: 26px;
+    padding: 5px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+
+.small_list {
+    width: 62px;
+    height: calc(100% - 24px);
+    margin: 12px 0px;
+    border-radius: 5px;
+    background-color: white;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+    .small_list > .md-subheader:first-child {
+        border-radius: 0px 5px 0px 0px;
+    }
+
+    .small_list > .md-subheader .md-subheader-content {
+        text-align: center;
+    }
+
+    .small_list > .md-subheader .md-subheader-inner {
+        display: block;
+        padding: 16px 0px;
+    }
+
+.full-list {
+    margin: 12px;
+    border-radius: 5px;
+    background-color: white;
+    width: 348px;
+    overflow: auto;
+}
+
+    .full-list md-list-item p {
+        padding-left: 24px;
+    }
+
+    .full-list > .md-subheader:first-child {
+        border-radius: 5px 5px 0px 0px;
+    }
+
+.admin-panel {
+    overflow: hidden;
+    height: calc(100% - 64px);
+    background-color: rgba(171, 179, 176, 0.24);
+}
+
+.admin-content-panel-parent {
+    margin: 12px;
+    overflow: auto;
+}
+
+.admin-content-panel {
+    border-radius: 5px;
+    background-color: white;
+    height: 100%;
+    overflow: auto;
+}
+
+.sensors-panel {
+    width: calc(100% - 1px);
+}
