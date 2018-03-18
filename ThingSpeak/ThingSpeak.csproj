@@ -152,7 +152,6 @@
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
-    <TypeScriptCompile Include="app\controllers\about-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />
