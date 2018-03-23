@@ -1,72 +1,81 @@
 ﻿<md-toolbar>
-    <div class="md-toolbar-tools">
-        <md-button ng-click="AdminCtrl.goTo('home')" class="md-mini md-icon-button" style="display:inline-block; color:white">
-            <i class="material-icons">home</i>
-        </md-button>
-        <span class="md-breadcrumb-page md-headline  animated fadeInLeft" style="color:white;padding-right:5px;">></span>
-        <span class="md-breadcrumb-page md-headline" style="color:white">Add Sensor</span>
+    <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
+        <a ng-href="/home" style="text-decoration:none">
+            <span class="md-headline" style="color:white">Thingspeak</span>
+        </a><div layout="row">
+
+            <md-button ng-click="AdminCtrl.goTo('profile')" class="md-mini md-icon-button" style="display:inline-block; color:white">
+                <i class="material-icons">person</i>
+            </md-button>
+        </div>
     </div>
 </md-toolbar>
 
 <md-content flex layout="row" class="admin-panel">
-    <!-- Show this menu on small screens -->
-    <md-list hide-gt-sm class="small_list animated fadeInLeft">
-        <md-subheader class="md-no-sticky">Menu</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('home')">
-            <i class="material-icons animated fadeInLeft">home</i>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('dashboard')">
-            <i class="material-icons animated fadeInLeft">insert_chart</i>
-        </md-list-item>
-        <md-subheader class="md-no-sticky">Sensors</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('edit-sensors')">
-            <i class="material-icons animated fadeInLeft">edit</i>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('add-sensors')">
-            <i class="material-icons animated fadeInLeft">add_location</i>
-        </md-list-item>
-        <md-subheader class="md-no-sticky">Users</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('edit-users')">
-            <i class="material-icons animated fadeInLeft">person</i>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('add-users')">
-            <i flex class="material-icons animated fadeInLeft">person_add</i>
-        </md-list-item>
-    </md-list>
+    <div>
+        <!-- Show this menu on small screens -->
+        <md-list hide-gt-sm class="small_list animated fadeInLeft">
+            <md-subheader class="md-no-sticky">Menu</md-subheader>
+            <md-list-item ng-click="AdminCtrl.navigate('home')">
+                <i class="material-icons animated fadeInLeft">home</i>
+            </md-list-item>
+            <md-list-item ng-click="AdminCtrl.navigate('dashboard')">
+                <i class="material-icons animated fadeInLeft">insert_chart</i>
+            </md-list-item>
+            <md-subheader class="md-no-sticky">Sensors</md-subheader>
+            <md-list-item ng-click="AdminCtrl.navigate('edit-sensors')">
+                <i class="material-icons animated fadeInLeft">edit</i>
+            </md-list-item>
+            <md-list-item ng-click="AdminCtrl.navigate('add-sensors')">
+                <i class="material-icons animated fadeInLeft">add_location</i>
+            </md-list-item>
+            <md-subheader class="md-no-sticky">Users</md-subheader>
+            <md-list-item ng-click="AdminCtrl.navigate('edit-users')">
+                <i class="material-icons animated fadeInLeft">person</i>
+            </md-list-item>
+            <md-list-item ng-click="AdminCtrl.navigate('add-users')">
+                <i flex class="material-icons animated fadeInLeft">person_add</i>
+            </md-list-item>
+        </md-list>
 
-    <!-- Show this menu on medium and large screens -->
-    <md-list hide show-gt-sm class="full-list animated fadeInLeft">
-        <md-subheader class="md-no-sticky">Menu</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('home')">
-            <i class="material-icons animated fadeInLeft">home</i>
-            <p class="animated fadeInLeft">Home</p>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('dashboard')">
-            <i class="material-icons animated fadeInLeft">insert_chart</i>
-            <p class="animated fadeInLeft">Dashboard</p>
-        </md-list-item>
-        <md-subheader class="md-no-sticky">Sensors</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('edit-sensors')">
-            <i class="material-icons animated fadeInLeft">edit</i>
-            <p class="animated fadeInLeft">Edit Sensors</p>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('add-sensors')">
-            <i class="material-icons animated fadeInLeft">add_location</i>
-            <p class="animated fadeInLeft">Add Sensor</p>
-        </md-list-item>
-        <md-subheader class="md-no-sticky">Users</md-subheader>
-        <md-list-item ng-click="AdminCtrl.navigate('edit-users')">
-            <i class="material-icons animated fadeInLeft">person</i>
-            <p class="animated fadeInLeft">Edit Users</p>
-        </md-list-item>
-        <md-list-item ng-click="AdminCtrl.navigate('add-users')">
-            <i class="material-icons animated fadeInLeft">person_add</i>
-            <p class="animated fadeInLeft">Add User</p>
-        </md-list-item>
-    </md-list>
+        <!-- Show this menu on medium and large screens -->
+        <md-list hide show-gt-sm class="full-list animated fadeInLeft">
+            <md-subheader class="md-no-sticky">Menu</md-subheader>
+            <md-list-item ng-click="AdminCtrl.goTo('home')">
+                <i class="material-icons animated fadeInLeft">home</i>
+                <p class="animated fadeInLeft">Home</p>
+            </md-list-item>
+            <md-list-item ng-click="adminScope.visiblePanel = 'dashboard'">
+                <i class="material-icons animated fadeInLeft">insert_chart</i>
+                <p class="animated fadeInLeft">Dashboard</p>
+            </md-list-item>
+            <md-subheader class="md-no-sticky">Sensors</md-subheader>
+            <md-list-item ng-click="adminScope.visiblePanel = 'edit-sensors'">
+                <i class="material-icons animated fadeInLeft">edit</i>
+                <p class="animated fadeInLeft">Edit Sensors</p>
+            </md-list-item>
+            <md-list-item ng-click="adminScope.visiblePanel = 'add-sensor'">
+                <i class="material-icons animated fadeInLeft">add_location</i>
+                <p class="animated fadeInLeft">Add Sensor</p>
+            </md-list-item>
+            <md-subheader class="md-no-sticky">Users</md-subheader>
+            <md-list-item ng-click="adminScope.visiblePanel = 'edit-users'">
+                <i class="material-icons animated fadeInLeft">person</i>
+                <p class="animated fadeInLeft">Edit Users</p>
+            </md-list-item>
+            <md-list-item ng-click="adminScope.visiblePanel = 'add-user'">
+                <i class="material-icons animated fadeInLeft">person_add</i>
+                <p class="animated fadeInLeft">Add User</p>
+            </md-list-item>
+        </md-list>
+    </div>
 
     <div flex class="admin-content-panel-parent animated fadeInRight">
-        <div class="admin-content-panel" ng-include="'/app/views/templates/edit-sensors-template.html'"></div>
+        <div ng-show="adminScope.visiblePanel=='dashboard'" class="container admin-content-panel" ng-include="'/app/views/templates/dashboard-template.html'"></div>
+        <div ng-show="adminScope.visiblePanel=='edit-sensors'" class="container admin-content-panel" ng-include="'/app/views/templates/edit-sensors-template.html'"></div>
+        <div ng-show="adminScope.visiblePanel=='add-sensor'" class="container admin-content-panel" ng-include="'/app/views/templates/add-sensor-template.html'"></div>
+        <div ng-show="adminScope.visiblePanel=='edit-users'" class="container admin-content-panel" ng-include="'/app/views/templates/edit-users-template.html'"></div>
+        <div ng-show="adminScope.visiblePanel=='add-user'" class="container admin-content-panel" ng-include="'/app/views/templates/add-user-template.html'"></div>
         <!--<div class="container admin-content-panel" ng-include="'/app/views/templates/add-sensor-template.html'"></div>-->
     </div>
 </md-content>

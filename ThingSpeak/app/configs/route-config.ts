@@ -17,6 +17,11 @@
                     controllerAs: 'AdminCtrl',
                     controller: 'AdminController',
                 })
+                .when("/profile", {
+                    templateUrl: '/app/views/profile.html',
+                    controllerAs: 'ProfCtrl',
+                    controller: 'ProfileController',
+                })
                 .otherwise({
                     redirectTo: "/home",
                 });

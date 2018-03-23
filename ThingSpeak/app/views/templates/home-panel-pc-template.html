@@ -1,0 +1,74 @@
+﻿<div ng-show="!homeScope.showSensorDetails" class="sensors-holder">
+    <div class="sensor-panel-top">
+        <div class="address-box">
+            <label style="padding-top: 5px;color:#e64a19;">Search by location</label>
+
+            <md-input-container class="md-icon-float md-block" style="margin:0px">
+                <input ng-model="currentLocation" type="text" id="googleMapAutocompleteBox" aria-label="Search Sensors">
+            </md-input-container>
+        </div>
+
+        <md-button ng-click="HomeCtrl.setCurrentLocation()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
+            <md-tooltip>My location</md-tooltip>
+            <i class="material-icons">my_location</i>
+        </md-button>
+    </div>
+
+    <md-subheader ng-show="homeScope.sensors.length">Sensors at this location ({{homeScope.sensors.length}})</md-subheader>
+
+    <md-list flex class="sensors-list">
+        <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in homeScope.sensors" class="md-3-line" ng-click="HomeCtrl.displaySensorDetails(sensor);">
+            <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
+            <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
+            <div class="md-list-item-text" layout="column">
+                <h3>{{sensor.physicalAddress}}</h3>
+                <h4>{{sensor.installedBy}}</h4>
+                <p>{{sensor.installedOn}}</p>
+            </div>
+            <md-divider></md-divider>
+        </md-list-item>
+    </md-list>
+</div>
+
+<div ng-show="homeScope.showSensorDetails" class="sensors-holder animated fadeInRight">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button ng-click="HomeCtrl.displaySensorDetails(false)" class="md-mini md-icon-button" style="display:inline-block; color:white">
+                <i class="material-icons">arrow_back</i>
+            </md-button>
+            <span class="md-breadcrumb-page" style="color:white; padding-left:10px;">Sensor details</span>
+        </div>
+    </md-toolbar>
+
+    <div class="sensor-details">
+        <div>
+            <label class="md-body-1">Sensor ID: </label>
+            <label class="md-body-2">{{homeScope.selectedSensor.id}}</label>
+            <br />
+        </div>
+        <div>
+            <label class="md-body-1">Status</label>
+            <label class="md-body-2">{{homeScope.selectedSensor.status? "ON" : "OFF"}}</label>
+            <i ng-if="homeScope.selectedSensor.status" class="material-icons" style="color:green">check_circle</i>
+            <i ng-if="!homeScope.selectedSensor.status" class="material-icons" style="color:red">error</i>
+            <br />
+        </div>
+        <div>
+            <label class="md-body-1">Sensor location: </label>
+            <label class="md-body-2">{{homeScope.selectedSensor.physicalAddress}}</label>
+            <br />
+        </div>
+
+        <div>
+            <label class="md-body-1">Installed by: </label>
+            <label class="md-body-2">{{homeScope.selectedSensor.installedBy}}</label>
+            <br />
+        </div>
+
+        <div>
+            <label class="md-body-1">Installed On:</label>
+            <label class="md-body-2">{{homeScope.selectedSensor.installedOn}}</label>
+            <br />
+        </div>
+    </div>
+</div>

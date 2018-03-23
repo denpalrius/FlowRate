@@ -1,4 +1,4 @@
-﻿<div class="container">
+﻿<div class="container" style="height:100%">
     <h4 class="animated fadeInRight">Add user</h4>
 
     <form name="addUserForm" novalidate ng-submit="AdminCtrl.addUser(addUserForm.$valid)">
@@ -75,13 +75,13 @@
         </md-button>
     </form>
 
-    <md-button ng-click="AdminCtrl.checkUser()" class="md-raised md-primary btn-lg btn-submit">
-        Check User
-    </md-button>
+    
 
     <!--<div ng-if="adminScope.AllUsers.length">-->
-    <div>
-        
+    <div ng-show="false">
+        <md-button ng-click="AdminCtrl.checkUser()" class="md-raised md-primary btn-lg btn-submit">
+            Check User
+        </md-button>
 
         <h4 class="lineOnHeader">Manage users</h4>
         <table class="table">

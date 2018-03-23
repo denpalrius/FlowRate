@@ -51,6 +51,11 @@ var ThingSpeak;
                     controllerAs: 'AdminCtrl',
                     controller: 'AdminController',
                 })
+                    .when("/profile", {
+                    templateUrl: '/app/views/profile.html',
+                    controllerAs: 'ProfCtrl',
+                    controller: 'ProfileController',
+                })
                     .otherwise({
                     redirectTo: "/home",
                 });
@@ -82,24 +87,6 @@ var ThingSpeak;
         Configs.ThemeConfig = ThemeConfig;
     })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
 })(ThingSpeak || (ThingSpeak = {}));
-//module ThingSpeak.Controllers {
-//    "use strict";
-//    interface ICurrentScope {
-//    }
-//    interface IAboutScope extends ng.IScope {
-//        aboutScope?: ICurrentScope;
-//    }
-//    export class AboutController {
-//        constructor(
-//            private $scope: IAboutScope) {
-//            var that: AboutController = this;
-//            that.init();
-//        }
-//        private init() {
-//            var that: AboutController = this;
-//        }
-//    }
-//} 
 var ThingSpeak;
 (function (ThingSpeak) {
     var Controllers;
@@ -123,6 +110,7 @@ var ThingSpeak;
                 that.$scope.adminScope.selectedSensor = {};
                 that.$scope.adminScope.status = "";
                 that.$scope.adminScope.view = "";
+                that.$scope.adminScope.visiblePanel = "dashboard";
                 //that.$scope.adminScope.view = "dashboard";
                 that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
                 that.$scope.adminScope.userRoles = [
@@ -135,40 +123,6 @@ var ThingSpeak;
             AdminController.prototype.goTo = function (route) {
                 var that = this;
                 that.$location.path(route);
-            };
-            AdminController.prototype.navigate = function (view) {
-                var that = this;
-                console.log("view: ", view);
-                //switch (view) {
-                //    case 'home': {
-                //        that.$location.path('home');
-                //        break;
-                //    }
-                //    case 'dashboard': {
-                //        that.$scope.adminScope.view = "/app/views/templates/dashboard-template.html";
-                //        break;
-                //    }
-                //    case 'edit-sensors': {
-                //        that.$scope.adminScope.view = "'/app/views/templates/edit-sensors-template.html'";
-                //        break;
-                //    }
-                //    case 'add-sensors': {
-                //        that.$scope.adminScope.view = "'/app/views/templates/add-sensors-template.html'";
-                //        break;
-                //    }
-                //    case 'edit-users': {
-                //        that.$scope.adminScope.view = "'/app/views/templates/edit-users-template.html'";
-                //        break;
-                //    }
-                //    case 'add-users': {
-                //        that.$scope.adminScope.view = "'/app/views/templates/add-users-template.html'";
-                //        break;
-                //    }
-                //    default: {
-                //        that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
-                //        break;
-                //    }
-                //}
             };
             AdminController.prototype.addUser = function (isValid) {
                 var that = this;
@@ -594,15 +548,33 @@ var ThingSpeak;
     (function (Controllers) {
         "use strict";
         var LoginController = (function () {
-            function LoginController($scope, $location, FirebaseService) {
+            function LoginController($scope, $location, FirebaseService, $mdToast) {
                 this.$scope = $scope;
                 this.$location = $location;
                 this.FirebaseService = FirebaseService;
+                this.$mdToast = $mdToast;
                 var that = this;
                 that.init();
             }
             LoginController.prototype.init = function () {
                 var that = this;
+            };
+            LoginController.prototype.login = function (email, password) {
+                var that = this;
+                if (email && password) {
+                    that.FirebaseService.logIn(email, password)
+                        .done(function (response) {
+                        that.$location.path("home");
+                        that.$scope.authScope.loggedInUser = response;
+                    })
+                        .fail(function (error) {
+                        console.error("Login error: ", error);
+                        ThingSpeak.Helpers.AppHelpers.showToast("We could not log you in at the moment. Please try again later", false, that.$mdToast);
+                    });
+                }
+                else {
+                    ThingSpeak.Helpers.AppHelpers.showToast("Username or password is missing", false, that.$mdToast);
+                }
             };
             LoginController.prototype.SignIn = function () {
                 var that = this;
@@ -626,6 +598,25 @@ var ThingSpeak;
             return LoginController;
         }());
         Controllers.LoginController = LoginController;
+    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
+})(ThingSpeak || (ThingSpeak = {}));
+var ThingSpeak;
+(function (ThingSpeak) {
+    var Controllers;
+    (function (Controllers) {
+        "use strict";
+        var ProfileController = (function () {
+            function ProfileController($scope) {
+                this.$scope = $scope;
+                var that = this;
+                that.init();
+            }
+            ProfileController.prototype.init = function () {
+                var that = this;
+            };
+            return ProfileController;
+        }());
+        Controllers.ProfileController = ProfileController;
     })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
 })(ThingSpeak || (ThingSpeak = {}));
 var ThingSpeak;
@@ -887,7 +878,7 @@ var ThingSpeak;
         }
         function addMarkerWithTimeout(scope, marker, timeout, $timeout) {
             window.setTimeout(function () {
-                marker.setAnimation(google.maps.Animation.DROP);
+                //marker.setAnimation(google.maps.Animation.DROP)
                 scope.markers.push(marker);
             }, timeout);
         }
@@ -996,15 +987,16 @@ var ThingSpeak;
             scope.markers = [];
             scope.geocoder = new google.maps.Geocoder;
             var mapOptions = {
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
                 zoomControl: true,
-                panControl: false,
+                panControl: true,
                 draggable: true,
+                streetViewControl: false,
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_TOP,
                     style: google.maps.ZoomControlStyle.DEFAULT
                 },
-                scaleControl: true,
-                rotateControl: true,
                 center: scope.userLocation,
                 zoom: 17
             };
@@ -1023,7 +1015,7 @@ var ThingSpeak;
                     currentLocation: '=?currentLocation',
                     sensors: '=?sensors',
                 },
-                template: '<div class="mapcanvas" id="locationMap" style="z-index:0"></div>',
+                template: '<div class="mapcanvas" id="locationMap"></div>',
                 link: function (scope, $elm, attr) {
                     init(scope, $timeout, HttpService);
                     loadCurrentLocation(scope, $timeout);
@@ -1184,6 +1176,12 @@ var ThingSpeak;
                     }
                     deferred.reject(errorMessage);
                 });
+                return deferred;
+            };
+            FirebaseService.prototype.logIn = function (email, password) {
+                var that = this;
+                var deferred = $.Deferred();
+                deferred.resolve("Denis Sigei");
                 return deferred;
             };
             FirebaseService.prototype.signIn = function () {
@@ -1508,14 +1506,14 @@ var ThingSpeak;
             // services
             ngFlowRate.service("HttpService", ["$http", ThingSpeak.Services.HttpService]);
             ngFlowRate.service("MapService", ["$rootScope", ThingSpeak.Services.MapService]);
-            ngFlowRate.service("ThingSpeakService", "FirebaseService", ["HttpService", ThingSpeak.Services.ThingSpeakService]);
+            ngFlowRate.service("ThingSpeakService", ["HttpService", "FirebaseService", ThingSpeak.Services.ThingSpeakService]);
             ngFlowRate.service("FirebaseService", ["$cookies", ThingSpeak.Services.FirebaseService]);
             // controllers
-            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", ThingSpeak.Controllers.LoginController]);
+            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", "$mdToast", ThingSpeak.Controllers.LoginController]);
             ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", ThingSpeak.Controllers.HomeController]);
             ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", ThingSpeak.Controllers.AdminController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", ThingSpeak.Controllers.FlowRateController]);
-            ngFlowRate.controller("AboutController", ["$scope", ThingSpeak.Controllers.LoginController]);
+            ngFlowRate.controller("ProfileController", ["$scope", ThingSpeak.Controllers.ProfileController]);
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(function () {
                 angular.bootstrap(document, ["ngFlowRate"]);

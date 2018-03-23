@@ -1,5 +1,5 @@
 ﻿
-<md-content style="width:auto; height:auto">
+<md-content hide style="width:auto; height:auto" >
     <md-button class="login-button" ng-click="LoginCtrl.SignIn()" aria-label="Sign in with Google">
         <img src="/app/images/btn_google_signin_dark_normal_web.png" />
     </md-button>
@@ -14,3 +14,40 @@
     </a>
     <!--<button ng-click="LoginCtrl.Signout()">Google Signout</button>-->
 </md-content>
+
+<div class="jumbotron jumbo-back" style="background-image:url(/app/images/mountain_river.jpg)">
+    <div class="container">
+        <h1 class="display-3">Flux</h1>
+        <p>
+            Welcome to Flux
+        </p>
+        <br />
+        <p style="font-size:medium; ">
+            Log in below to continue
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <br />
+    <form>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label for="email" class="">Email address</label>
+            <input ng-model="Email" type="email">
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+            <label class="">Password</label>
+            <input ng-model="Password" type="password">
+        </md-input-container>
+
+
+        <br />
+
+        <md-button class="md-raised md-primary" style="width:99%"
+                   ng-click="LoginCtrl.login(Email,Password)">
+            Log in
+        </md-button>
+
+    </form>
+</div>

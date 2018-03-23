@@ -1,0 +1,111 @@
+﻿
+.left-pane {
+    position: fixed;
+    z-index: 99999;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.95);
+    height: calc(100% - 88px);
+    width: 418px;
+    margin: 12px;
+    padding: 0px;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+}
+
+.tab-label {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+    .tab-label > i, .tab-label > span {
+        vertical-align: middle;
+    }
+
+    .tab-label > i {
+        margin: 0px 3px;
+    }
+
+md-tab-body {
+    padding: 5px;
+}
+
+.search-panel {
+    min-width: 0px;
+    width: auto;
+    right: 0;
+    left: auto;
+    top: 0;
+    height: 65px;
+    background-color: yellow;
+}
+
+.map-panel {
+    overflow: hidden;
+    height: calc(100% - 64px);
+    background-color: rgba(171, 179, 176, 0.24);
+}
+
+.address-box-container {
+    display: inline-table !important;
+    width: 100%;
+}
+
+.address-box {
+    padding-left: 10px;
+    width: calc(100% - 57px);
+    display: inline-table !important;
+    vertical-align: middle;
+}
+
+.current-location-button {
+    display: inline-table !important;
+    vertical-align: middle;
+}
+
+.search-container {
+    margin-bottom: 10px;
+    background-color: white;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+.sensors-holder {
+    height: 100%;
+    overflow: hidden;
+}
+
+.sensor-details {
+    padding: 12px;
+    overflow: auto;
+    height: calc(100% - 64px);
+}
+
+.sensors-list {
+    overflow: auto;
+    padding: 0px;
+    height: calc(100% - 154px);
+}
+
+.mapcanvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.mobile-map-holder {
+  
+}
+
+.pc-map-holder {
+    margin: 0px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sensors-wrapper {
+    margin: 0px;
+    background-color: white;
+}

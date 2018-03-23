@@ -20,15 +20,15 @@
             // services
             ngFlowRate.service("HttpService", ["$http", Services.HttpService]);
             ngFlowRate.service("MapService", ["$rootScope", Services.MapService]);
-            ngFlowRate.service("ThingSpeakService", "FirebaseService", ["HttpService", Services.ThingSpeakService]);
+            ngFlowRate.service("ThingSpeakService" ,["HttpService", "FirebaseService", Services.ThingSpeakService]);
             ngFlowRate.service("FirebaseService", ["$cookies",Services.FirebaseService]);
 
             // controllers
-            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", Controllers.LoginController]);
+            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.LoginController]);
             ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", Controllers.HomeController]);
             ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.AdminController]);
             ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
-            ngFlowRate.controller("AboutController", ["$scope", Controllers.LoginController]);
+            ngFlowRate.controller("ProfileController", ["$scope", Controllers.ProfileController]);
 
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(() => {

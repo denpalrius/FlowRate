@@ -282,7 +282,7 @@
 
     function addMarkerWithTimeout(scope: IScope, marker: google.maps.Marker, timeout: any, $timeout: ng.ITimeoutService) {
         window.setTimeout(function () {
-            marker.setAnimation(google.maps.Animation.DROP)
+            //marker.setAnimation(google.maps.Animation.DROP)
             scope.markers.push(marker);
         }, timeout);
     }
@@ -396,15 +396,16 @@
         scope.geocoder = new google.maps.Geocoder;
 
         var mapOptions: google.maps.MapOptions = {
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: false,
             zoomControl: true,
-            panControl: false,
-            draggable: true,
+            panControl: true,
+            draggable: true, 
+            streetViewControl: false,
             zoomControlOptions: {
                 position: google.maps.ControlPosition.RIGHT_TOP,
                 style: google.maps.ZoomControlStyle.DEFAULT
             },
-            scaleControl: true,
-            rotateControl: true,
             center: scope.userLocation,
             zoom: 17
         }
@@ -429,7 +430,7 @@
                 //    "="   (Direct model binding / two - way binding )
                 //    "&"   (Behaviour binding / Method binding  )
             },
-            template: '<div class="mapcanvas" id="locationMap" style="z-index:0"></div>',
+            template: '<div class="mapcanvas" id="locationMap"></div>',
             link: function (scope: IScope, $elm: any, attr: any) {
                 init(scope, $timeout, HttpService);
 

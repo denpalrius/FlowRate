@@ -22,6 +22,7 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\css\home.css" />
     <Content Include="app\css\admin.css" />
     <Content Include="app\css\full-screen-nav.css" />
     <Content Include="app\css\form style.css" />
@@ -44,17 +45,21 @@
     <Content Include="app\scripts\app.js" />
     <Content Include="app\models\sample-sensor-data.json" />
     <None Include="app\scripts\cool-style.json" />
+    <Content Include="app\views\home-new.html" />
+    <Content Include="app\views\home-old.html" />
     <Content Include="app\views\templates\dashboard-template.html" />
     <Content Include="app\views\admin.html" />
-    <Content Include="app\views\about.html" />
+    <Content Include="app\views\profile.html" />
     <Content Include="app\views\login.html" />
     <Content Include="app\views\home.html" />
     <Content Include="app\views\flow-rate.html" />
+    <Content Include="app\views\templates\home-panel-mobile-template.html" />
     <Content Include="app\views\templates\info-window-template.html" />
     <Content Include="app\views\templates\edit-sensors-template.html" />
     <Content Include="app\views\templates\add-user-template.html" />
     <Content Include="app\views\templates\edit-users-template.html" />
     <Content Include="app\views\templates\add-sensor-template.html" />
+    <Content Include="app\views\templates\home-panel-pc-template.html" />
     <Content Include="app\views\templates\modal-template.html" />
     <Content Include="Content\angular-material.css" />
     <Content Include="Content\angular-material.layout-attributes.css" />
@@ -152,7 +157,7 @@
     <TypeScriptCompile Include="app\configs\app-configs.ts" />
     <TypeScriptCompile Include="app\configs\route-config.ts" />
     <TypeScriptCompile Include="app\controllers\admin-controller.ts" />
-    <TypeScriptCompile Include="app\controllers\about-controller.ts" />
+    <TypeScriptCompile Include="app\controllers\profile-controller.ts" />
     <TypeScriptCompile Include="app\controllers\home-controller.ts" />
     <TypeScriptCompile Include="app\controllers\flow-rate-controller.ts" />
     <TypeScriptCompile Include="app\filters\remove-string-filter.ts" />

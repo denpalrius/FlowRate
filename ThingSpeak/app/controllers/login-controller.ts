@@ -13,7 +13,8 @@
         constructor(
             private $scope: ILoginScope,
             private $location: ng.ILocationService,
-            private FirebaseService: Services.FirebaseService) {
+            private FirebaseService: Services.FirebaseService,
+            private $mdToast: any) {
 
             var that: LoginController = this;
             that.init();
@@ -21,6 +22,24 @@
 
         private init() {
             var that: LoginController = this;
+        }
+
+        private login(email: string, password: string) {
+            var that: LoginController = this;
+            if (email && password) {
+                that.FirebaseService.logIn(email, password)
+                    .done((response: any) => {
+                        that.$location.path("home");
+                        that.$scope.authScope.loggedInUser = response;
+                    })
+                    .fail((error: any) => {
+                        console.error("Login error: ", error);
+                        Helpers.AppHelpers.showToast("We could not log you in at the moment. Please try again later", false, that.$mdToast);
+                    });
+            }
+            else {
+                Helpers.AppHelpers.showToast("Username or password is missing", false, that.$mdToast);
+            }
         }
 
         private SignIn() {
@@ -45,5 +64,6 @@
 
             that.$location.path("login");
         }
+
     }
 }

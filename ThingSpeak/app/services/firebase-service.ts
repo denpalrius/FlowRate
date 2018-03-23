@@ -6,7 +6,6 @@ interface IFireBase {
     initializeApp: any;
 }
 
-
 module ThingSpeak.Services {
     export class FirebaseService {
         provider: any;
@@ -75,6 +74,13 @@ module ThingSpeak.Services {
                     deferred.reject(errorMessage);
                 });
 
+            return deferred;
+        }
+
+        public logIn(email: string, password: string): JQueryDeferred<any> {
+            var that: FirebaseService = this;
+            var deferred = $.Deferred();
+            deferred.resolve("Denis Sigei");
             return deferred;
         }
 
@@ -257,7 +263,6 @@ module ThingSpeak.Services {
 
             return deferred;
         }
-
 
         private snapshotToArray(snapshot: any) {
             var returnArr: any = [];

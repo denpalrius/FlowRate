@@ -9,6 +9,7 @@
         selectedSensor?: ViewModels.iSensor;
         status?: string;
         view?: string;
+        visiblePanel?: string;
         userRoles?: ViewModels.iUserRole[];
     }
 
@@ -37,6 +38,7 @@
             that.$scope.adminScope.selectedSensor = {};
             that.$scope.adminScope.status = "";
             that.$scope.adminScope.view = "";
+            that.$scope.adminScope.visiblePanel = "dashboard";
             //that.$scope.adminScope.view = "dashboard";
             that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
             that.$scope.adminScope.userRoles = [
@@ -52,43 +54,6 @@
             var that: AdminController = this;
 
             that.$location.path(route);
-        }
-
-        private navigate(view: string) {
-            var that: AdminController = this;
-
-            console.log("view: ", view);
-
-            //switch (view) {
-            //    case 'home': {
-            //        that.$location.path('home');
-            //        break;
-            //    }
-            //    case 'dashboard': {
-            //        that.$scope.adminScope.view = "/app/views/templates/dashboard-template.html";
-            //        break;
-            //    }
-            //    case 'edit-sensors': {
-            //        that.$scope.adminScope.view = "'/app/views/templates/edit-sensors-template.html'";
-            //        break;
-            //    }
-            //    case 'add-sensors': {
-            //        that.$scope.adminScope.view = "'/app/views/templates/add-sensors-template.html'";
-            //        break;
-            //    }
-            //    case 'edit-users': {
-            //        that.$scope.adminScope.view = "'/app/views/templates/edit-users-template.html'";
-            //        break;
-            //    }
-            //    case 'add-users': {
-            //        that.$scope.adminScope.view = "'/app/views/templates/add-users-template.html'";
-            //        break;
-            //    }
-            //    default: {
-            //        that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
-            //        break;
-            //    }
-            //}
         }
 
         private addUser(isValid: boolean) {

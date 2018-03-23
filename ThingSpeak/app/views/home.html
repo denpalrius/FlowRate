@@ -1,123 +1,59 @@
-﻿<ts-google-map sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()"/>
-
-<div class="left-pane col-lg-3 col-md-5 col-sm-12">
-    <div class="search-container">
-        <div class="sensor-panel-top">
-            <label style="padding-left:14px; padding-top: 16px;color:#e64a19; display:inline-block">Search location</label>
-            <div class="pull-right" style="display:inline-block">
-                <!--ng-show="homeScope.loggedInUser.role==1"-->
-                <md-button ng-click="HomeCtrl.goTo('admin')" class="md-mini md-icon-button" style="display:inline-block">
-                    <i class="material-icons" style="color:darkgrey">settings</i>
-                </md-button>
-                <div ng-show="homeScope.loggedInUser.name" uib-dropdown dropdown-append-to-body class="md-avatar" style="display:inline-block">
-                    <img uib-dropdown-toggle ui-sref="/admin" src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" alt="" aria-label="Profile Picture" />
-                    <div class="dropdown-menu" style="background-color:transparent; border:0px solid transparent; margin:0px; padding:0px" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
-                        <md-card>
-                            <md-card-title>
-                                <md-card-title-media>
-                                    <div class="md-media-md card-media">
-                                        <img src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" style="height:90px; width:90px; cursor:auto;" alt="" />
-                                    </div>
-                                </md-card-title-media>
-                                <md-card-title-text>
-                                    <span class="md-headline">{{homeScope.loggedInUser.name}}</span>
-                                    <span class="md-subhead">{{homeScope.loggedInUser.email}}</span>
-                                    <md-button class="md-button-signout" ng-click="HomeCtrl.Signout()">
-                                        <i class="material-icons pop-button-content">eject</i>
-                                        <span class="pop-button-content">Sign out</span>
-                                    </md-button>
-
-                                </md-card-title-text>
-
-                            </md-card-title>
-
-                            <!--<md-divider></md-divider>
-
-                            <md-card-actions layout="row" layout-align="center">
-                                <a class="md-button md-button-pop" onclick="openNav()">
-                                    <i class="material-icons pop-buttons">insert_chart</i>
-                                    <br />
-                                    <p>Dashboard</p>
-                                </a>
-                            </md-card-actions>-->
-                        </md-card>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sensor-panel-top">
-            <div class="address-box">
-                <md-input-container class="md-icon-float md-block" style="margin:0px">
-                    <input ng-model="currentLocation" type="text" id="googleMapAutocompleteBox" aria-label="Search Sensors">
-                </md-input-container>
-            </div>
-
-            <md-button ng-click="HomeCtrl.setCurrentLocation()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
-                <md-tooltip>My location</md-tooltip>
-                <i class="material-icons">my_location</i>
+﻿<md-toolbar>
+    <div layout="row" layout-align="space-between center" class="md-toolbar-tools">
+        <a ng-href="/home" style="text-decoration:none">
+            <span class="md-headline" style="color:white">Thingspeak</span>
+        </a>
+        <div layout="row">
+            <md-button ng-click="HomeCtrl.goTo('admin')" class="md-mini md-icon-button" style="display:inline-block; color:white">
+                <i class="material-icons">settings</i>
             </md-button>
-        </div>
-    </div>
+            <md-button ng-click="HomeCtrl.goTo('profile')" class="md-mini md-icon-button" style="display:inline-block; color:white">
+                <i class="material-icons">person</i>
+            </md-button>
+            <div ng-show="homeScope.loggedInUser.name" uib-dropdown dropdown-append-to-body class="md-avatar" style="display:inline-block">
+                <img uib-dropdown-toggle ui-sref="/admin" src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" alt="" aria-label="Profile Picture" />
+                <div class="dropdown-menu" style="background-color:transparent; border:0px solid transparent; margin:0px; padding:0px" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+                    <md-card>
+                        <md-card-title>
+                            <md-card-title-media>
+                                <div class="md-media-md card-media">
+                                    <img src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" style="height:90px; width:90px; cursor:auto;" alt="" />
+                                </div>
+                            </md-card-title-media>
+                            <md-card-title-text>
+                                <span class="md-headline">{{homeScope.loggedInUser.name}}</span>
+                                <span class="md-subhead">{{homeScope.loggedInUser.email}}</span>
+                                <md-button class="md-button-signout" ng-click="HomeCtrl.Signout()">
+                                    <i class="material-icons pop-button-content">eject</i>
+                                    <span class="pop-button-content">Sign out</span>
+                                </md-button>
 
-    <div ng-show="!homeScope.showSensorDetails" class="sensors-holder">
-        <md-subheader class="">Sensors at this location ({{homeScope.sensors.length}})</md-subheader>
-        <md-list flex style="height: calc(100% - 46px); overflow: auto;">
-            <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in homeScope.sensors" class="md-3-line" ng-click="HomeCtrl.displaySensorDetails(sensor);">
-                <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
-                <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
-                <div class="md-list-item-text" layout="column">
-                    <h3>{{sensor.physicalAddress}}</h3>
-                    <h4>{{sensor.installedBy}}</h4>
-                    <p>{{sensor.installedOn}}</p>
+                            </md-card-title-text>
+
+                        </md-card-title>
+
+                        <!--<md-divider></md-divider>
+
+                        <md-card-actions layout="row" layout-align="center">
+                            <a class="md-button md-button-pop" onclick="openNav()">
+                                <i class="material-icons pop-buttons">insert_chart</i>
+                                <br />
+                                <p>Dashboard</p>
+                            </a>
+                        </md-card-actions>-->
+                    </md-card>
                 </div>
-                <md-divider></md-divider>
-            </md-list-item>
-        </md-list>
-    </div>
-
-    <div ng-show="homeScope.showSensorDetails" class="sensors-holder">
-        <md-toolbar class="md-hue-2">
-            <div class="md-toolbar-tools">
-                <md-button ng-click="HomeCtrl.displaySensorDetails(false);" style="top:34px;" class="md-fab md-accent md-hue-2" aria-label="Back to sensors list">
-                    <md-tooltip>Back</md-tooltip>
-                    <i class="material-icons" style="vertical-align: middle; margin-bottom: 5px;">arrow_back</i>
-                </md-button>
-                <label class="md-title" style="color: white; margin-top:20px; margin-left:30px">Sensor Details</label>
-            </div>
-        </md-toolbar>
-        <br />
-        <div style="padding:20px; overflow: inherit; height: calc(100% - 89px);">
-            <div>
-                <label class="md-body-1">Sensor ID: </label>
-                <label class="md-body-2">{{homeScope.selectedSensor.id}}</label>
-                <br />
-            </div>
-            <div>
-                <label class="md-body-1">Status</label>
-                <label class="md-body-2">{{homeScope.selectedSensor.status? "ON" : "OFF"}}</label>
-                <i ng-if="homeScope.selectedSensor.status" class="material-icons" style="color:green">check_circle</i>
-                <i ng-if="!homeScope.selectedSensor.status" class="material-icons" style="color:red">error</i>
-                <br />
-            </div>
-            <div>
-                <label class="md-body-1">Sensor location: </label>
-                <label class="md-body-2">{{homeScope.selectedSensor.physicalAddress}}</label>
-                <br />
-            </div>
-
-            <div>
-                <label class="md-body-1">Installed by: </label>
-                <label class="md-body-2">{{homeScope.selectedSensor.installedBy}}</label>
-                <br />
-            </div>
-
-            <div>
-                <label class="md-body-1">Installed On:</label>
-                <label class="md-body-2">{{homeScope.selectedSensor.installedOn}}</label>
-                <br />
             </div>
         </div>
     </div>
+</md-toolbar>
 
-</div>
+<!--<md-content hide show-xs layout="column" layout-align="start stretch" class="admin-panel">
+    <ts-google-map flex="33" class="mobile-map-holder" sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()" />
+    <ng-include flex="66" class="sensors-wrapper" src="'/app/views/templates/home-panel-mobile-template.html'" />
+</md-content>-->
+
+<md-content hide show-gt-xs class="admin-panel">
+    <ng-include class="left-pane" src="'/app/views/templates/home-panel-pc-template.html'"/>
+    <ts-google-map class="pc-map-holder" sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()" />
+</md-content>
