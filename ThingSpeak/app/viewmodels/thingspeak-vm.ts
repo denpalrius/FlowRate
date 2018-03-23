@@ -51,6 +51,7 @@
     export interface newUser extends iUser {
         password?: string;
     }
+
     export interface iSensor extends iChannel {
         physicalAddress?: string;
         status?: boolean;

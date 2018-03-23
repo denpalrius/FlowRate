@@ -5,6 +5,8 @@
         sensors?: ViewModels.iSensor[];
         newSensor?: ViewModels.iSensor;
         newUser?: ViewModels.newUser;
+        selectedUser?: ViewModels.iUser;
+        allUsers?: ViewModels.iUser[];
         currentNavItem?: string;
         selectedSensor?: ViewModels.iSensor;
         status?: string;
@@ -33,6 +35,8 @@
 
             that.$scope.adminScope = {};
             that.$scope.adminScope.newUser = {};
+            that.$scope.adminScope.selectedUser = {};
+            that.$scope.adminScope.allUsers = [];
             that.$scope.adminScope.sensors = [];
             that.$scope.adminScope.newSensor = {};
             that.$scope.adminScope.selectedSensor = {};
@@ -48,6 +52,7 @@
             ];
 
             that.getSensors();
+            that.getUsers();
         }
 
         private goTo(route: string) {
@@ -95,8 +100,37 @@
                     that.$scope.adminScope.sensors = sensors;
                 })
                 .fail((error: any) => {
-                    console.log("Error:", error);
+                    console.warn("Error: ", error);
                 });
+        }
+
+        private getUsers() {
+            var that: AdminController = this;
+            that.FirebaseService.readList("users")
+                .done((users: ViewModels.iUser[]) => {
+                    that.$scope.adminScope.allUsers = users;
+                })
+                .fail((error: any) => {
+                    console.error("Error: ", error);
+                });
+        }
+
+        private selectUser(selectedUser: ViewModels.iUser) {
+            var that: AdminController = this;
+            that.$scope.adminScope.selectedUser = selectedUser;
+            console.log(selectedUser);
+        }
+
+        private updateUser(selectedUser: ViewModels.iUser) {
+            var that: AdminController = this;
+
+            console.warn("Should update user!");
+        }
+
+        private updateSensor(selectedUser: ViewModels.iUser) {
+            var that: AdminController = this;
+
+            console.warn("Should update sensor!");
         }
 
         private signOut() {

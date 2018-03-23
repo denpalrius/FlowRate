@@ -80,6 +80,10 @@
     overflow: hidden;
 }
 
+    .admin-content-panel > div {
+        height: calc(100% - 24px);
+    }
+
 .add-sensors-panel {
     width: calc(100% - 1px);
     padding: 12px 0px;
@@ -88,4 +92,20 @@
 .edit-sensors-panel {
     width: calc(100% - 1px);
     padding: 12px;
+}
+
+.admin-header {
+    text-align: center;
+    margin: 10px 0px 0px 0px;
+}
+
+.edit-list {
+    height: calc(100% - 120px);
+    overflow: auto;
+}
+
+.add-data-form {
+    height: calc(100% - 71px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }

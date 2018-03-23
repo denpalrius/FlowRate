@@ -1,7 +1,8 @@
-﻿<div class="sensors-panel">
-    <h4 style="padding:4px; text-align:center">Add Sensor</h4>
+﻿<div style="height:100%; overflow:hidden">
+    <h4 class="admin-header">Add Sensor</h4>
     <hr />
-    <form name="addSensorForm" novalidate ng-submit="AdminCtrl.addSensor(addSensorForm.$valid)">
+
+    <form class="add-data-form" name="addSensorForm" novalidate ng-submit="AdminCtrl.addSensor(addSensorForm.$valid)">
         <div layout-gt-sm="row">
             <md-input-container class="md-block" flex-gt-sm>
                 <label>Name</label>
@@ -58,10 +59,8 @@
             </md-input-container>
         </div>
 
-        <br />
-        <md-button type="submit" class="md-raised md-primary" style="color:white">
-            Add
+        <md-button type="submit" class="md-raised md-accent" style="float:right">
+            Submit
         </md-button>
     </form>
-    <br>
 </div>

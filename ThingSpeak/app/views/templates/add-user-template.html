@@ -1,7 +1,8 @@
-﻿<div class="container" style="height:100%">
-    <h4 class="animated fadeInRight">Add user</h4>
+﻿<div style="height:100%; overflow:hidden">
+    <h4 class="admin-header">Add User</h4>
+    <hr />
 
-    <form name="addUserForm" novalidate ng-submit="AdminCtrl.addUser(addUserForm.$valid)">
+    <form class="add-data-form" name="addUserForm" novalidate ng-submit="AdminCtrl.addUser(addUserForm.$valid)">
         <div layout-gt-sm="row">
             <md-input-container class="md-block" flex-gt-sm>
                 <label>First name</label>
@@ -69,56 +70,8 @@
             </md-input-container>
         </div>
 
-        <br />
-        <md-button type="submit" class="md-raised md-primary btn-lg btn-submit">
+        <md-button type="submit" class="md-raised md-accent" style="float:right">
             Submit
         </md-button>
     </form>
-
-    
-
-    <!--<div ng-if="adminScope.AllUsers.length">-->
-    <div ng-show="false">
-        <md-button ng-click="AdminCtrl.checkUser()" class="md-raised md-primary btn-lg btn-submit">
-            Check User
-        </md-button>
-
-        <h4 class="lineOnHeader">Manage users</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>First name</th>
-                    <th>Last name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th> </th>
-                    <th> </th>
-                </tr>
-            </thead>
-            <tr ng-repeat="user in adminScope.AllUsers track by $index">
-                <td>{{$index+1}}</td>
-                <td>{{user.firstName}}</td>
-                <td>{{user.lastName}}</td>
-                <td>{{user.email}}</td>
-                <td>{{user.userRole == 1? "Administrator" : "Standard user"}}</td>
-                <td>
-                    <md-button ng-click="AdminCtrl.deleteUser(user)" class="md-icon-button" aria-label="Sort by name" style="float:right; top:-12px">
-                        <md-tooltip>
-                            Delete user
-                        </md-tooltip>
-                        <i class="material-icons">delete</i>
-                    </md-button>
-                </td>
-                <td>
-                    <!--<md-button class="md-icon-button" aria-label="Sort by name" style="float:right; top:-12px">
-                        <md-tooltip>
-                            Change Password
-                        </md-tooltip>
-                        <i class="material-icons">vpn_key</i>
-                    </md-button>-->
-                </td>
-            </tr>
-        </table>
-    </div>
 </div>

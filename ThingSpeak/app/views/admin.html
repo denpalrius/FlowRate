@@ -1,7 +1,7 @@
 ﻿<md-toolbar>
     <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
         <a ng-href="/home" style="text-decoration:none">
-            <span class="md-headline" style="color:white">Thingspeak</span>
+            <span class="md-headline" style="color:white">Flux</span>
         </a><div layout="row">
 
             <md-button ng-click="AdminCtrl.goTo('profile')" class="md-mini md-icon-button" style="display:inline-block; color:white">
@@ -16,24 +16,24 @@
         <!-- Show this menu on small screens -->
         <md-list hide-gt-sm class="small_list animated fadeInLeft">
             <md-subheader class="md-no-sticky">Menu</md-subheader>
-            <md-list-item ng-click="AdminCtrl.navigate('home')">
+            <md-list-item ng-click="AdminCtrl.goTo('home')">
                 <i class="material-icons animated fadeInLeft">home</i>
             </md-list-item>
-            <md-list-item ng-click="AdminCtrl.navigate('dashboard')">
+            <md-list-item ng-click="adminScope.visiblePanel = 'dashboard'">
                 <i class="material-icons animated fadeInLeft">insert_chart</i>
             </md-list-item>
             <md-subheader class="md-no-sticky">Sensors</md-subheader>
-            <md-list-item ng-click="AdminCtrl.navigate('edit-sensors')">
+            <md-list-item ng-click="adminScope.visiblePanel = 'edit-sensors'">
                 <i class="material-icons animated fadeInLeft">edit</i>
             </md-list-item>
-            <md-list-item ng-click="AdminCtrl.navigate('add-sensors')">
+            <md-list-item ng-click="adminScope.visiblePanel = 'add-sensor'">
                 <i class="material-icons animated fadeInLeft">add_location</i>
             </md-list-item>
             <md-subheader class="md-no-sticky">Users</md-subheader>
-            <md-list-item ng-click="AdminCtrl.navigate('edit-users')">
+            <md-list-item ng-click="adminScope.visiblePanel = 'edit-users'">
                 <i class="material-icons animated fadeInLeft">person</i>
             </md-list-item>
-            <md-list-item ng-click="AdminCtrl.navigate('add-users')">
+            <md-list-item ng-click="adminScope.visiblePanel = 'add-user'">
                 <i flex class="material-icons animated fadeInLeft">person_add</i>
             </md-list-item>
         </md-list>

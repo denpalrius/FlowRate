@@ -31,9 +31,11 @@
     <TypeScriptCompile Include="app\controllers\login-controller.ts" />
     <TypeScriptCompile Include="app\directives\compare-to-directive.ts" />
     <TypeScriptCompile Include="app\directives\ts-google-map-directive.ts" />
+    <Content Include="app\css\login.css" />
     <Content Include="app\images\btn_google_signin_dark_normal_web.png" />
     <Content Include="app\images\ic_account_circle_black_24dp_2x.png" />
     <Content Include="app\images\ic_my_location_black_24px.svg" />
+    <Content Include="app\images\jumbo-bacground.png" />
     <Content Include="app\images\mountain_river.jpg" />
     <Content Include="app\images\news_specmay2016update.png" />
     <Content Include="app\images\sensor-marker.svg" />
@@ -42,6 +44,8 @@
     <Content Include="app\images\sensor-searching.png" />
     <Content Include="app\images\thingspeak.png" />
     <Content Include="app\images\thingspeak-icon.ico" />
+    <Content Include="app\images\water-mountain.jpg" />
+    <Content Include="app\images\water-sun.jpg" />
     <Content Include="app\scripts\app.js" />
     <Content Include="app\models\sample-sensor-data.json" />
     <None Include="app\scripts\cool-style.json" />

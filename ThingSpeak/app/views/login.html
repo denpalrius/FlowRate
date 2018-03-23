@@ -1,53 +1,59 @@
-﻿
-<md-content hide style="width:auto; height:auto" >
-    <md-button class="login-button" ng-click="LoginCtrl.SignIn()" aria-label="Sign in with Google">
-        <img src="/app/images/btn_google_signin_dark_normal_web.png" />
-    </md-button>
-
-    <br />
-    Click the login button to log in with Google. After the popu closes, click the home button below
-    <br />
-    <br />
-    <br />
-    <a class="md-button md-raised md-primary login-button" href="home" aria-label="Home">
-        home
-    </a>
-    <!--<button ng-click="LoginCtrl.Signout()">Google Signout</button>-->
-</md-content>
-
-<div class="jumbotron jumbo-back" style="background-image:url(/app/images/mountain_river.jpg)">
-    <div class="container">
-        <h1 class="display-3">Flux</h1>
-        <p>
-            Welcome to Flux
-        </p>
-        <br />
-        <p style="font-size:medium; ">
-            Log in below to continue
-        </p>
+﻿<div layout="column">
+    <div flex="50" class="jumbotron jumbo-back">
+        <div class="container">
+            <h1 style="color:white; font-family: cursive;">Flux</h1>
+            <br />
+            <p style="font-size:medium; color:white">
+                Log in below to continue
+            </p>
+        </div>
     </div>
-</div>
 
-<div class="container">
-    <br />
-    <form>
-        <md-input-container class="md-block" flex-gt-sm>
-            <label for="email" class="">Email address</label>
-            <input ng-model="Email" type="email">
-        </md-input-container>
-
-        <md-input-container class="md-block" flex-gt-sm>
-            <label class="">Password</label>
-            <input ng-model="Password" type="password">
-        </md-input-container>
-
-
+    <div flex class="container">
         <br />
 
-        <md-button class="md-raised md-primary" style="width:99%"
-                   ng-click="LoginCtrl.login(Email,Password)">
-            Log in
-        </md-button>
 
-    </form>
+        <form name="loginForm" novalidate ng-submit="LoginCtrl.login(loginForm.$valid)">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Email</label>
+                <input type="text" name="email"  ng-model="loginScope.email" required ng-minlength="1" ng-required="true">
+                <input type="email" name="email" ng-model="adminScope.newUser.email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/">
+                <div ng-messages="addUserForm.email.$error" role="alert">
+                    <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                        Your email must be between 10 and 100 characters long and look like an e-mail address.
+                    </div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Password</label>
+                <input type="password" name="passoword" ng-model="loginScope.password" required ng-minlength="1" ng-required="true">
+            </md-input-container>
+            <br />
+            <md-button type="submit" class="md-raised md-primary">Log In</md-button>
+        </form>
+
+
+
+        <form>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="email" class="">Email address</label>
+                <input ng-model="Email" type="email">
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label class="">Password</label>
+                <input ng-model="Password" type="password">
+            </md-input-container>
+
+
+            <br />
+
+            <md-button class="md-raised md-primary" style="width:99%"
+                       ng-click="LoginCtrl.login(Email,Password)">
+                Log in
+            </md-button>
+
+        </form>
+    </div>
+
 </div>

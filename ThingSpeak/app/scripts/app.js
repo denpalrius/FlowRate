@@ -73,12 +73,19 @@ var ThingSpeak;
         var ThemeConfig = (function () {
             function ThemeConfig($mdThemingProvider, $mdIconProvider) {
                 $mdThemingProvider.theme('default')
-                    .primaryPalette('cyan')
-                    .accentPalette('deep-orange');
+                    .primaryPalette('blue', {
+                    'default': '600',
+                    'hue-1': '500',
+                    'hue-2': '800',
+                    'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
+                })
+                    .accentPalette('deep-orange', {
+                    'default': '700' // use shade 200 for default, and keep all other shades the same
+                });
                 // Enable browser color
                 $mdThemingProvider.enableBrowserColor({
                     theme: 'default',
-                    palette: 'accent',
+                    palette: 'primary',
                     hue: '700' // Default is '800'
                 });
             }
@@ -105,6 +112,8 @@ var ThingSpeak;
                 var that = this;
                 that.$scope.adminScope = {};
                 that.$scope.adminScope.newUser = {};
+                that.$scope.adminScope.selectedUser = {};
+                that.$scope.adminScope.allUsers = [];
                 that.$scope.adminScope.sensors = [];
                 that.$scope.adminScope.newSensor = {};
                 that.$scope.adminScope.selectedSensor = {};
@@ -119,6 +128,7 @@ var ThingSpeak;
                     { role: "Standard User", value: ThingSpeak.ViewModels.UserRole.standard }
                 ];
                 that.getSensors();
+                that.getUsers();
             };
             AdminController.prototype.goTo = function (route) {
                 var that = this;
@@ -160,8 +170,31 @@ var ThingSpeak;
                     that.$scope.adminScope.sensors = sensors;
                 })
                     .fail(function (error) {
-                    console.log("Error:", error);
+                    console.warn("Error: ", error);
                 });
+            };
+            AdminController.prototype.getUsers = function () {
+                var that = this;
+                that.FirebaseService.readList("users")
+                    .done(function (users) {
+                    that.$scope.adminScope.allUsers = users;
+                })
+                    .fail(function (error) {
+                    console.error("Error: ", error);
+                });
+            };
+            AdminController.prototype.selectUser = function (selectedUser) {
+                var that = this;
+                that.$scope.adminScope.selectedUser = selectedUser;
+                console.log(selectedUser);
+            };
+            AdminController.prototype.updateUser = function (selectedUser) {
+                var that = this;
+                console.warn("Should update user!");
+            };
+            AdminController.prototype.updateSensor = function (selectedUser) {
+                var that = this;
+                console.warn("Should update sensor!");
             };
             AdminController.prototype.signOut = function () {
                 console.log("Signing out");

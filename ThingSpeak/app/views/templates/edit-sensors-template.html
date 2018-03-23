@@ -1,14 +1,23 @@
-﻿<div class="edit-sensors-panel">
-    <h4 style="padding:4px; text-align:center">Edit Sensors</h4>
+﻿<div>
+    <h4 class="admin-header">Edit Sensors</h4>
     <hr />
 
-    <div layout="row">
-        <div flex>
-            <md-input-container class="md-block" style="margin:12px;">
-                <label>Search Sensor</label>
-                <input type="text">
-            </md-input-container>
-            <md-list flex style="height: calc(100% - 46px); overflow: auto;">
+    <div layout-gt-sm="row" layout="column" style="height: calc(100% - 61px);">
+        <div flex="50" flex-gt-sm="40" style="background-color: #edf5f1;">
+            <div class="sensor-panel-top" style="margin-top:20px">
+                <div class="address-box">
+                    <md-input-container class="md-block" style="margin:12px;">
+                        <label style="padding-top: 5px;color:#e64a19;">Search sensor</label>
+                        <input type="text" ng-model="sensorFilter" aria-label="Search sensor">
+                    </md-input-container>
+                </div>
+
+                <md-button ng-click="sensorFilter = ''" class="md-icon-button md-accent" aria-label="Clear Name Search">
+                    <i class="material-icons">clear_all</i>
+                </md-button>
+            </div>
+
+            <md-list flex class="edit-list">
                 <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in adminScope.sensors" class="md-3-line" ng-click="AdminCtrl.displaySensorDetails(sensor);">
                     <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
                     <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
@@ -20,9 +29,12 @@
                     <md-divider></md-divider>
                 </md-list-item>
             </md-list>
+
         </div>
 
-        <form flex name="editSensorForm" novalidate ng-submit="AdminCtrl.addSensor(editSensorForm.$valid)">
+        <div style="margin-right:52px;"></div>
+
+        <form flex="50" flex-gt-sm="60" name="addUserForm" style="overflow-x: hidden; overflow-y:auto" novalidate ng-submit="AdminCtrl.updateSensor(addUserForm.$valid)">
             <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                     <label>Name</label>
@@ -60,11 +72,11 @@
                     <input type="number" name="longitude" ng-model="adminScope.selectedSensor.longitude">
                 </md-input-container>
                 <!--<md-input-container class="md-block" flex-gt-sm>
-                    <label>Status</label>
-                    <md-switch class="md-primary" name="special" ng-model="adminScope.selectedSensor.status">
-                        Sensor is on
-                    </md-switch>
-                </md-input-container>-->
+                <label>Status</label>
+                <md-switch class="md-primary" name="special" ng-model="adminScope.selectedSensor.status">
+                    Sensor is on
+                </md-switch>
+            </md-input-container>-->
             </div>
 
             <div layout-gt-sm="row">
@@ -79,11 +91,9 @@
                 </md-input-container>
             </div>
 
-            <br />
-            <md-button type="submit" class="md-raised md-primary" style="color:white">
+            <md-button type="submit" class="md-raised md-accent" style="float:right">
                 Save
             </md-button>
         </form>
-        <br>
     </div>
 </div>
