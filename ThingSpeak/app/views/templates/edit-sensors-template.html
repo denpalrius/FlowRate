@@ -8,7 +8,6 @@
                 <label>Search Sensor</label>
                 <input type="text">
             </md-input-container>
-            {{adminScope.sensors}}
             <md-list flex style="height: calc(100% - 46px); overflow: auto;">
                 <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in adminScope.sensors" class="md-3-line" ng-click="AdminCtrl.displaySensorDetails(sensor);">
                     <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
