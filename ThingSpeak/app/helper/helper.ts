@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Helpers {
+﻿module Flux.Helpers {
     export class AppHelpers {
         constructor() {
         }

@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Services {
+﻿module Flux.Services {
     export class HttpService {
         constructor(private $http: ng.IHttpService) {
             var that: HttpService = this;

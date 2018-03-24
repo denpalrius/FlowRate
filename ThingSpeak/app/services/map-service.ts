@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Services {
+﻿module Flux.Services {
     export class MapService {
         constructor(private $rootScope: ng.IRootScopeService) {
             var that: MapService = this;

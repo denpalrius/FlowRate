@@ -1,38 +1,38 @@
-﻿module ThingSpeak{
+﻿module Flux{
     "use strict";
 
     export class AppModule {
         constructor() {
             // module
-            let ngFlowRate: ng.IModule = angular.module("ngFlowRate", ["ngRoute", "ngMaterial", "ngMessages", "ngAnimate","ui.bootstrap", "ngCookies", "firebase"]);
+            let ngFlux: ng.IModule = angular.module("ngFlux", ["ngRoute", "ngMaterial", "ngMessages", "ngAnimate","ui.bootstrap", "ngCookies", "firebase"]);
 
             // configs
-            ngFlowRate.config([Configs.AppConfig]);
-            ngFlowRate.config(["$routeProvider", "$locationProvider", Configs.RouteConfig]);
-            ngFlowRate.config(["$mdThemingProvider", "$mdIconProvider", Configs.ThemeConfig]);
+            ngFlux.config([Configs.AppConfig]);
+            ngFlux.config(["$routeProvider", "$locationProvider", Configs.RouteConfig]);
+            ngFlux.config(["$mdThemingProvider", "$mdIconProvider", Configs.ThemeConfig]);
 
             //Directives
-            ngFlowRate.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", "HttpService", Directives.TsGoogleMap]);
+            ngFlux.directive("tsGoogleMap", ["$timeout", "$log", "$rootScope", "HttpService", Directives.TsGoogleMap]);
 
             //Filters
-            ngFlowRate.filter("TsRemoveStringFilter", Filters.TsRemoveStringFilter);
+            ngFlux.filter("TsRemoveStringFilter", Filters.TsRemoveStringFilter);
 
             // services
-            ngFlowRate.service("HttpService", ["$http", Services.HttpService]);
-            ngFlowRate.service("MapService", ["$rootScope", Services.MapService]);
-            ngFlowRate.service("ThingSpeakService" ,["HttpService", "FirebaseService", Services.ThingSpeakService]);
-            ngFlowRate.service("FirebaseService", ["$cookies",Services.FirebaseService]);
+            ngFlux.service("HttpService", ["$http", Services.HttpService]);
+            ngFlux.service("MapService", ["$rootScope", Services.MapService]);
+            ngFlux.service("ThingSpeakService" ,["HttpService", "FirebaseService", Services.ThingSpeakService]);
+            ngFlux.service("FirebaseService", ["$cookies",Services.FirebaseService]);
 
             // controllers
-            ngFlowRate.controller("LoginController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.LoginController]);
-            ngFlowRate.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", Controllers.HomeController]);
-            ngFlowRate.controller("AdminController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.AdminController]);
-            ngFlowRate.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
-            ngFlowRate.controller("ProfileController", ["$scope", Controllers.ProfileController]);
+            ngFlux.controller("LoginController", ["$scope", "$location", "FirebaseService", "$mdToast", Controllers.LoginController]);
+            ngFlux.controller("HomeController", ["$scope", "$rootScope", "$timeout", "$location", "$cookies", "FirebaseService", "MapService", Controllers.HomeController]);
+            ngFlux.controller("AdminController", ["$scope", "$location", "FirebaseService", "HttpService", "$mdToast", Controllers.AdminController]);
+            ngFlux.controller("FlowRateController", ["$scope", "$rootScope", "$location", "HttpService", "ThingSpeakService", "$timeout", Controllers.FlowRateController]);
+            ngFlux.controller("ProfileController", ["$scope", Controllers.ProfileController]);
 
             // bootstrap the app when everything has been loaded
             angular.element(document).ready(() => {
-                angular.bootstrap(document, ["ngFlowRate"]);
+                angular.bootstrap(document, ["ngFlux"]);
             });
         }
     }

@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Configs {
+﻿module Flux.Configs {
     export class RouteConfig {
         constructor($routeProvider: ng.route.IRouteProvider, $locationProvider: ng.ILocationProvider) {
             $routeProvider

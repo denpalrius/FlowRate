@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Directives {
+﻿module Flux.Directives {
     "use strict";
 
     interface IScope extends ng.IScope {

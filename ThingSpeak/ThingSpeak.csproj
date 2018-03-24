@@ -48,6 +48,7 @@
     <Content Include="app\images\water-sun.jpg" />
     <Content Include="app\scripts\app.js" />
     <Content Include="app\models\sample-sensor-data.json" />
+    <Content Include="app\scripts\mild-style .json" />
     <None Include="app\scripts\cool-style.json" />
     <Content Include="app\views\home-new.html" />
     <Content Include="app\views\home-old.html" />
@@ -134,6 +135,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="app\scripts\sample-channel.json" />
     <None Include="Properties\PublishProfiles\firebase.pubxml" />
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
@@ -172,7 +174,8 @@
     <TypeScriptCompile Include="app\services\map-service.ts" />
     <TypeScriptCompile Include="app\services\thing-speak-service.ts" />
     <TypeScriptCompile Include="app\services\http-service.ts" />
-    <TypeScriptCompile Include="app\viewmodels\thingspeak-vm.ts" />
+    <TypeScriptCompile Include="app\viewmodels\3p-vm.ts" />
+    <TypeScriptCompile Include="app\viewmodels\flux-vm.ts" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Scripts\typings\angular-cookies\index.d.ts" />

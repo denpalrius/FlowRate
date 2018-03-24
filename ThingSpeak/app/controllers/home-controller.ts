@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Controllers {
+﻿module Flux.Controllers {
     "use strict";
 
     interface ICurrentScope {

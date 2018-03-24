@@ -1,5 +1,4 @@
-﻿module ThingSpeak.ViewModels {
-
+﻿module Flux.ViewModels {
     export interface iChannel {
         id?: string;
         name?: string;
@@ -8,6 +7,7 @@
         longitude?: string;
         field1?: string;
         field2?: string;
+        feeds?: iFeed[];
         created_at?: string;
         updated_at?: string;
         last_entry_id?: number;

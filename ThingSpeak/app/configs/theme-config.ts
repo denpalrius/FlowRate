@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Configs {
+﻿module Flux.Configs {
     export class ThemeConfig {
         constructor($mdThemingProvider: any, $mdIconProvider: any) {
             $mdThemingProvider.theme('default')

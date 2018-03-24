@@ -1,11 +1,15 @@
-﻿module ThingSpeak.Controllers {
+﻿module Flux.Controllers {
     "use strict";
 
+    declare const google: ViewModels.iGoogle;
+
     interface ICurrentScope {
+        selectedChannel?: ViewModels.iChannel;
         sensors?: ViewModels.iSensor[];
         newSensor?: ViewModels.iSensor;
         newUser?: ViewModels.newUser;
         selectedUser?: ViewModels.iUser;
+        loggedInUser?: ViewModels.iUser;
         allUsers?: ViewModels.iUser[];
         currentNavItem?: string;
         selectedSensor?: ViewModels.iSensor;
@@ -24,6 +28,7 @@
             private $scope: IAdminScope,
             private $location: ng.ILocationService,
             private FirebaseService: Services.FirebaseService,
+            private HttpService: Services.HttpService,
             private $mdToast: any) {
 
             var that: AdminController = this;
@@ -34,7 +39,9 @@
             var that: AdminController = this;
 
             that.$scope.adminScope = {};
+            that.$scope.adminScope.selectedChannel = {};
             that.$scope.adminScope.newUser = {};
+            that.$scope.adminScope.loggedInUser = {};
             that.$scope.adminScope.selectedUser = {};
             that.$scope.adminScope.allUsers = [];
             that.$scope.adminScope.sensors = [];
@@ -53,6 +60,8 @@
 
             that.getSensors();
             that.getUsers();
+
+            that.loadSampleChannel();
         }
 
         private goTo(route: string) {
@@ -81,9 +90,9 @@
             that.FirebaseService.checkSignedInUser()
                 .done((user: any) => {
                     if (user) {
-                        that.$scope.homeScope.loggedInUser = user;
+                        that.$scope.adminScope.loggedInUser = user;
 
-                        console.log("User", that.$scope.homeScope.loggedInUser);
+                        console.log("User", that.$scope.adminScope.loggedInUser);
                     } else {
                         that.$location.path("login");
                     }
@@ -174,6 +183,53 @@
                         Helpers.AppHelpers.showToast("There was an error adding new sensor", false, that.$mdToast);
                     });
             }
+        }
+
+        private loadSampleChannel() {
+            var that: AdminController = this;
+
+            that.HttpService.get("app/scripts/sample-channel.json")
+                .done((response: Models.IHttpResponse) => {
+                    that.$scope.adminScope.selectedChannel = response.data;
+                    var selectedChannel: ViewModels.iChannel = response.data;
+
+                    google.charts.load('current', { packages: ['corechart', 'line'] });
+
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('number', 'Timestamp');
+                    data.addColumn('number', "Cumulative flow rate");
+
+                    var rows: any[] = [];
+                    selectedChannel.feeds.forEach((feed: ViewModels.iFeed) => {
+                        rows.push([+feed.entry_id, +feed.field1]);
+                    });
+
+                    data.addRows(rows);
+
+                    var options = {
+                        chart: {
+                            //title: selectedChannel.name,
+                            //subtitle: selectedChannel.description
+                            title: "Padawan v1",
+                            subtitle: "Digitized Flow Meter"
+                        },
+                        hAxis: {
+                            title: 'Date'
+                        },
+                        vAxis: {
+                            title: "Cummulative Flow"
+                        },
+                        //backgroundColor: '#f1f8e9'
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                    //chart.draw(data, options);
+                    chart.draw(data, google.charts.Line.convertOptions(options));
+
+
+                }).fail((error: Models.IHttpResponse) => {
+                    console.error(error);
+                });
         }
     }
 }

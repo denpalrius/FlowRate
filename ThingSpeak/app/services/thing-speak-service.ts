@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Services {
+﻿module Flux.Services {
     export class ThingSpeakService {
         constructor(
             private HttpService: Services.HttpService,

@@ -1,0 +1,562 @@
+﻿{
+  "channel": {
+    "id": 284893,
+    "name": "Padawan v1",
+    "description": "Digitized Flow Meter",
+    "latitude": "0.0",
+    "longitude": "0.0",
+    "field1": "Cummulative Flow",
+    "field2": "Real Time Flow",
+    "created_at": "2017-06-08T17:46:43Z",
+    "updated_at": "2018-03-24T15:25:51Z",
+    "last_entry_id": 91
+  },
+  "feeds": [
+    {
+      "created_at": "2017-06-13T08:22:08Z",
+      "entry_id": 1,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:23:06Z",
+      "entry_id": 2,
+      "field1": "1.99",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:24:06Z",
+      "entry_id": 3,
+      "field1": "4.40",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:26:06Z",
+      "entry_id": 4,
+      "field1": "6.44",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:27:04Z",
+      "entry_id": 5,
+      "field1": "6.44",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:28:04Z",
+      "entry_id": 6,
+      "field1": "6.44",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T08:30:08Z",
+      "entry_id": 7,
+      "field1": "3.13",
+      "field2": "117.34"
+    },
+    {
+      "created_at": "2017-06-13T08:31:05Z",
+      "entry_id": 8,
+      "field1": "4.06",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:32:11Z",
+      "entry_id": 9,
+      "field1": "7.22",
+      "field2": "118.63"
+    },
+    {
+      "created_at": "2017-06-13T08:34:08Z",
+      "entry_id": 10,
+      "field1": "9.70",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:46:12Z",
+      "entry_id": 11,
+      "field1": "0.00",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:50:07Z",
+      "entry_id": 12,
+      "field1": "2.84",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:51:04Z",
+      "entry_id": 13,
+      "field1": "2.84",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:57:04Z",
+      "entry_id": 14,
+      "field1": "0.00",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T08:59:06Z",
+      "entry_id": 15,
+      "field1": "5.02",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:00:07Z",
+      "entry_id": 16,
+      "field1": "5.02",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:04:04Z",
+      "entry_id": 17,
+      "field1": "5.02",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:06:13Z",
+      "entry_id": 18,
+      "field1": "5.02",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:08:05Z",
+      "entry_id": 19,
+      "field1": "18.71",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:10:04Z",
+      "entry_id": 20,
+      "field1": "19.78",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:14:06Z",
+      "entry_id": 21,
+      "field1": "0.00",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:16:10Z",
+      "entry_id": 22,
+      "field1": "5.50",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:18:04Z",
+      "entry_id": 23,
+      "field1": "5.50",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:22:07Z",
+      "entry_id": 24,
+      "field1": "5.50",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:34:07Z",
+      "entry_id": 25,
+      "field1": "2.20",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:36:04Z",
+      "entry_id": 26,
+      "field1": "10.21",
+      "field2": "93.32"
+    },
+    {
+      "created_at": "2017-06-13T09:38:04Z",
+      "entry_id": 27,
+      "field1": "10.21",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:46:04Z",
+      "entry_id": 28,
+      "field1": "3.69",
+      "field2": "3.43"
+    },
+    {
+      "created_at": "2017-06-13T09:48:05Z",
+      "entry_id": 29,
+      "field1": "14.82",
+      "field2": "7.08"
+    },
+    {
+      "created_at": "2017-06-13T09:50:04Z",
+      "entry_id": 30,
+      "field1": "14.91",
+      "field2": "1.89"
+    },
+    {
+      "created_at": "2017-06-13T09:54:03Z",
+      "entry_id": 31,
+      "field1": "21.87",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:56:06Z",
+      "entry_id": 32,
+      "field1": "21.87",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T09:58:04Z",
+      "entry_id": 33,
+      "field1": "21.87",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-06-13T10:00:04Z",
+      "entry_id": 34,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:02:04Z",
+      "entry_id": 35,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:04:06Z",
+      "entry_id": 36,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:28:04Z",
+      "entry_id": 37,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:30:04Z",
+      "entry_id": 38,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:32:04Z",
+      "entry_id": 39,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:34:04Z",
+      "entry_id": 40,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:46:04Z",
+      "entry_id": 41,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-13T10:48:04Z",
+      "entry_id": 42,
+      "field1": "4.00",
+      "field2": "4"
+    },
+    {
+      "created_at": "2017-06-14T15:45:04Z",
+      "entry_id": 43,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T15:47:04Z",
+      "entry_id": 44,
+      "field1": "1.12",
+      "field2": "1"
+    },
+    {
+      "created_at": "2017-06-14T15:49:04Z",
+      "entry_id": 45,
+      "field1": "1.12",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T15:51:04Z",
+      "entry_id": 46,
+      "field1": "5.86",
+      "field2": "3"
+    },
+    {
+      "created_at": "2017-06-14T15:53:04Z",
+      "entry_id": 47,
+      "field1": "6.53",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T15:55:04Z",
+      "entry_id": 48,
+      "field1": "6.53",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T15:57:04Z",
+      "entry_id": 49,
+      "field1": "14.54",
+      "field2": "6"
+    },
+    {
+      "created_at": "2017-06-14T15:59:04Z",
+      "entry_id": 50,
+      "field1": "14.55",
+      "field2": "1"
+    },
+    {
+      "created_at": "2017-06-14T16:00:05Z",
+      "entry_id": 51,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:02:07Z",
+      "entry_id": 52,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:04:04Z",
+      "entry_id": 53,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:06:04Z",
+      "entry_id": 54,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:08:07Z",
+      "entry_id": 55,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:10:04Z",
+      "entry_id": 56,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:12:04Z",
+      "entry_id": 57,
+      "field1": "14.55",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:14:04Z",
+      "entry_id": 58,
+      "field1": "14.56",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:16:04Z",
+      "entry_id": 59,
+      "field1": "14.56",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-06-14T16:18:04Z",
+      "entry_id": 60,
+      "field1": "14.56",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-15T07:17:31Z",
+      "entry_id": 61,
+      "field1": "",
+      "field2": null
+    },
+    {
+      "created_at": "2017-10-15T10:48:41Z",
+      "entry_id": 62,
+      "field1": "0",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-10-15T10:56:19Z",
+      "entry_id": 63,
+      "field1": "0",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-10-15T10:58:19Z",
+      "entry_id": 64,
+      "field1": "0",
+      "field2": "0.00"
+    },
+    {
+      "created_at": "2017-10-30T13:03:53Z",
+      "entry_id": 65,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:05:53Z",
+      "entry_id": 66,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:07:52Z",
+      "entry_id": 67,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:09:53Z",
+      "entry_id": 68,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:11:53Z",
+      "entry_id": 69,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:13:53Z",
+      "entry_id": 70,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:15:52Z",
+      "entry_id": 71,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:17:54Z",
+      "entry_id": 72,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:19:53Z",
+      "entry_id": 73,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:21:52Z",
+      "entry_id": 74,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:23:57Z",
+      "entry_id": 75,
+      "field1": "6.40",
+      "field2": "1"
+    },
+    {
+      "created_at": "2017-10-30T13:25:52Z",
+      "entry_id": 76,
+      "field1": "8.85",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:27:52Z",
+      "entry_id": 77,
+      "field1": "16.09",
+      "field2": "4"
+    },
+    {
+      "created_at": "2017-10-30T13:29:52Z",
+      "entry_id": 78,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:31:52Z",
+      "entry_id": 79,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:33:55Z",
+      "entry_id": 80,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:35:54Z",
+      "entry_id": 81,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:37:55Z",
+      "entry_id": 82,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:39:52Z",
+      "entry_id": 83,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:41:52Z",
+      "entry_id": 84,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:43:52Z",
+      "entry_id": 85,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:45:55Z",
+      "entry_id": 86,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:47:52Z",
+      "entry_id": 87,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2017-10-30T13:49:52Z",
+      "entry_id": 88,
+      "field1": "16.24",
+      "field2": "0"
+    },
+    {
+      "created_at": "2018-01-31T19:23:18Z",
+      "entry_id": 89,
+      "field1": "0",
+      "field2": null
+    },
+    {
+      "created_at": "2018-03-24T15:22:48Z",
+      "entry_id": 90,
+      "field1": "0.00",
+      "field2": "0"
+    },
+    {
+      "created_at": "2018-03-24T15:25:51Z",
+      "entry_id": 91,
+      "field1": "3.69",
+      "field2": "3"
+    }
+  ]
+}

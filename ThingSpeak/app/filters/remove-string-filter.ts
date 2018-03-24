@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Filters {
+﻿module Flux.Filters {
     "use strict";
 
     export function TsRemoveStringFilter() {

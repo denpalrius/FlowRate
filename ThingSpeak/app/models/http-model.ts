@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Models {
+﻿module Flux.Models {
     "use strict";
 
     export interface IHttpResponse {

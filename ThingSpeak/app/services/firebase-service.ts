@@ -1,12 +1,6 @@
-﻿declare const firebase: IFireBase;
+﻿module Flux.Services {
+    declare const firebase: ViewModels.IFireBase;
 
-interface IFireBase {
-    database: any;
-    auth: any;
-    initializeApp: any;
-}
-
-module ThingSpeak.Services {
     export class FirebaseService {
         provider: any;
         loggedInUser: ViewModels.iUser;

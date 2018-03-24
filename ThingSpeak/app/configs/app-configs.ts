@@ -1,4 +1,4 @@
-﻿module ThingSpeak.Configs {
+﻿module Flux.Configs {
     export class AppConfig {
         public static ApiUrl: string = "https://thingspeak.com/channels/16153/feed.json";
         public static googleMapsKey: string = "AIzaSyD-GStdYSjF3KUTNa3Xqxc_2BYx4kH-WNw";
