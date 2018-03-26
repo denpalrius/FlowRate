@@ -11,49 +11,27 @@
 
     <div flex class="container">
         <br />
-
-
         <form name="loginForm" novalidate ng-submit="LoginCtrl.login(loginForm.$valid)">
             <md-input-container class="md-block" flex-gt-sm>
                 <label>Email</label>
-                <input type="text" name="email"  ng-model="loginScope.email" required ng-minlength="1" ng-required="true">
-                <input type="email" name="email" ng-model="adminScope.newUser.email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/">
-                <div ng-messages="addUserForm.email.$error" role="alert">
+                <input type="text" name="email" ng-model="loginScope.email" required ng-required="true" minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/">
+                <div ng-messages="loginForm.email.$error" role="alert">
                     <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
-                        Your email must be between 10 and 100 characters long and look like an e-mail address.
+                        <!--Enter a valid email address-->
                     </div>
                 </div>
             </md-input-container>
             <md-input-container class="md-block" flex-gt-sm>
                 <label>Password</label>
-                <input type="password" name="passoword" ng-model="loginScope.password" required ng-minlength="1" ng-required="true">
+                <input type="password" name="password" ng-model="loginScope.password" minlength="1" required>
+                <div ng-messages="loginForm.password.$error" role="alert">
+                    <div ng-message-exp="['required', 'minlength']">
+                        <!--Enter a valid password-->
+                    </div>
+                </div>
             </md-input-container>
             <br />
             <md-button type="submit" class="md-raised md-primary">Log In</md-button>
         </form>
-
-
-
-        <form>
-            <md-input-container class="md-block" flex-gt-sm>
-                <label for="email" class="">Email address</label>
-                <input ng-model="Email" type="email">
-            </md-input-container>
-
-            <md-input-container class="md-block" flex-gt-sm>
-                <label class="">Password</label>
-                <input ng-model="Password" type="password">
-            </md-input-container>
-
-
-            <br />
-
-            <md-button class="md-raised md-primary" style="width:99%"
-                       ng-click="LoginCtrl.login(Email,Password)">
-                Log in
-            </md-button>
-
-        </form>
     </div>
-
 </div>
