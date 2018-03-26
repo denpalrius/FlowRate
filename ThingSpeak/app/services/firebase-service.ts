@@ -135,7 +135,7 @@
                         photoUrl: user.photoURL,
                         emailVerified: user.emailVerified,
                         id: user.uid,
-                        token: user.getToken()
+                        token: user.getIdToken
                     }
 
                     deferred.resolve(signedInUser);

@@ -193,43 +193,52 @@
                     that.$scope.adminScope.selectedChannel = response.data;
                     var selectedChannel: ViewModels.iChannel = response.data;
 
-                    google.charts.load('current', { packages: ['corechart', 'line'] });
-
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('number', 'Timestamp');
-                    data.addColumn('number', "Cumulative flow rate");
-
-                    var rows: any[] = [];
-                    selectedChannel.feeds.forEach((feed: ViewModels.iFeed) => {
-                        rows.push([+feed.entry_id, +feed.field1]);
-                    });
-
-                    data.addRows(rows);
-
-                    var options = {
-                        chart: {
-                            //title: selectedChannel.name,
-                            //subtitle: selectedChannel.description
-                            title: "Padawan v1",
-                            subtitle: "Digitized Flow Meter"
-                        },
-                        hAxis: {
-                            title: 'Date'
-                        },
-                        vAxis: {
-                            title: "Cummulative Flow"
-                        },
-                        //backgroundColor: '#f1f8e9'
-                    };
-
-                    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                    //chart.draw(data, options);
-                    chart.draw(data, google.charts.Line.convertOptions(options));
-
+                    that.drawChart(selectedChannel.feeds);
 
                 }).fail((error: Models.IHttpResponse) => {
                     console.error(error);
                 });
+        }   
+
+        private drawChart(feeds: ViewModels.iFeed[]) {
+            var that: AdminController = this;
+
+            google.charts.load('current', { packages: ['corechart', 'line'] });
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('number', 'Timestamp');
+            data.addColumn('number', "Cummulative Flow");
+            data.addColumn('number', "Real Time Flow");
+
+            var rows: any[] = [];
+            feeds.forEach((feed: ViewModels.iFeed) => {
+                rows.push([+feed.entry_id, +feed.field1, +feed.field2]);
+            });
+
+            data.addRows(rows);
+
+            var options = {
+                chart: {
+                    //title: selectedChannel.name,
+                    //subtitle: selectedChannel.description
+                    title: "Padawan v1",
+                    subtitle: "Digitized Flow Meter"
+                },
+                width: 900,
+                height: 500
+                //hAxis: {
+                //    title: 'Date'
+                //},
+                //vAxis: {
+                //    title: "Cummulative Flow"
+                //},
+                //backgroundColor: '#f1f8e9'
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            //chart.draw(data, options);
+            chart.draw(data, google.charts.Line.convertOptions(options));
+
         }
     }
 }

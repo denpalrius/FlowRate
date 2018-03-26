@@ -241,35 +241,36 @@ var Flux;
                     .done(function (response) {
                     that.$scope.adminScope.selectedChannel = response.data;
                     var selectedChannel = response.data;
-                    google.charts.load('current', { packages: ['corechart', 'line'] });
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('number', 'Timestamp');
-                    data.addColumn('number', "Cumulative flow rate");
-                    var rows = [];
-                    selectedChannel.feeds.forEach(function (feed) {
-                        rows.push([+feed.entry_id, +feed.field1]);
-                    });
-                    data.addRows(rows);
-                    var options = {
-                        chart: {
-                            //title: selectedChannel.name,
-                            //subtitle: selectedChannel.description
-                            title: "Padawan v1",
-                            subtitle: "Digitized Flow Meter"
-                        },
-                        hAxis: {
-                            title: 'Date'
-                        },
-                        vAxis: {
-                            title: "Cummulative Flow"
-                        },
-                    };
-                    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                    //chart.draw(data, options);
-                    chart.draw(data, google.charts.Line.convertOptions(options));
+                    that.drawChart(selectedChannel.feeds);
                 }).fail(function (error) {
                     console.error(error);
                 });
+            };
+            AdminController.prototype.drawChart = function (feeds) {
+                var that = this;
+                google.charts.load('current', { packages: ['corechart', 'line'] });
+                var data = new google.visualization.DataTable();
+                data.addColumn('number', 'Timestamp');
+                data.addColumn('number', "Cummulative Flow");
+                data.addColumn('number', "Real Time Flow");
+                var rows = [];
+                feeds.forEach(function (feed) {
+                    rows.push([+feed.entry_id, +feed.field1, +feed.field2]);
+                });
+                data.addRows(rows);
+                var options = {
+                    chart: {
+                        //title: selectedChannel.name,
+                        //subtitle: selectedChannel.description
+                        title: "Padawan v1",
+                        subtitle: "Digitized Flow Meter"
+                    },
+                    width: 900,
+                    height: 500
+                };
+                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                //chart.draw(data, options);
+                chart.draw(data, google.charts.Line.convertOptions(options));
             };
             return AdminController;
         }());
@@ -405,140 +406,31 @@ var Flux;
                 that.$scope.homeScope.currentLocation = "";
                 that.$scope.homeScope.userAddress = "";
                 that.$scope.homeScope.showSensorDetails = false;
-                that.$scope.homeScope.customMapStyle = [
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text.fill",
-                        "stylers": [
-                            {
-                                "color": "#444444"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#f2f2f2"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "color": "#bab8cb"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "labels",
-                        "stylers": [
-                            {
-                                "color": "#9a3fa0"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "saturation": -100
-                            },
-                            {
-                                "lightness": 45
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.highway",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "simplified"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "road.arterial",
-                        "elementType": "labels.icon",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "visibility": "off"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            },
-                            {
-                                "color": "#8e2b2b"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "all",
-                        "stylers": [
-                            {
-                                "color": "#30a4d3"
-                            },
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            }
-                        ]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "geometry.fill",
-                        "stylers": [
-                            {
-                                "visibility": "on"
-                            },
-                            {
-                                "hue": "#00a3ff"
-                            }
-                        ]
-                    }
-                ];
-                that.checkUSer();
-                //that.intitializeGoogleMapsAutoComplete();
+                that.$scope.homeScope.isLeftPanelVisible = true;
                 that.MapService.intitializeGoogleMapsAutoComplete();
+                that.checkUSer();
+                that.monitorWidths();
+            };
+            HomeController.prototype.monitorWidths = function () {
+                var that = this;
+                that.changeWidth();
+                $(window).resize(function () {
+                    that.changeWidth();
+                });
+            };
+            HomeController.prototype.changeWidth = function () {
+                var that = this;
+                var display = $("#leftPanel").css("display");
+                if ($(window).width() >= 960) {
+                    if (display != "block") {
+                        $("#leftPanel").css("display", "block");
+                    }
+                }
+                else {
+                    if (display != "none") {
+                        $("#leftPanel").css("display", "none");
+                    }
+                }
             };
             HomeController.prototype.goTo = function (route) {
                 var that = this;
@@ -554,7 +446,7 @@ var Flux;
                     .done(function (user) {
                     if (user) {
                         that.$scope.homeScope.loggedInUser = user;
-                        console.log("User", that.$scope.homeScope.loggedInUser);
+                        //console.log("User", that.$scope.homeScope.loggedInUser );
                         that.getSensors();
                     }
                     else {
@@ -1306,7 +1198,7 @@ var Flux;
                             photoUrl: user.photoURL,
                             emailVerified: user.emailVerified,
                             id: user.uid,
-                            token: user.getToken()
+                            token: user.getIdToken
                         };
                         deferred.resolve(signedInUser);
                     }

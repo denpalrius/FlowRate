@@ -17,6 +17,7 @@
         created_at?: string;
         entry_id?: number;
         field1?: string;
+        field2?: string;
     }
 
     export interface iFlowRate {

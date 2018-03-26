@@ -7,14 +7,13 @@
         userAddress?: string;
         mapCenter?: string;
         googleMapsUrl?: string;
-        customMapStyle?: any;
         sensors?: ViewModels.iSensor[];
         selectedSensor?: ViewModels.iSensor;
         mapEnable?: boolean;
         showSensorDetails?: boolean;
         userLocation?: google.maps.LatLng;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
-
+        isLeftPanelVisible?: boolean;
     }
 
     interface IHomeScope extends ng.IScope {
@@ -45,144 +44,39 @@
             that.$scope.homeScope.currentLocation = "";
             that.$scope.homeScope.userAddress = "";
             that.$scope.homeScope.showSensorDetails = false;
-
-            that.$scope.homeScope.customMapStyle = [
-                {
-                    "featureType": "administrative",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#444444"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "color": "#f2f2f2"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#bab8cb"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "color": "#9a3fa0"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "saturation": -100
-                        },
-                        {
-                            "lightness": 45
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "simplified"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        },
-                        {
-                            "color": "#8e2b2b"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": [
-                        {
-                            "color": "#30a4d3"
-                        },
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "visibility": "on"
-                        },
-                        {
-                            "hue": "#00a3ff"
-                        }
-                    ]
-                }
-            ];
-
-            that.checkUSer();
-
-            //that.intitializeGoogleMapsAutoComplete();
+            that.$scope.homeScope.isLeftPanelVisible = true;
 
             that.MapService.intitializeGoogleMapsAutoComplete();
+            that.checkUSer();
+
+            that.monitorWidths();
+
+
+        }
+
+        private monitorWidths() {
+            var that: HomeController = this;
+            that.changeWidth();
+
+            $(window).resize(function () {
+                that.changeWidth();
+            });
+        }
+
+        private changeWidth() {
+            var that: HomeController = this;
+            var display = $("#leftPanel").css("display");
+
+            if ($(window).width() >= 960) {
+                if (display != "block") {
+                    $("#leftPanel").css("display", "block");
+                }
+            }
+            else {
+                if (display != "none") {
+                    $("#leftPanel").css("display", "none");
+                }
+            }
         }
 
         private goTo(route: string) {
@@ -190,6 +84,7 @@
 
             that.$location.path(route);
         }
+
         private setCurrentLocation() {
             var that: HomeController = this;
             that.$rootScope.$emit('set-current-location');
@@ -202,7 +97,7 @@
                     if (user) {
                         that.$scope.homeScope.loggedInUser = user;
 
-                        console.log("User", that.$scope.homeScope.loggedInUser );
+                        //console.log("User", that.$scope.homeScope.loggedInUser );
 
                         that.getSensors();
                     } else {
