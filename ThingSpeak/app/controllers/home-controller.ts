@@ -46,7 +46,6 @@
             that.$scope.homeScope.showSensorDetails = false;
             that.$scope.homeScope.isLeftPanelVisible = true;
 
-            that.MapService.intitializeGoogleMapsAutoComplete();
             that.checkUSer();
 
             that.monitorWidths();

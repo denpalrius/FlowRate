@@ -50,8 +50,6 @@
     <Content Include="app\models\sample-sensor-data.json" />
     <Content Include="app\scripts\mild-style .json" />
     <None Include="app\scripts\cool-style.json" />
-    <Content Include="app\views\home-new.html" />
-    <Content Include="app\views\home-old.html" />
     <Content Include="app\views\templates\dashboard-template.html" />
     <Content Include="app\views\admin.html" />
     <Content Include="app\views\profile.html" />
