@@ -3,7 +3,7 @@
         constructor(private $rootScope: ng.IRootScopeService) {
             var that: MapService = this;
 
-            that.intitializeGoogleMapsAutoComplete();
+            //that.intitializeGoogleMapsAutoComplete("googleMapAutocompleteBoxMobile");
         }
 
         public getUserLocation(): JQueryDeferred<google.maps.LatLng> {
@@ -20,23 +20,24 @@
             } else {
                 deferred.reject("Geolocation not supported");
             }
-
             return deferred;
         }
 
-        public intitializeGoogleMapsAutoComplete() {
+        public intitializeGoogleMapsAutoComplete(elm: string) {
             var that: MapService = this;
 
-            let searchInput = $("#googleMapAutocompleteBox")[0] as HTMLInputElement;
+            let searchInput = $(elm)[0] as HTMLInputElement;
 
-            console.log("googleMapAutocompleteBox", searchInput);
+            console.log(elm, searchInput);
 
-            var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+            if (searchInput) {
+                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
 
-            googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
-                var place = googleMapAutoComplete.getPlace();
-                that.$rootScope.$emit('auto-complete-location-changed', place);
-            });
+                googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
+                    var place = googleMapAutoComplete.getPlace();
+                    that.$rootScope.$emit('auto-complete-location-changed', place);
+                });
+            }
         }
     }
 }

@@ -415,28 +415,8 @@ var Flux;
                 that.$scope.homeScope.showSensorDetails = false;
                 that.$scope.homeScope.isLeftPanelVisible = true;
                 that.checkUSer();
-                that.monitorWidths();
-            };
-            HomeController.prototype.monitorWidths = function () {
-                var that = this;
-                that.changeWidth();
-                $(window).resize(function () {
-                    that.changeWidth();
-                });
-            };
-            HomeController.prototype.changeWidth = function () {
-                var that = this;
-                var display = $("#leftPanel").css("display");
-                if ($(window).width() >= 960) {
-                    if (display != "block") {
-                        $("#leftPanel").css("display", "block");
-                    }
-                }
-                else {
-                    if (display != "none") {
-                        $("#leftPanel").css("display", "none");
-                    }
-                }
+                //that.MapService.intitializeGoogleMapsAutoComplete("#googleMapAutocompleteBoxPc");
+                that.intitializeGoogleMapsAutoComplete();
             };
             HomeController.prototype.goTo = function (route) {
                 var that = this;
@@ -445,6 +425,18 @@ var Flux;
             HomeController.prototype.setCurrentLocation = function () {
                 var that = this;
                 that.$rootScope.$emit('set-current-location');
+            };
+            HomeController.prototype.intitializeGoogleMapsAutoComplete = function () {
+                var that = this;
+                var searchInput = document.getElementById('googleMapAutocomplete');
+                console.log('#googleMapAutocomplete controller', searchInput);
+                if (searchInput) {
+                    var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+                    googleMapAutoComplete.addListener('place_changed', function (e) {
+                        var place = googleMapAutoComplete.getPlace();
+                        that.$rootScope.$emit('auto-complete-location-changed', place);
+                    });
+                }
             };
             HomeController.prototype.checkUSer = function () {
                 var that = this;
@@ -702,7 +694,7 @@ var Flux;
                     .done(function (geoCodeResult) {
                     $timeout(0).then(function () {
                         scope.currentLocation = geoCodeResult.formatted_address;
-                        //console.log("Reverse output: ", scope.currentLocation);
+                        console.log("Reverse output: ", scope.currentLocation);
                     });
                 })
                     .fail(function (error) {
@@ -952,6 +944,18 @@ var Flux;
                 }
             ];
         }
+        function intitializeGoogleMapsAutoComplete($rootScope) {
+            // let searchInput = $('#googleMapAutocomplete')[0] as HTMLInputElement;
+            var searchInput = document.getElementById('googleMapAutocomplete');
+            console.log('#googleMapAutocomplete directive', searchInput);
+            if (searchInput) {
+                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+                googleMapAutoComplete.addListener('place_changed', function (e) {
+                    var place = googleMapAutoComplete.getPlace();
+                    $rootScope.$emit('auto-complete-location-changed', place);
+                });
+            }
+        }
         function init(scope, $timeout, HttpService) {
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
@@ -991,6 +995,7 @@ var Flux;
                     init(scope, $timeout, HttpService);
                     loadCurrentLocation(scope, $timeout);
                     loadListeners(scope, $timeout);
+                    intitializeGoogleMapsAutoComplete($rootScope);
                     $rootScope.$on('auto-complete-location-changed', function (event, place) {
                         changeMarkerLocation(place.geometry.location, scope, $timeout);
                         //TODO: Load nearby sensors 
@@ -1367,7 +1372,7 @@ var Flux;
             function MapService($rootScope) {
                 this.$rootScope = $rootScope;
                 var that = this;
-                that.intitializeGoogleMapsAutoComplete();
+                //that.intitializeGoogleMapsAutoComplete("googleMapAutocompleteBoxMobile");
             }
             MapService.prototype.getUserLocation = function () {
                 if (navigator.geolocation) {
@@ -1383,15 +1388,17 @@ var Flux;
                 }
                 return deferred;
             };
-            MapService.prototype.intitializeGoogleMapsAutoComplete = function () {
+            MapService.prototype.intitializeGoogleMapsAutoComplete = function (elm) {
                 var that = this;
-                var searchInput = $("#googleMapAutocompleteBox")[0];
-                console.log("googleMapAutocompleteBox", searchInput);
-                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
-                googleMapAutoComplete.addListener('place_changed', function (e) {
-                    var place = googleMapAutoComplete.getPlace();
-                    that.$rootScope.$emit('auto-complete-location-changed', place);
-                });
+                var searchInput = $(elm)[0];
+                console.log(elm, searchInput);
+                if (searchInput) {
+                    var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+                    googleMapAutoComplete.addListener('place_changed', function (e) {
+                        var place = googleMapAutoComplete.getPlace();
+                        that.$rootScope.$emit('auto-complete-location-changed', place);
+                    });
+                }
             };
             return MapService;
         }());

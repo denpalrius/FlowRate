@@ -29,6 +29,7 @@
             private $cookies: ng.cookies.ICookiesService,
             private FirebaseService: Services.FirebaseService,
             private MapService: Services.MapService) {
+
             var that: HomeController = this;
             that.init();
         }
@@ -48,34 +49,8 @@
 
             that.checkUSer();
 
-            that.monitorWidths();
-
-
-        }
-
-        private monitorWidths() {
-            var that: HomeController = this;
-            that.changeWidth();
-
-            $(window).resize(function () {
-                that.changeWidth();
-            });
-        }
-
-        private changeWidth() {
-            var that: HomeController = this;
-            var display = $("#leftPanel").css("display");
-
-            if ($(window).width() >= 960) {
-                if (display != "block") {
-                    $("#leftPanel").css("display", "block");
-                }
-            }
-            else {
-                if (display != "none") {
-                    $("#leftPanel").css("display", "none");
-                }
-            }
+            //that.MapService.intitializeGoogleMapsAutoComplete("#googleMapAutocompleteBoxPc");
+            that.intitializeGoogleMapsAutoComplete();
         }
 
         private goTo(route: string) {
@@ -87,6 +62,24 @@
         private setCurrentLocation() {
             var that: HomeController = this;
             that.$rootScope.$emit('set-current-location');
+        }
+
+
+        private intitializeGoogleMapsAutoComplete() {
+            var that: HomeController = this;
+
+            var searchInput:any = document.getElementById('googleMapAutocomplete');
+
+            console.log('#googleMapAutocomplete controller', searchInput);
+
+            if (searchInput) {
+                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
+
+                googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
+                    var place = googleMapAutoComplete.getPlace();
+                    that.$rootScope.$emit('auto-complete-location-changed', place);
+                });
+            }
         }
 
         private checkUSer() {

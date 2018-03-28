@@ -48,10 +48,10 @@
     </div>
 </md-toolbar>
 
-<ng-include id="leftPanel" class="left-pane" style="display:none" src="'/app/views/templates/home-panel-pc-template.html'" />
+<ng-include hide-xs  hide-sm class="left-pane" src="'/app/views/templates/home-panel-pc-template.html'" />
 
 <div id="home-panel" layout-xs="column" layout-sm="column" layout-align-xs="start stretch" layout-align-sm="start stretch" class="admin-panel">
-    <ts-google-map flex-xs="33" flex-sm="33" class="mobile-map-holder" sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()" />
+    <ts-google-map flex-xs="33" flex-sm="33" class="mobile-map-holder" currentLocation="scope.currentLocation" sensors="homeScope.sensors" set-location-click="HomeCtrl.setLocation()" />
     <ng-include flex-xs="66" flex-sm="66" hide show-xs show-sm class="sensors-wrapper" src="'/app/views/templates/home-panel-mobile-template.html'" />
 </div>
 
