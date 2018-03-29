@@ -2,8 +2,6 @@
     export class MapService {
         constructor(private $rootScope: ng.IRootScopeService) {
             var that: MapService = this;
-
-            //that.intitializeGoogleMapsAutoComplete("googleMapAutocompleteBoxMobile");
         }
 
         public getUserLocation(): JQueryDeferred<google.maps.LatLng> {
@@ -26,9 +24,8 @@
         public intitializeGoogleMapsAutoComplete(elm: string) {
             var that: MapService = this;
 
-            let searchInput = $(elm)[0] as HTMLInputElement;
-
-            console.log(elm, searchInput);
+            let searchInput: any = document.getElementById(elm);
+            //console.log(elm, searchInput);
 
             if (searchInput) {
                 var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);

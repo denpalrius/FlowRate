@@ -64,7 +64,7 @@
 
 .admin-panel {
     overflow: hidden;
-    height: calc(100% - 64px);
+    height: calc(100% - 48px);
     background-color: rgba(171, 179, 176, 0.24);
 }
 

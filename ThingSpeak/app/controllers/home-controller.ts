@@ -3,7 +3,6 @@
 
     interface ICurrentScope {
         loggedInUser?: ViewModels.iUser;
-        currentLocation?: string;
         userAddress?: string;
         mapCenter?: string;
         googleMapsUrl?: string;
@@ -14,6 +13,7 @@
         userLocation?: google.maps.LatLng;
         googleMapAutoComplete?: google.maps.places.Autocomplete;
         isLeftPanelVisible?: boolean;
+        areSensorsLoading?: boolean
     }
 
     interface IHomeScope extends ng.IScope {
@@ -42,15 +42,12 @@
             that.$scope.homeScope.googleMapsUrl = "";
             that.$scope.homeScope.sensors = [];
             that.$scope.homeScope.selectedSensor = {};
-            that.$scope.homeScope.currentLocation = "";
             that.$scope.homeScope.userAddress = "";
             that.$scope.homeScope.showSensorDetails = false;
             that.$scope.homeScope.isLeftPanelVisible = true;
+            that.$scope.homeScope.areSensorsLoading = true;
 
             that.checkUSer();
-
-            //that.MapService.intitializeGoogleMapsAutoComplete("#googleMapAutocompleteBoxPc");
-            that.intitializeGoogleMapsAutoComplete();
         }
 
         private goTo(route: string) {
@@ -64,33 +61,12 @@
             that.$rootScope.$emit('set-current-location');
         }
 
-
-        private intitializeGoogleMapsAutoComplete() {
-            var that: HomeController = this;
-
-            var searchInput:any = document.getElementById('googleMapAutocomplete');
-
-            console.log('#googleMapAutocomplete controller', searchInput);
-
-            if (searchInput) {
-                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
-
-                googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
-                    var place = googleMapAutoComplete.getPlace();
-                    that.$rootScope.$emit('auto-complete-location-changed', place);
-                });
-            }
-        }
-
         private checkUSer() {
             var that: HomeController = this;
             that.FirebaseService.checkSignedInUser()
                 .done((user: any) => {
                     if (user) {
                         that.$scope.homeScope.loggedInUser = user;
-
-                        //console.log("User", that.$scope.homeScope.loggedInUser );
-
                         that.getSensors();
                     } else {
                         that.$location.path("login");
@@ -119,12 +95,18 @@
 
             that.FirebaseService.readList("sensors")
                 .done((sensors: ViewModels.iSensor[]) => {
-                    that.$scope.$apply(function () {
-                        that.$scope.homeScope.sensors = sensors;
-                    });
+                    that.$scope.homeScope.sensors = sensors;
+                })
+                .fail((error: any) => {
+                    console.log("Error: ", error);
+                })
+                .always(() => {
+                    that.MapService.intitializeGoogleMapsAutoComplete('googleMapAutoComplete-mobile');
+                    that.MapService.intitializeGoogleMapsAutoComplete('googleMapAutoComplete-pc');
 
-                }).fail((error: any) => {
-                    console.log("Error:", error);
+                    that.$scope.homeScope.areSensorsLoading = false;
+
+                    that.$scope.$apply();
                 });
         }
 

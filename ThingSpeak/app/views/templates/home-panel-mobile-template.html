@@ -1,13 +1,17 @@
-﻿<md-subheader class="">Sensors at this location ({{homeScope.sensors.length}})</md-subheader>
+﻿<div ng-if="homeScope.areSensorsLoading">
+    <md-progress-linear md-mode="query" ng-disabled="!homeScope.areSensorsLoading"></md-progress-linear>
+    <span style="margin-left: 30%;">fetching sensors...</span>
+</div>
 
-<div ng-show="!homeScope.showSensorDetails" class="sensors-holder">
+<md-subheader ng-show="!homeScope.showSensorDetails && !homeScope.areSensorsLoading" class="">Sensors at this location ({{homeScope.sensors.length}})</md-subheader>
+
+<div ng-show="!homeScope.showSensorDetails && !homeScope.areSensorsLoading" class="sensors-holder">
     <div class="sensor-panel-top">
         <div class="address-box">
             <label style="padding-top: 5px;color:#e64a19;">Search by location</label>
-
-            <!--<md-input-container class="md-icon-float md-block" style="margin:0px">
-                <input ng-model="currentLocation" type="text" id="googleMapAutocompleteBoxMobile" aria-label="Search Sensors">
-            </md-input-container>-->
+            <md-input-container class="md-icon-float md-block" style="margin:0px">
+                <input id="googleMapAutoComplete-mobile" type="text" aria-label="Search Sensors">
+            </md-input-container>
         </div>
 
         <md-button ng-click="HomeCtrl.setCurrentLocation()" class="md-icon-button md-accent current-location-button" aria-label="My Location">
@@ -16,7 +20,12 @@
         </md-button>
     </div>
 
-    <md-list flex class="sensors-list">
+    <div ng-if="homeScope.areSensorsLoading">
+        <md-progress-linear md-mode="query" ng-disabled="!homeScope.areSensorsLoading"></md-progress-linear>
+        <span style="margin-left: 30%;">fetching sensors...</span>
+    </div>
+
+    <md-list flex class="sensors-list"  style="height: calc(100% - 102px);">
         <md-list-item ng-init="sensor.status=true" ng-repeat="sensor in homeScope.sensors" class="md-3-line" ng-click="HomeCtrl.displaySensorDetails(sensor);">
             <img ng-if="sensor.status" src="/app/images/sensor-on.png" class="md-avatar" alt="item.who" />
             <img ng-if="!sensor.status" src="/app/images/sensor-off.png" class="md-avatar" alt="item.who" />
@@ -30,7 +39,7 @@
     </md-list>
 </div>
 
-<div ng-show="homeScope.showSensorDetails" class="sensors-holder animated fadeInRight">
+<div ng-show="homeScope.showSensorDetails && !homeScope.areSensorsLoading" class="sensors-holder animated fadeInRight">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <md-button ng-click="HomeCtrl.displaySensorDetails(false)" class="md-mini md-icon-button" style="display:inline-block; color:white">

@@ -132,7 +132,3 @@ label {
     display: inline-block;
     vertical-align: middle;
 }
-
-md-input-container .md-input {
-    color: hsla(0, 0%, 0%, 0.20);
-}

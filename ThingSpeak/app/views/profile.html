@@ -1,4 +1,47 @@
-﻿
-<div style="height:auto; width:auto; margin:auto">
-    This is your profile
+﻿<md-toolbar style="min-height: 48px; height: 48px;">
+    <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
+        <a ng-href="/home" style="text-decoration:none">
+            <span class="md-headline" style="color:white">Flux</span>
+        </a><div layout="row">
+
+            <md-button ng-click="AdminCtrl.goTo('profile')" class="md-mini md-icon-button" style="display:inline-block; color:white">
+                <i class="material-icons">person</i>
+            </md-button>
+        </div>
+    </div>
+</md-toolbar>
+
+<div ng-show="homeScope.loggedInUser.name" uib-dropdown dropdown-append-to-body class="md-avatar" style="display:inline-block">
+    <img uib-dropdown-toggle ui-sref="/admin" src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" alt="" aria-label="Profile Picture" />
+    <div class="dropdown-menu" style="background-color:transparent; border:0px solid transparent; margin:0px; padding:0px" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-body">
+        <md-card>
+            <md-card-title>
+                <md-card-title-media>
+                    <div class="md-media-md card-media">
+                        <img src="{{homeScope.loggedInUser.photoURL}}" class="md-avatar profile-picture" style="height:90px; width:90px; cursor:auto;" alt="" />
+                    </div>
+                </md-card-title-media>
+                <md-card-title-text>
+                    <span class="md-headline">{{homeScope.loggedInUser.name}}</span>
+                    <span class="md-subhead">{{homeScope.loggedInUser.email}}</span>
+                    <md-button class="md-button-signout" ng-click="HomeCtrl.Signout()">
+                        <i class="material-icons pop-button-content">eject</i>
+                        <span class="pop-button-content">Sign out</span>
+                    </md-button>
+
+                </md-card-title-text>
+
+            </md-card-title>
+
+            <!--<md-divider></md-divider>
+
+            <md-card-actions layout="row" layout-align="center">
+                <a class="md-button md-button-pop" onclick="openNav()">
+                    <i class="material-icons pop-buttons">insert_chart</i>
+                    <br />
+                    <p>Dashboard</p>
+                </a>
+            </md-card-actions>-->
+        </md-card>
+    </div>
 </div>

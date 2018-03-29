@@ -74,7 +74,7 @@ var Flux;
             function ThemeConfig($mdThemingProvider, $mdIconProvider) {
                 $mdThemingProvider.theme('default')
                     .primaryPalette('blue', {
-                    'default': '600',
+                    'default': '400',
                     'hue-1': '500',
                     'hue-2': '800',
                     'hue-3': 'A100' // use shade A100 for the <code>md-hue-3</code> class
@@ -410,13 +410,11 @@ var Flux;
                 that.$scope.homeScope.googleMapsUrl = "";
                 that.$scope.homeScope.sensors = [];
                 that.$scope.homeScope.selectedSensor = {};
-                that.$scope.homeScope.currentLocation = "";
                 that.$scope.homeScope.userAddress = "";
                 that.$scope.homeScope.showSensorDetails = false;
                 that.$scope.homeScope.isLeftPanelVisible = true;
+                that.$scope.homeScope.areSensorsLoading = true;
                 that.checkUSer();
-                //that.MapService.intitializeGoogleMapsAutoComplete("#googleMapAutocompleteBoxPc");
-                that.intitializeGoogleMapsAutoComplete();
             };
             HomeController.prototype.goTo = function (route) {
                 var that = this;
@@ -426,25 +424,12 @@ var Flux;
                 var that = this;
                 that.$rootScope.$emit('set-current-location');
             };
-            HomeController.prototype.intitializeGoogleMapsAutoComplete = function () {
-                var that = this;
-                var searchInput = document.getElementById('googleMapAutocomplete');
-                console.log('#googleMapAutocomplete controller', searchInput);
-                if (searchInput) {
-                    var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
-                    googleMapAutoComplete.addListener('place_changed', function (e) {
-                        var place = googleMapAutoComplete.getPlace();
-                        that.$rootScope.$emit('auto-complete-location-changed', place);
-                    });
-                }
-            };
             HomeController.prototype.checkUSer = function () {
                 var that = this;
                 that.FirebaseService.checkSignedInUser()
                     .done(function (user) {
                     if (user) {
                         that.$scope.homeScope.loggedInUser = user;
-                        //console.log("User", that.$scope.homeScope.loggedInUser );
                         that.getSensors();
                     }
                     else {
@@ -470,11 +455,16 @@ var Flux;
                 var that = this;
                 that.FirebaseService.readList("sensors")
                     .done(function (sensors) {
-                    that.$scope.$apply(function () {
-                        that.$scope.homeScope.sensors = sensors;
-                    });
-                }).fail(function (error) {
-                    console.log("Error:", error);
+                    that.$scope.homeScope.sensors = sensors;
+                })
+                    .fail(function (error) {
+                    console.log("Error: ", error);
+                })
+                    .always(function () {
+                    that.MapService.intitializeGoogleMapsAutoComplete('googleMapAutoComplete-mobile');
+                    that.MapService.intitializeGoogleMapsAutoComplete('googleMapAutoComplete-pc');
+                    that.$scope.homeScope.areSensorsLoading = false;
+                    that.$scope.$apply();
                 });
             };
             HomeController.prototype.getSensorDetails = function (sensorId) {
@@ -944,18 +934,6 @@ var Flux;
                 }
             ];
         }
-        function intitializeGoogleMapsAutoComplete($rootScope) {
-            // let searchInput = $('#googleMapAutocomplete')[0] as HTMLInputElement;
-            var searchInput = document.getElementById('googleMapAutocomplete');
-            console.log('#googleMapAutocomplete directive', searchInput);
-            if (searchInput) {
-                var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
-                googleMapAutoComplete.addListener('place_changed', function (e) {
-                    var place = googleMapAutoComplete.getPlace();
-                    $rootScope.$emit('auto-complete-location-changed', place);
-                });
-            }
-        }
         function init(scope, $timeout, HttpService) {
             scope.types = "['establishment']";
             scope.infoWindow = new google.maps.InfoWindow;
@@ -995,7 +973,6 @@ var Flux;
                     init(scope, $timeout, HttpService);
                     loadCurrentLocation(scope, $timeout);
                     loadListeners(scope, $timeout);
-                    intitializeGoogleMapsAutoComplete($rootScope);
                     $rootScope.$on('auto-complete-location-changed', function (event, place) {
                         changeMarkerLocation(place.geometry.location, scope, $timeout);
                         //TODO: Load nearby sensors 
@@ -1372,7 +1349,6 @@ var Flux;
             function MapService($rootScope) {
                 this.$rootScope = $rootScope;
                 var that = this;
-                //that.intitializeGoogleMapsAutoComplete("googleMapAutocompleteBoxMobile");
             }
             MapService.prototype.getUserLocation = function () {
                 if (navigator.geolocation) {
@@ -1390,8 +1366,8 @@ var Flux;
             };
             MapService.prototype.intitializeGoogleMapsAutoComplete = function (elm) {
                 var that = this;
-                var searchInput = $(elm)[0];
-                console.log(elm, searchInput);
+                var searchInput = document.getElementById(elm);
+                //console.log(elm, searchInput);
                 if (searchInput) {
                     var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
                     googleMapAutoComplete.addListener('place_changed', function (e) {

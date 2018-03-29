@@ -388,23 +388,7 @@
             }
         ];
     }
-
-    function intitializeGoogleMapsAutoComplete($rootScope: any) {
-       // let searchInput = $('#googleMapAutocomplete')[0] as HTMLInputElement;
-        var searchInput: any = document.getElementById('googleMapAutocomplete');
-
-        console.log('#googleMapAutocomplete directive', searchInput);
-
-        if (searchInput) {
-            var googleMapAutoComplete = new google.maps.places.Autocomplete(searchInput);
-
-            googleMapAutoComplete.addListener('place_changed', (e: google.maps.MouseEvent) => {
-                var place = googleMapAutoComplete.getPlace();
-                $rootScope.$emit('auto-complete-location-changed', place);
-            });
-        }
-    }
-
+    
     function init(scope: IScope, $timeout: ng.ITimeoutService, HttpService: Services.HttpService) {
         scope.types = "['establishment']";
         scope.infoWindow = new google.maps.InfoWindow;
@@ -452,7 +436,6 @@
 
                 loadCurrentLocation(scope, $timeout);
                 loadListeners(scope, $timeout);
-                intitializeGoogleMapsAutoComplete($rootScope);
 
                 $rootScope.$on('auto-complete-location-changed', (event: any, place: google.maps.places.PlaceResult) => {
                     changeMarkerLocation(place.geometry.location, scope, $timeout);
