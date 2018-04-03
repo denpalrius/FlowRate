@@ -1,11 +1,8 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Directives;
     (function (Directives) {
         "use strict";
-        function signOut() {
-            console.log("Signing out");
-        }
         function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(browserHasGeolocation ?
@@ -13,10 +10,10 @@ var ThingSpeak;
                 'Error: Your browser doesn\'t support geolocation.');
             infoWindow.open(map);
         }
-        function getUserLocationFn(_navigator) {
-            if (_navigator.geolocation) {
+        function getUserLocationFn() {
+            if (navigator.geolocation) {
                 var deferred = $.Deferred();
-                _navigator.geolocation.getCurrentPosition(function (position) {
+                navigator.geolocation.getCurrentPosition(function (position) {
                     deferred.resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
                 }, function (error) {
                     deferred.reject("User did not accept location permission");
@@ -78,29 +75,11 @@ var ThingSpeak;
                     .done(function (geoCodeResult) {
                     $timeout(0).then(function () {
                         scope.currentLocation = geoCodeResult.formatted_address;
+                        console.log("Reverse output: ", scope.currentLocation);
                     });
                 })
                     .fail(function (error) {
                     console.log("Failed to load user");
-                });
-            });
-            scope.googleMapAutoComplete.addListener('place_changed', function (e) {
-                var place = scope.googleMapAutoComplete.getPlace();
-                $timeout(0).then(function () {
-                    scope.marker.setPosition(place.geometry.location);
-                    scope.currentLocation = place.formatted_address;
-                    scope.map.setCenter(place.geometry.location);
-                    if (scope.marker) {
-                        scope.showSensorDetails = false;
-                        if (scope.sensors && scope.sensors.length) {
-                            scope.sensors.forEach(function (sensor) {
-                                var sensorID = scope.marker.getLabel();
-                                if (sensorID && sensor.id == sensorID) {
-                                    displaySensor(sensor, scope, $timeout);
-                                }
-                            });
-                        }
-                    }
                 });
             });
         }
@@ -126,18 +105,27 @@ var ThingSpeak;
                     (1 - c((lon2 - lon1) * p)) / 2;
             return 12742 * Math.asin(Math.sqrt(a));
         }
-        function attachSearchBar() {
-            var searchInput = $("#googleMapSearchBox")[0];
-            return new google.maps.places.Autocomplete(searchInput);
-        }
-        function loadCurrentLocation(navigator, scope, $timeout) {
-            getUserLocationFn(navigator)
+        function loadCurrentLocation(scope, $timeout) {
+            getUserLocationFn()
                 .done(function (pos) {
                 scope.userLocation = pos;
                 setDataOnMap(pos, scope, $timeout);
             })
                 .fail(function (error) {
                 scope.userLocation = null;
+            });
+        }
+        function changeMarkerLocation(coords, scope, $timeout) {
+            getUserAddress(coords, null)
+                .done(function (geoCodeResult) {
+                $timeout(0).then(function () {
+                    scope.currentLocation = geoCodeResult.formatted_address;
+                    scope.marker.setPosition(coords);
+                    scope.map.setCenter(coords);
+                });
+            })
+                .fail(function (error) {
+                console.log("Failed to get address details, ", error);
             });
         }
         function setDataOnMap(coords, scope, $timeout) {
@@ -153,18 +141,6 @@ var ThingSpeak;
                 .fail(function (error) {
                 console.log("Failed to get address details, ", error);
             });
-        }
-        function displaySensor(sensor, scope, $timeout) {
-            if (sensor) {
-                scope.showSensorDetails = true;
-                scope.selectedSensor = sensor;
-                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
-                setDataOnMap(sensorCoordinates, scope, $timeout);
-            }
-            else {
-                scope.showSensorDetails = false;
-                scope.selectedSensor = {};
-            }
         }
         function setMapOnAll(scope, map) {
             for (var i = 0; i < scope.markers.length; i++) {
@@ -200,7 +176,10 @@ var ThingSpeak;
                             content: str
                         });
                         marker.addListener('click', function () {
-                            displaySensor(sensor, scope, $timeout);
+                            if (sensor) {
+                                var sensorCoordinates = new google.maps.LatLng(sensor.lat, sensor.lon);
+                                setDataOnMap(sensorCoordinates, scope, $timeout);
+                            }
                         });
                         addMarkerWithTimeout(scope, marker, i * 20, $timeout);
                     }
@@ -213,7 +192,6 @@ var ThingSpeak;
         }
         function addMarkerWithTimeout(scope, marker, timeout, $timeout) {
             window.setTimeout(function () {
-                marker.setAnimation(google.maps.Animation.DROP);
                 scope.markers.push(marker);
             }, timeout);
         }
@@ -227,22 +205,15 @@ var ThingSpeak;
             var deferred = $.Deferred();
             http.get("app/scripts/map-style.json")
                 .done(function (response) {
-                console.log("Loaded style: ", response.data);
                 deferred.resolve(response.data);
             })
                 .fail(function (error) {
-                console.log("Failed to load custom map style");
                 deferred.reject(error);
             });
             return deferred;
         }
-        function init(scope, $timeout) {
-            scope.types = "['establishment']";
-            scope.infoWindow = new google.maps.InfoWindow;
-            scope.markers = [];
-            scope.geocoder = new google.maps.Geocoder;
-            scope.showSensorsDetails = false;
-            var mapStyles = [
+        function setMapStyles() {
+            return [
                 {
                     "featureType": "administrative",
                     "elementType": "labels.text.fill",
@@ -322,20 +293,27 @@ var ThingSpeak;
                     ]
                 }
             ];
+        }
+        function init(scope, $timeout, HttpService) {
+            scope.types = "['establishment']";
+            scope.infoWindow = new google.maps.InfoWindow;
+            scope.markers = [];
+            scope.geocoder = new google.maps.Geocoder;
             var mapOptions = {
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
                 zoomControl: true,
-                panControl: false,
+                panControl: true,
                 draggable: true,
+                streetViewControl: false,
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_TOP,
                     style: google.maps.ZoomControlStyle.DEFAULT
                 },
-                scaleControl: true,
-                rotateControl: true,
                 center: scope.userLocation,
-                zoom: 17,
-                styles: mapStyles
+                zoom: 17
             };
+            mapOptions.styles = setMapStyles();
             scope.map = new google.maps.Map($("#locationMap")[0], mapOptions);
             scope.marker = new google.maps.Marker({
                 position: scope.userLocation,
@@ -343,34 +321,31 @@ var ThingSpeak;
                 title: 'User Location'
             });
         }
-        function TsGoogleMap($timeout, $log) {
-            var ddo = {
+        function TsGoogleMap($timeout, $log, $rootScope, HttpService) {
+            var mapDirective = {
                 restrict: 'AE',
                 scope: {
-                    currentLocation: '=currentLocation',
-                    sensors: '=sensors',
-                    getUserLocationClick: '&getUserLocationClick',
-                    displaySensorClick: '&displaySensorClick',
-                    displaySensorListClick: '&displaySensorListClick',
-                    showSensorDetails: '=?showSensorDetails',
-                    selectedSensor: '=?selectedSensor',
-                    loggedInUser: '=?loggedInUser',
-                    signOutClick: '&signOutClick'
+                    currentLocation: '=?currentLocation',
+                    sensors: '=?sensors',
                 },
-                templateUrl: '/app/views/templates/ts-google-map-template.html',
+                template: '<div class="mapcanvas" id="locationMap"></div>',
                 link: function (scope, $elm, attr) {
-                    init(scope, $timeout);
-                    $timeout(5).then(function () {
-                        scope.googleMapAutoComplete = attachSearchBar();
-                        scope.getUserLocationClick = function () { return loadCurrentLocation(navigator, scope, $timeout); };
-                        loadCurrentLocation(navigator, scope, $timeout);
-                        scope.displaySensorClick = function (sensor) { return displaySensor(sensor, scope, $timeout); };
-                        loadListeners(scope, $timeout);
+                    init(scope, $timeout, HttpService);
+                    loadCurrentLocation(scope, $timeout);
+                    loadListeners(scope, $timeout);
+                    $rootScope.$on('auto-complete-location-changed', function (event, place) {
+                        changeMarkerLocation(place.geometry.location, scope, $timeout);
+                    });
+                    $rootScope.$on('set-current-location', function (event) {
+                        loadCurrentLocation(scope, $timeout);
+                    });
+                    $rootScope.$on('display-sensor-details', function (event, sensor) {
+                        changeMarkerLocation(new google.maps.LatLng(sensor.lat, sensor.lon), scope, $timeout);
                     });
                 }
             };
-            return ddo;
+            return mapDirective;
         }
         Directives.TsGoogleMap = TsGoogleMap;
-    })(Directives = ThingSpeak.Directives || (ThingSpeak.Directives = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Directives = Flux.Directives || (Flux.Directives = {}));
+})(Flux || (Flux = {}));

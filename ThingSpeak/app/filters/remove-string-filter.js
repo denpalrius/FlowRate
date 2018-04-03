@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Filters;
     (function (Filters) {
         "use strict";
@@ -16,5 +16,5 @@ var ThingSpeak;
             };
         }
         Filters.TsRemoveStringFilter = TsRemoveStringFilter;
-    })(Filters = ThingSpeak.Filters || (ThingSpeak.Filters = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Filters = Flux.Filters || (Flux.Filters = {}));
+})(Flux || (Flux = {}));

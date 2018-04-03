@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Controllers;
     (function (Controllers) {
         "use strict";
@@ -55,7 +55,7 @@ var ThingSpeak;
                 that.$scope.flowRateScope.pageLoadingFinished = false;
                 console.log("Loading started...", that.$scope.flowRateScope.pageLoadingFinished);
                 var deferred = $.Deferred();
-                that.HttpService.get(ThingSpeak.Configs.AppConfig.ApiUrl)
+                that.HttpService.get(Flux.Configs.AppConfig.ApiUrl)
                     .done(function (response) {
                     console.log("response.data", response.data);
                     that.$scope.flowRateScope.maraRiverFlowRate = response.data;
@@ -90,5 +90,5 @@ var ThingSpeak;
             return FlowRateController;
         }());
         Controllers.FlowRateController = FlowRateController;
-    })(Controllers = ThingSpeak.Controllers || (ThingSpeak.Controllers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Controllers = Flux.Controllers || (Flux.Controllers = {}));
+})(Flux || (Flux = {}));

@@ -59,7 +59,7 @@ var Flux;
                     .otherwise({
                     redirectTo: "/home",
                 });
-                $locationProvider.html5Mode(true);
+                //$locationProvider.html5Mode(true);
             }
             return RouteConfig;
         }());
@@ -99,6 +99,7 @@ var Flux;
     var Controllers;
     (function (Controllers) {
         "use strict";
+        var dateOptions;
         var AdminController = (function () {
             function AdminController($scope, $location, FirebaseService, HttpService, $mdToast) {
                 this.$scope = $scope;
@@ -123,6 +124,7 @@ var Flux;
                 that.$scope.adminScope.status = "";
                 that.$scope.adminScope.view = "";
                 that.$scope.adminScope.visiblePanel = "dashboard";
+                that.$scope.adminScope.showByEntries = false;
                 //that.$scope.adminScope.view = "dashboard";
                 that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
                 that.$scope.adminScope.userRoles = [
@@ -130,6 +132,16 @@ var Flux;
                     { role: "Manager", value: Flux.ViewModels.UserRole.manager },
                     { role: "Standard User", value: Flux.ViewModels.UserRole.standard }
                 ];
+                dateOptions = {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                };
+                //Load Google visualization apis
+                google.charts.load('current', { packages: ['corechart', 'line'] });
                 that.getSensors();
                 that.getUsers();
                 that.loadSampleChannel();
@@ -241,43 +253,222 @@ var Flux;
                     .done(function (response) {
                     that.$scope.adminScope.selectedChannel = response.data;
                     var selectedChannel = response.data;
-                    that.drawChart(selectedChannel.feeds);
-                }).fail(function (error) {
+                    if (selectedChannel && selectedChannel.feeds) {
+                        that.drawCumulativeChart(selectedChannel);
+                        that.drawRealTimeChart(selectedChannel);
+                        that.drawCumulativeChart_Data(selectedChannel);
+                        that.drawRealTimeChart_Data(selectedChannel);
+                    }
+                    $(window).resize(function () {
+                        if (selectedChannel && selectedChannel.feeds) {
+                            that.drawCumulativeChart(selectedChannel);
+                            that.drawRealTimeChart(selectedChannel);
+                            that.drawCumulativeChart_Data(selectedChannel);
+                            that.drawRealTimeChart_Data(selectedChannel);
+                        }
+                    });
+                })
+                    .fail(function (error) {
                     console.error(error);
                 });
             };
-            AdminController.prototype.drawChart = function (feeds) {
+            AdminController.prototype.drawCumulativeChart = function (channel) {
                 var that = this;
-                google.charts.load('current', { packages: ['corechart', 'line'] });
-                var data = new google.visualization.DataTable();
-                data.addColumn('number', 'Timestamp');
-                data.addColumn('number', "Cummulative Flow");
-                data.addColumn('number', "Real Time Flow");
-                var rows = [];
-                feeds.forEach(function (feed) {
-                    rows.push([+feed.entry_id, +feed.field1, +feed.field2]);
-                });
-                data.addRows(rows);
-                var options = {
-                    chart: {
-                        //title: selectedChannel.name,
-                        //subtitle: selectedChannel.description
-                        title: "Padawan v1",
-                        subtitle: "Digitized Flow Meter"
-                    },
-                    width: 900,
-                    height: 500
-                    //hAxis: {
-                    //    title: 'Date'
-                    //},
-                    //vAxis: {
-                    //    title: "Cummulative Flow"
-                    //},
-                    //backgroundColor: '#f1f8e9'
-                };
-                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                //chart.draw(data, options);
-                chart.draw(data, google.charts.Line.convertOptions(options));
+                google.charts.setOnLoadCallback(function () { drawChart(); });
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('date', 'Date');
+                    data.addColumn('number', "Cumulative Flow");
+                    data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } });
+                    var rows = [];
+                    channel.feeds.forEach(function (feed) {
+                        var entry = feed.entry_id;
+                        var date = new Date(feed.created_at);
+                        var fieldNum = parseFloat(feed.field1);
+                        var field = isNaN(fieldNum) ? 0 : fieldNum;
+                        rows.push([date, field, that.createCustomHTMLContent(date, entry, field)]);
+                    });
+                    data.addRows(rows);
+                    var options = {
+                        chart: {
+                            title: channel.name,
+                            subtitle: channel.description
+                        },
+                        height: 400,
+                        tooltip: { isHtml: true },
+                        legend: { position: 'none' },
+                        hAxis: {
+                            title: 'Date',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        vAxis: {
+                            title: 'Cumulative Flow',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        colors: ['Blue']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('cumulativeChart'));
+                    chart.draw(data, google.charts.Line.convertOptions(options));
+                }
+            };
+            AdminController.prototype.drawRealTimeChart = function (channel) {
+                var that = this;
+                google.charts.setOnLoadCallback(function () { drawChart(); });
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('date', 'Date');
+                    data.addColumn('number', "Real Time Flow");
+                    data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } });
+                    var rows = [];
+                    channel.feeds.forEach(function (feed) {
+                        var entry = feed.entry_id;
+                        var date = new Date(feed.created_at);
+                        var fieldNum = parseFloat(feed.field2);
+                        var field = isNaN(fieldNum) ? 0 : fieldNum;
+                        rows.push([date, field, that.createCustomHTMLContent(date, entry, field)]);
+                    });
+                    data.addRows(rows);
+                    var options = {
+                        chart: {
+                            title: channel.name,
+                            subtitle: channel.description
+                        },
+                        height: 400,
+                        tooltip: { isHtml: true },
+                        legend: { position: 'none' },
+                        hAxis: {
+                            title: 'Date',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        vAxis: {
+                            title: 'Real Time Flow',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        colors: ['Red']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('realTimeChart'));
+                    chart.draw(data, google.charts.Line.convertOptions(options));
+                }
+            };
+            AdminController.prototype.drawCumulativeChart_Data = function (channel) {
+                var that = this;
+                google.charts.setOnLoadCallback(function () { drawChart(); });
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('number', 'Entry');
+                    data.addColumn('number', "Cumultive Flow");
+                    data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } });
+                    var rows = [];
+                    channel.feeds.forEach(function (feed) {
+                        var entry = feed.entry_id;
+                        var date = new Date(feed.created_at);
+                        var fieldNum = parseFloat(feed.field1);
+                        var field = isNaN(fieldNum) ? 0 : fieldNum;
+                        rows.push([entry, field, that.createCustomHTMLContent(date, entry, field)]);
+                    });
+                    data.addRows(rows);
+                    var options = {
+                        chart: {
+                            title: channel.name,
+                            subtitle: channel.description
+                        },
+                        tooltip: { isHtml: true },
+                        legend: { position: 'none' },
+                        height: 400,
+                        hAxis: {
+                            title: 'Entry',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        vAxis: {
+                            title: 'Cumulative Flow',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        colors: ['Blue']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('cumulativeChart_data'));
+                    chart.draw(data, google.charts.Line.convertOptions(options));
+                }
+            };
+            AdminController.prototype.drawRealTimeChart_Data = function (channel) {
+                var that = this;
+                google.charts.setOnLoadCallback(function () { drawChart(); });
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('number', 'Entry');
+                    data.addColumn('number', "Real Time Flow");
+                    data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } });
+                    var rows = [];
+                    channel.feeds.forEach(function (feed) {
+                        var entry = feed.entry_id;
+                        var date = new Date(feed.created_at);
+                        var fieldNum = parseFloat(feed.field2);
+                        var field = isNaN(fieldNum) ? 0 : fieldNum;
+                        rows.push([entry, field, that.createCustomHTMLContent(date, entry, field)]);
+                    });
+                    data.addRows(rows);
+                    var options = {
+                        chart: {
+                            title: channel.name,
+                            subtitle: channel.description
+                        },
+                        tooltip: { isHtml: true },
+                        legend: { position: 'none' },
+                        height: 400,
+                        hAxis: {
+                            title: 'Entry',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        vAxis: {
+                            title: 'Real Time Flow',
+                            titleTextStyle: {
+                                italic: false,
+                                fontStyle: "normal"
+                            }
+                        },
+                        colors: ['Red']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('realTimeChart_data'));
+                    chart.draw(data, google.charts.Line.convertOptions(options));
+                }
+            };
+            AdminController.prototype.createCustomHTMLContent = function (date, entryId, flowRate) {
+                return '<div style="padding:5px">' +
+                    '<table>' +
+                    '<tr>' +
+                    '<td><b> Date </b></td>' +
+                    '<td  style="min-width:171px">' + date.toLocaleTimeString("en-us", dateOptions) + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td><b> Entry Id </b></td>' +
+                    '<td>' + entryId + '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                    '<td style="width:70px"><b>Flow Rate  </b></td>' +
+                    '<td>' + flowRate + '</td>' +
+                    '</tr>' +
+                    '</table>' +
+                    '</div>';
             };
             return AdminController;
         }());
@@ -1442,6 +1633,11 @@ var Flux;
             UserRole[UserRole["manager"] = 2] = "manager";
             UserRole[UserRole["standard"] = 3] = "standard";
         })(UserRole = ViewModels.UserRole || (ViewModels.UserRole = {}));
+        var chartType;
+        (function (chartType) {
+            chartType[chartType["cumulative"] = 1] = "cumulative";
+            chartType[chartType["realTime"] = 2] = "realTime";
+        })(chartType = ViewModels.chartType || (ViewModels.chartType = {}));
     })(ViewModels = Flux.ViewModels || (Flux.ViewModels = {}));
 })(Flux || (Flux = {}));
 var Flux;

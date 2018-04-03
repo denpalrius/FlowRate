@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Services;
     (function (Services) {
         var HttpService = (function () {
@@ -27,5 +27,5 @@ var ThingSpeak;
             return HttpService;
         }());
         Services.HttpService = HttpService;
-    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Services = Flux.Services || (Flux.Services = {}));
+})(Flux || (Flux = {}));

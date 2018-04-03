@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Helpers;
     (function (Helpers) {
         var AppHelpers = (function () {
@@ -30,8 +30,15 @@ var ThingSpeak;
                     return true;
                 }
             };
+            AppHelpers.showToast = function (message, truthy, $mdToast) {
+                $mdToast.show($mdToast.simple()
+                    .textContent(message)
+                    .position('top right')
+                    .hideDelay(3000)
+                    .toastClass(truthy ? 'success' : 'error'));
+            };
             return AppHelpers;
         }());
         Helpers.AppHelpers = AppHelpers;
-    })(Helpers = ThingSpeak.Helpers || (ThingSpeak.Helpers = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Helpers = Flux.Helpers || (Flux.Helpers = {}));
+})(Flux || (Flux = {}));

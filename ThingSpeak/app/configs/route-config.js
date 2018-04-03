@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Configs;
     (function (Configs) {
         var RouteConfig = (function () {
@@ -15,20 +15,15 @@ var ThingSpeak;
                     controllerAs: 'HomeCtrl',
                     controller: 'HomeController',
                 })
-                    .when("/about", {
-                    templateUrl: '/app/views/about.html',
-                    controllerAs: 'AboutCtrl',
-                    controller: 'AboutController',
-                })
                     .when("/admin", {
                     templateUrl: '/app/views/admin.html',
                     controllerAs: 'AdminCtrl',
                     controller: 'AdminController',
                 })
-                    .when("/flowrate", {
-                    templateUrl: '/app/views/flow-rate.html',
-                    controllerAs: 'FlowRateCtrl',
-                    controller: 'FlowRateController',
+                    .when("/profile", {
+                    templateUrl: '/app/views/profile.html',
+                    controllerAs: 'ProfCtrl',
+                    controller: 'ProfileController',
                 })
                     .otherwise({
                     redirectTo: "/home",
@@ -38,5 +33,5 @@ var ThingSpeak;
             return RouteConfig;
         }());
         Configs.RouteConfig = RouteConfig;
-    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Configs = Flux.Configs || (Flux.Configs = {}));
+})(Flux || (Flux = {}));

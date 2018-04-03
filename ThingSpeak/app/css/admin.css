@@ -109,3 +109,11 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+#cumulativeChart, #realTimeChart {
+    overflow: hidden;
+}
+
+.chartHolder {
+    overflow:hidden;
+}

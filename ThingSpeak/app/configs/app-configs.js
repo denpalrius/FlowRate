@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Configs;
     (function (Configs) {
         var AppConfig = (function () {
@@ -27,5 +27,5 @@ var ThingSpeak;
             UserProfile: "USERPROFILE"
         };
         Configs.AppConfig = AppConfig;
-    })(Configs = ThingSpeak.Configs || (ThingSpeak.Configs = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Configs = Flux.Configs || (Flux.Configs = {}));
+})(Flux || (Flux = {}));

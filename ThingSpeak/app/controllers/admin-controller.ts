@@ -2,6 +2,7 @@
     "use strict";
 
     declare const google: ViewModels.iGoogle;
+    var dateOptions: Intl.DateTimeFormatOptions;
 
     interface ICurrentScope {
         selectedChannel?: ViewModels.iChannel;
@@ -17,6 +18,7 @@
         view?: string;
         visiblePanel?: string;
         userRoles?: ViewModels.iUserRole[];
+        showByEntries?: boolean;
     }
 
     interface IAdminScope extends ng.IScope {
@@ -50,13 +52,27 @@
             that.$scope.adminScope.status = "";
             that.$scope.adminScope.view = "";
             that.$scope.adminScope.visiblePanel = "dashboard";
+            that.$scope.adminScope.showByEntries = false;
             //that.$scope.adminScope.view = "dashboard";
             that.$scope.adminScope.view = "'/app/views/templates/dashboard-template.html'";
+
             that.$scope.adminScope.userRoles = [
                 { role: "Administrator", value: ViewModels.UserRole.admin },
                 { role: "Manager", value: ViewModels.UserRole.manager },
                 { role: "Standard User", value: ViewModels.UserRole.standard }
             ];
+
+            dateOptions = {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            };
+
+            //Load Google visualization apis
+            google.charts.load('current', { packages: ['corechart', 'line'] });
 
             that.getSensors();
             that.getUsers();
@@ -193,52 +209,262 @@
                     that.$scope.adminScope.selectedChannel = response.data;
                     var selectedChannel: ViewModels.iChannel = response.data;
 
-                    that.drawChart(selectedChannel.feeds);
+                    if (selectedChannel && selectedChannel.feeds) {
+                        that.drawCumulativeChart(selectedChannel);
+                        that.drawRealTimeChart(selectedChannel);
+                        that.drawCumulativeChart_Data(selectedChannel);
+                        that.drawRealTimeChart_Data(selectedChannel);
+                    }
 
-                }).fail((error: Models.IHttpResponse) => {
+                    $(window).resize(function () {
+                        if (selectedChannel && selectedChannel.feeds) {
+                            that.drawCumulativeChart(selectedChannel);
+                            that.drawRealTimeChart(selectedChannel);
+                            that.drawCumulativeChart_Data(selectedChannel);
+                            that.drawRealTimeChart_Data(selectedChannel);
+                        }
+                    });
+
+                })
+                .fail((error: Models.IHttpResponse) => {
                     console.error(error);
                 });
-        }   
+        }
 
-        private drawChart(feeds: ViewModels.iFeed[]) {
+        private drawCumulativeChart(channel: ViewModels.iChannel) {
             var that: AdminController = this;
 
-            google.charts.load('current', { packages: ['corechart', 'line'] });
+            google.charts.setOnLoadCallback(function () { drawChart() });
 
-            var data = new google.visualization.DataTable();
-            data.addColumn('number', 'Timestamp');
-            data.addColumn('number', "Cummulative Flow");
-            data.addColumn('number', "Real Time Flow");
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', "Cumulative Flow");
+                data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } })
 
-            var rows: any[] = [];
-            feeds.forEach((feed: ViewModels.iFeed) => {
-                rows.push([+feed.entry_id, +feed.field1, +feed.field2]);
-            });
+                var rows: any[] = [];
+                channel.feeds.forEach((feed: ViewModels.iFeed) => {
+                    let entry = feed.entry_id;
+                    let date = new Date(feed.created_at);
+                    let fieldNum = parseFloat(feed.field1);
+                    let field = isNaN(fieldNum) ? 0 : fieldNum
+                    rows.push([date, field, that.createCustomHTMLContent(date, entry, field)]);
+                });
 
-            data.addRows(rows);
+                data.addRows(rows);
 
-            var options = {
-                chart: {
-                    //title: selectedChannel.name,
-                    //subtitle: selectedChannel.description
-                    title: "Padawan v1",
-                    subtitle: "Digitized Flow Meter"
-                },
-                width: 900,
-                height: 500
-                //hAxis: {
-                //    title: 'Date'
-                //},
-                //vAxis: {
-                //    title: "Cummulative Flow"
-                //},
-                //backgroundColor: '#f1f8e9'
-            };
+                var options = {
+                    chart: {
+                        title: channel.name,
+                        subtitle: channel.description
+                    },
+                    height: 400,
+                    tooltip: { isHtml: true },
+                    legend: { position: 'none' },
+                    hAxis: {
+                        title: 'Date',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    vAxis: {
+                        title: 'Cumulative Flow',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    colors: ['Blue']
+                };
 
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-            //chart.draw(data, options);
-            chart.draw(data, google.charts.Line.convertOptions(options));
+                var chart = new google.visualization.LineChart(document.getElementById('cumulativeChart'));
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+        }
 
+
+        private drawRealTimeChart(channel: ViewModels.iChannel) {
+            var that: AdminController = this;
+
+            google.charts.setOnLoadCallback(function () { drawChart() });
+
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', "Real Time Flow");
+                data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } })
+
+                var rows: any[] = [];
+                channel.feeds.forEach((feed: ViewModels.iFeed) => {
+                    let entry = feed.entry_id;
+                    let date = new Date(feed.created_at);
+                    let fieldNum = parseFloat(feed.field2);
+                    let field = isNaN(fieldNum) ? 0 : fieldNum
+                    rows.push([date, field, that.createCustomHTMLContent(date, entry, field)]);
+                });
+
+                data.addRows(rows);
+
+                var options = {
+                    chart: {
+                        title: channel.name,
+                        subtitle: channel.description
+                    },
+                    height: 400,
+                    tooltip: { isHtml: true },
+                    legend: { position: 'none' },
+                    hAxis: {
+                        title: 'Date',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    vAxis: {
+                        title: 'Real Time Flow',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    colors: ['Red']
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('realTimeChart'));
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+        }
+
+        private drawCumulativeChart_Data(channel: ViewModels.iChannel) {
+            var that: AdminController = this;
+
+            google.charts.setOnLoadCallback(function () { drawChart() });
+
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('number', 'Entry');
+                data.addColumn('number', "Cumultive Flow");
+                data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } })
+
+                var rows: any[] = [];
+                channel.feeds.forEach((feed: ViewModels.iFeed) => {
+                    let entry = feed.entry_id;
+                    let date = new Date(feed.created_at);
+                    let fieldNum = parseFloat(feed.field1);
+                    let field = isNaN(fieldNum) ? 0 : fieldNum
+                    rows.push([entry, field, that.createCustomHTMLContent(date, entry, field)]);
+                });
+
+                data.addRows(rows);
+
+                var options = {
+                    chart: {
+                        title: channel.name,
+                        subtitle: channel.description
+                    },
+                    tooltip: { isHtml: true },
+                    legend: { position: 'none' },
+                    height: 400,
+                    hAxis: {
+                        title: 'Entry',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    vAxis: {
+                        title: 'Cumulative Flow',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    colors: ['Blue']
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('cumulativeChart_data'));
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+        }
+
+        private drawRealTimeChart_Data(channel: ViewModels.iChannel) {
+            var that: AdminController = this;
+
+            google.charts.setOnLoadCallback(function () { drawChart() });
+
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('number', 'Entry');
+                data.addColumn('number', "Real Time Flow");
+                data.addColumn({ 'type': 'string', 'role': 'tooltip', 'p': { 'html': true } })
+
+                var rows: any[] = [];
+                channel.feeds.forEach((feed: ViewModels.iFeed) => {
+                    let entry = feed.entry_id;
+                    let date = new Date(feed.created_at);
+                    let fieldNum = parseFloat(feed.field2);
+                    let field = isNaN(fieldNum) ? 0 : fieldNum
+                    rows.push([entry, field, that.createCustomHTMLContent(date, entry, field)]);
+                });
+
+                data.addRows(rows);
+
+                var options = {
+                    chart: {
+                        title: channel.name,
+                        subtitle: channel.description
+                    },
+                    tooltip: { isHtml: true },
+                    legend: { position: 'none' },
+                    height: 400,
+                    hAxis: {
+                        title: 'Entry',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    vAxis: {
+                        title: 'Real Time Flow',
+                        titleTextStyle:
+                        {
+                            italic: false,
+                            fontStyle: "normal"
+                        }
+                    },
+                    colors: ['Red']
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('realTimeChart_data'));
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+        }
+
+        private createCustomHTMLContent(date: Date, entryId: any, flowRate: any) {
+            return '<div style="padding:5px">' +
+                '<table>' +
+                '<tr>' +
+                '<td><b> Date </b></td>' +
+                '<td  style="min-width:171px">' + date.toLocaleTimeString("en-us", dateOptions) + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td><b> Entry Id </b></td>' +
+                '<td>' + entryId + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td style="width:70px"><b>Flow Rate  </b></td>' +
+                '<td>' + flowRate + '</td>' +
+                '</tr>' +
+                '</table>' +
+                '</div>';
         }
     }
 }

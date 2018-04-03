@@ -1,6 +1,34 @@
 ﻿<h4 class="admin-header">Dashboard</h4>
 <hr />
 
-<div style="overflow:auto">
-    <div id="chart_div"></div>
+<!--<md-input-container class="md-block">
+    <md-switch class="md-primary" ng-model="adminScope.showByEntries">
+        Show by Entries
+    </md-switch>
+</md-input-container>
+
+<div ng-show="!adminScope.showByEntries" class="chartHolder">
+    <div id="cumulativeChart_data"></div>
+    <div id="realTimeChart_data"></div>
 </div>
+
+<div ng-show="adminScope.showByEntries" class="chartHolder">
+    <div id="cumulativeChart"></div>
+    <div id="realTimeChart"></div>
+</div>-->
+
+
+<md-tabs style="max-height:calc(100% - 74px) !important; min-height:calc(100% - 74px) !important">
+    <md-tab label="By Entries">
+        <div class="chartHolder">
+            <div id="cumulativeChart_data"></div>
+            <div id="realTimeChart_data"></div>
+        </div>
+    </md-tab>
+    <md-tab label="By Date">
+        <div class="chartHolder">
+            <div id="cumulativeChart"></div>
+            <div id="realTimeChart"></div>
+        </div>
+    </md-tab>
+</md-tabs>

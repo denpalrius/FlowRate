@@ -1,5 +1,5 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Services;
     (function (Services) {
         var FirebaseService = (function () {
@@ -10,13 +10,121 @@ var ThingSpeak;
             }
             FirebaseService.prototype.init = function () {
                 var that = this;
-                firebase.initializeApp(ThingSpeak.Configs.AppConfig.firebaseConfig);
+                firebase.initializeApp(Flux.Configs.AppConfig.firebaseConfig);
                 firebase.auth().useDeviceLanguage();
                 that.provider = new firebase.auth.GoogleAuthProvider();
                 that.provider.setCustomParameters({
                     'login_hint': 'user@example.com'
                 });
                 that.loggedInUser = {};
+            };
+            FirebaseService.prototype.signUp = function (newUser) {
+                var that = this;
+                var deferred = $.Deferred();
+                firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password)
+                    .then(function (user) {
+                    var loggedInUser = {
+                        id: user.uid,
+                        fullName: user.displayName,
+                        email: user.email,
+                        phone: user.phoneNumber,
+                        photoUrl: user.photoURL,
+                        role: Flux.ViewModels.UserRole.standard
+                    };
+                    var isUserAdded = that.write(Flux.Configs.AppConfig.firebaseRefs.users, loggedInUser)
+                        .done(function (response) {
+                        console.log("New user: ", response);
+                        return true;
+                    })
+                        .fail(function (error) {
+                        console.log("Error: ", error);
+                        return false;
+                    });
+                    console.log("isUserAdded: ", isUserAdded);
+                    deferred.resolve(user);
+                })
+                    .catch(function (error) {
+                    var errorMessage = "There was an error creating the new acccount. Kindly contact the owner";
+                    if (error.code.match(/^(auth\/email-already-in-use| auth\/invalid-email| auth\/weak-password)$/)) {
+                        errorMessage = error.message;
+                    }
+                    else if (error.code === "auth/operation-not-allowed") {
+                        errorMessage = "Email sign up is not allowed";
+                    }
+                    deferred.reject(errorMessage);
+                });
+                return deferred;
+            };
+            FirebaseService.prototype.logIn = function (email, password) {
+                var that = this;
+                var deferred = $.Deferred();
+                deferred.resolve("Denis Sigei");
+                return deferred;
+            };
+            FirebaseService.prototype.signIn = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                firebase.auth().signInWithPopup(that.provider)
+                    .then(function (result) {
+                    if (result.credential) {
+                        var token = result.credential.accessToken;
+                    }
+                    var user = result.user;
+                    deferred.resolve('Sign in was Succesfull');
+                })
+                    .catch(function (error) {
+                    var errorOccured = {
+                        errorCode: error.code,
+                        errorMessage: error.message,
+                        email: error.email,
+                        credential: error.credential
+                    };
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            FirebaseService.prototype.signOut = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                firebase.auth().signOut()
+                    .then(function () {
+                    deferred.resolve('Signout Succesfull');
+                })
+                    .catch(function (error) {
+                    deferred.reject(error);
+                });
+                return deferred;
+            };
+            FirebaseService.prototype.checkSignedInUser = function () {
+                var that = this;
+                var deferred = $.Deferred();
+                firebase.auth().onAuthStateChanged(function (user) {
+                    if (user) {
+                        var signedInUser = {
+                            fullName: user.displayName,
+                            email: user.email,
+                            photoUrl: user.photoURL,
+                            emailVerified: user.emailVerified,
+                            id: user.uid,
+                            token: user.getIdToken
+                        };
+                        deferred.resolve(signedInUser);
+                    }
+                    else {
+                        deferred.reject("There is no currently logged in user");
+                    }
+                });
+                return deferred;
+            };
+            FirebaseService.prototype.updateUserProfile = function () {
+                var user = firebase.auth().currentUser;
+                var signedInUser = {
+                    fullName: user.displayName,
+                    email: user.email,
+                    photoUrl: user.photoURL,
+                    emailVerified: user.emailVerified,
+                    id: user.uid
+                };
             };
             FirebaseService.prototype.googleSignin = function () {
                 var that = this;
@@ -27,15 +135,13 @@ var ThingSpeak;
                     var user = result.user;
                     that.loggedInUser = {
                         id: user.uid,
-                        name: user.displayName,
+                        fullName: user.displayName,
                         email: user.email,
                         phone: user.phoneNumber,
-                        photoURL: user.photoURL,
-                        role: ThingSpeak.ViewModels.iuserRole.standard
+                        photoUrl: user.photoURL,
+                        role: Flux.ViewModels.UserRole.standard
                     };
-                    that.$cookies.put(ThingSpeak.Configs.AppConfig.cookies.userToken, token);
-                    that.$cookies.putObject(ThingSpeak.Configs.AppConfig.cookies.UserProfile, that.loggedInUser);
-                    that.write(ThingSpeak.Configs.AppConfig.firebaseRefs.users, that.loggedInUser)
+                    that.write(Flux.Configs.AppConfig.firebaseRefs.users, that.loggedInUser)
                         .done(function (response) {
                         console.log(response);
                     })
@@ -51,50 +157,16 @@ var ThingSpeak;
                 });
                 return deferred;
             };
-            FirebaseService.prototype.googleSignin_new = function () {
-                var that = this;
-                var deferred = $.Deferred();
-                firebase.auth().signInWithPopup(that.provider).then(function (result) {
-                    if (result.credential) {
-                        var token = result.credential.accessToken;
-                    }
-                    var user = result.user;
-                    deferred.resolve('Sign in was Succesfull');
-                }).catch(function (error) {
-                    var errorOccured = {
-                        errorCode: error.code,
-                        errorMessage: error.message,
-                        email: error.email,
-                        credential: error.credential
-                    };
-                    deferred.reject(error);
-                });
-                return deferred;
-            };
-            FirebaseService.prototype.googleSignout = function () {
-                var that = this;
-                var deferred = $.Deferred();
-                firebase.auth().signOut()
-                    .then(function () {
-                    deferred.resolve('Signout Succesfull');
-                })
-                    .catch(function (error) {
-                    deferred.reject(error);
-                });
-                that.$cookies.remove(ThingSpeak.Configs.AppConfig.cookies.userToken);
-                that.$cookies.remove(ThingSpeak.Configs.AppConfig.cookies.UserProfile);
-                return deferred;
-            };
             FirebaseService.prototype.write = function (ref, data) {
                 var that = this;
                 var deferred = $.Deferred();
                 if (ref && data.id) {
-                    firebase.database().ref(ref + '/' + data.id).set(data).done(function () {
+                    firebase.database().ref(ref + '/' + data.id).set(data).then(function () {
                         deferred.resolve("Data added successfuly");
                     });
                 }
                 else {
-                    deferred.reject("The provided data or its intended location are invalid!");
+                    deferred.reject("An error occured adding the new data!");
                 }
                 return deferred;
             };
@@ -148,5 +220,5 @@ var ThingSpeak;
             return FirebaseService;
         }());
         Services.FirebaseService = FirebaseService;
-    })(Services = ThingSpeak.Services || (ThingSpeak.Services = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Services = Flux.Services || (Flux.Services = {}));
+})(Flux || (Flux = {}));

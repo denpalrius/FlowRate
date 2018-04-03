@@ -70,4 +70,9 @@
         installedBy?: string;
         channel?: iChannel;
     }
+
+    export enum chartType {
+        cumulative = 1,
+        realTime = 2
+    }
 }

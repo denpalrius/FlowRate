@@ -1,7 +1,7 @@
-var ThingSpeak;
-(function (ThingSpeak) {
+var Flux;
+(function (Flux) {
     var Models;
     (function (Models) {
         "use strict";
-    })(Models = ThingSpeak.Models || (ThingSpeak.Models = {}));
-})(ThingSpeak || (ThingSpeak = {}));
+    })(Models = Flux.Models || (Flux.Models = {}));
+})(Flux || (Flux = {}));
